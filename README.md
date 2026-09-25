@@ -1,36 +1,49 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# almena-registry-web
 
-## Getting Started
+The web portal of the Almena Network registry, built with [Next.js](https://nextjs.org) 16 (App Router), React 19, TypeScript and Tailwind CSS 4. Its data comes from [registry-api](../registry-api).
 
-First, run the development server:
+## Quick start
+
+Needs Node.js 24 or later, [Task](https://taskfile.dev) and Docker.
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+task init   # .env from .env.example
+task dev    # the portal with hot reload on http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Start the API first (`task up` or `task dev` in `../registry-api`). To run the production build in Docker instead:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+task up      # builds the image and starts it
+task health  # {"status":"ok"}
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Configuration
 
-## Learn More
+Read from the environment or `.env`; [.env.example](.env.example) explains every one.
 
-To learn more about Next.js, take a look at the following resources:
+| Variable | Default | |
+|---|---|---|
+| `NEXT_PUBLIC_REGISTRY_API_URL` | `http://localhost:8000` | The API as the browser reaches it; inlined into the bundle at build time, so changing it needs a rebuild |
+| `REGISTRY_API_URL` | `http://localhost:8000` | The API as the Next.js server reaches it, read at runtime |
+| `REGISTRY_API_URL_DOCKER` | `http://host.docker.internal:8000` | The same, for the Docker container |
+| `REGISTRY_WEB_PORT` | `3000` | Port of the portal on the host |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Endpoints
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+| | |
+|---|---|
+| `GET /` | The portal |
+| `GET /health` | Liveness, used by the Docker health check |
 
-## Deploy on Vercel
+## Development
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+`task --list` shows every task. Before sending a change, `task check` (ESLint, TypeScript and a production build) must pass; see [CONTRIBUTING.md](CONTRIBUTING.md). This Next.js version differs from older ones: [AGENTS.md](AGENTS.md) points to the documentation bundled in `node_modules/next/dist/docs/`.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Contributing and security
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) and the [Code of Conduct](CODE_OF_CONDUCT.md). Report vulnerabilities privately as described in [SECURITY.md](SECURITY.md).
+
+## License
+
+Licensed under the [Apache License 2.0](LICENSE).

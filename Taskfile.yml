@@ -1,0 +1,101 @@
+# https://taskfile.dev
+version: "3"
+
+dotenv: [".env"]
+
+vars:
+  IMAGE: almena-registry-web:dev
+  PORT: '{{.REGISTRY_WEB_PORT | default "3000"}}'
+
+tasks:
+  default:
+    desc: List available tasks
+    cmds:
+      - task --list
+    silent: true
+
+  init:
+    desc: Create .env from .env.example (an existing .env is left untouched)
+    cmds:
+      - cp .env.example .env
+    status:
+      - test -f .env
+
+  install:
+    desc: Install the dependencies from package-lock.json
+    cmds:
+      - npm ci
+    sources:
+      - package.json
+      - package-lock.json
+    generates:
+      - node_modules/.package-lock.json
+
+  dev:
+    desc: Run the portal locally with hot reload (the API from ../registry-api, e.g. its task dev)
+    deps: [install]
+    cmds:
+      - npx next dev --port {{.PORT}}
+
+  build:
+    desc: Build the production bundle (.next/standalone)
+    deps: [install]
+    cmds:
+      - npm run build
+
+  start:
+    desc: Serve the production build locally (after task build)
+    cmds:
+      - npx next start --port {{.PORT}}
+
+  lint:
+    desc: Lint and type-check
+    deps: [install]
+    cmds:
+      - npm run lint
+      - npx tsc --noEmit
+
+  fmt:
+    desc: Apply ESLint's automatic fixes
+    deps: [install]
+    cmds:
+      - npx eslint --fix
+
+  check:
+    desc: Everything that must pass before finishing a change (lint + production build)
+    cmds:
+      - task: lint
+      - task: build
+
+  docker:build:
+    desc: Build the Docker image
+    cmds:
+      - docker compose build
+
+  up:
+    desc: Start the portal in Docker (detached) and wait until it is healthy
+    cmds:
+      - docker compose up --build --detach --wait
+
+  down:
+    desc: Stop and remove the Docker containers
+    cmds:
+      - docker compose down
+
+  logs:
+    desc: Follow the portal's container logs
+    cmds:
+      - docker compose logs --follow web
+
+  health:
+    desc: Query the running portal's health endpoint
+    cmds:
+      - curl --fail --silent --show-error http://localhost:{{.PORT}}/health
+      - echo
+    silent: true
+
+  clean:
+    desc: Remove node_modules, the build output and the local Docker image
+    cmds:
+      - rm -rf node_modules .next
+      - docker image rm -f {{.IMAGE}}
