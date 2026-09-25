@@ -11,7 +11,7 @@ task init   # .env from .env.example
 task dev    # the portal with hot reload on http://localhost:3000
 ```
 
-Start the API first (`task up` or `task dev` in `../registry-api`). To run the production build in Docker instead:
+The portal is published at `https://registry.almena.network` and uses the API at `https://registry-api.almena.network`; to work against a local API instead (`task dev` in `../registry-api`), point both API variables below at `http://localhost:8000`. To run the production build in Docker instead:
 
 ```bash
 task up      # builds the image and starts it
@@ -24,9 +24,9 @@ Read from the environment or `.env`; [.env.example](.env.example) explains every
 
 | Variable | Default | |
 |---|---|---|
-| `NEXT_PUBLIC_REGISTRY_API_URL` | `http://localhost:8000` | The API as the browser reaches it; inlined into the bundle at build time, so changing it needs a rebuild |
-| `REGISTRY_API_URL` | `http://localhost:8000` | The API as the Next.js server reaches it, read at runtime |
-| `REGISTRY_API_URL_DOCKER` | `http://host.docker.internal:8000` | The same, for the Docker container |
+| `NEXT_PUBLIC_REGISTRY_WEB_URL` | `https://registry.almena.network` | Public origin of the portal, for metadata; inlined at build time |
+| `NEXT_PUBLIC_REGISTRY_API_URL` | `https://registry-api.almena.network` | The API as the browser reaches it; inlined into the bundle at build time, so changing it needs a rebuild |
+| `REGISTRY_API_URL` | `https://registry-api.almena.network` | The API as the Next.js server reaches it, read at runtime |
 | `REGISTRY_WEB_PORT` | `3000` | Port of the portal on the host |
 
 ## Endpoints

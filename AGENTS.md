@@ -14,7 +14,9 @@ The web portal of the Almena Network registry; its data comes from
 `../registry-api` (FastAPI). Everything is written in English. Use `task` for
 everything (`task --list`); `task check` must pass before finishing.
 
-- The API URL: `process.env.REGISTRY_API_URL` on the server,
-  `process.env.NEXT_PUBLIC_REGISTRY_API_URL` in the browser (inlined at build).
+- The portal is `https://registry.almena.network` (`NEXT_PUBLIC_REGISTRY_WEB_URL`),
+  the API `https://registry-api.almena.network`: `process.env.REGISTRY_API_URL`
+  on the server, `process.env.NEXT_PUBLIC_REGISTRY_API_URL` in the browser
+  (inlined at build).
 - `app/health/route.ts` is the Docker health check: keep it dependency-free.
 - `output: "standalone"` in `next.config.ts` is what the Dockerfile ships.
