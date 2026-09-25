@@ -4,7 +4,7 @@ version: "3"
 dotenv: [".env"]
 
 vars:
-  IMAGE: almena-registry-web:dev
+  IMAGE: almena-registry:dev
   PORT: '{{.REGISTRY_WEB_PORT | default "3000"}}'
 
 tasks:
@@ -32,7 +32,7 @@ tasks:
       - node_modules/.package-lock.json
 
   dev:
-    desc: Run the portal locally with hot reload (the API from ../registry-api, e.g. its task dev)
+    desc: Run the portal locally with hot reload (the API from ../api, e.g. its task dev)
     deps: [install]
     cmds:
       - npx next dev --port {{.PORT}}
@@ -53,6 +53,8 @@ tasks:
     deps: [install]
     cmds:
       - npm run lint
+      # Route types (LayoutProps, PageProps…) live in .next/types: generate them first.
+      - npx next typegen
       - npx tsc --noEmit
 
   fmt:

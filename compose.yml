@@ -1,4 +1,4 @@
-name: almena-registry-web
+name: almena-registry
 
 services:
   web:
@@ -6,10 +6,10 @@ services:
       context: .
       args:
         NEXT_PUBLIC_REGISTRY_WEB_URL: ${NEXT_PUBLIC_REGISTRY_WEB_URL:-https://registry.almena.network}
-        NEXT_PUBLIC_REGISTRY_API_URL: ${NEXT_PUBLIC_REGISTRY_API_URL:-https://registry-api.almena.network}
-    image: almena-registry-web:dev
+        NEXT_PUBLIC_REGISTRY_API_URL: ${NEXT_PUBLIC_REGISTRY_API_URL:-https://api.almena.network}
+    image: almena-registry:dev
     restart: unless-stopped
     ports:
       - "${REGISTRY_WEB_PORT:-3000}:3000"
     environment:
-      REGISTRY_API_URL: ${REGISTRY_API_URL:-https://registry-api.almena.network}
+      REGISTRY_API_URL: ${REGISTRY_API_URL:-https://api.almena.network}

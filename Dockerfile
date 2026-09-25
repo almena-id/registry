@@ -14,7 +14,7 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 # NEXT_PUBLIC_* variables are inlined into the browser bundle at build time.
 ARG NEXT_PUBLIC_REGISTRY_WEB_URL=https://registry.almena.network
-ARG NEXT_PUBLIC_REGISTRY_API_URL=https://registry-api.almena.network
+ARG NEXT_PUBLIC_REGISTRY_API_URL=https://api.almena.network
 ENV NEXT_PUBLIC_REGISTRY_WEB_URL=$NEXT_PUBLIC_REGISTRY_WEB_URL \
     NEXT_PUBLIC_REGISTRY_API_URL=$NEXT_PUBLIC_REGISTRY_API_URL
 RUN npm run build

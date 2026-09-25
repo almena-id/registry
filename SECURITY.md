@@ -3,7 +3,7 @@
 ## Reporting a vulnerability
 
 Please report vulnerabilities privately through GitHub: on
-[almena-network/registry-web](https://github.com/almena-network/registry-web),
+[almena-network/registry](https://github.com/almena-network/registry),
 open the **Security** tab and choose **Report a vulnerability**. Do not open a
 public issue, pull request or discussion about it.
 
@@ -34,6 +34,6 @@ In scope, among others:
 Out of scope:
 
 - the development setup (`task dev`, `.env.example`);
-- issues in [registry-api](https://github.com/almena-network/registry-api)
+- issues in [api](https://github.com/almena-network/api)
   itself: report them there;
 - denial of service through sheer traffic volume.

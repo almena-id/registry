@@ -7,7 +7,7 @@ through [SECURITY.md](SECURITY.md), never through public issues.
 ## Getting started
 
 You need Node.js 24 or later, [Task](https://taskfile.dev) and Docker, plus
-[registry-api](../registry-api) running for anything that shows data.
+[api](../api) running for anything that shows data.
 
 ```bash
 task init    # creates .env from .env.example
