@@ -1,0 +1,101 @@
+{
+  "app": {
+    "name": "Almena Registry",
+    "network": "Almena Network"
+  },
+  "header": {
+    "language": "Language",
+    "theme": "Theme",
+    "themes": {
+      "system": "System",
+      "light": "Light",
+      "dark": "Dark"
+    },
+    "timeZone": {
+      "label": "Time zone",
+      "searchPlaceholder": "Search a time zone…",
+      "empty": "No time zone matches that search.",
+      "suggestedHeading": "Detected in this browser",
+      "allHeading": "All time zones"
+    }
+  },
+  "home": {
+    "title": "Your organisation's identities, in one place",
+    "lead": "Manage tenants, issuers, verifiers and DIDs for the Almena Network.",
+    "signIn": "Continue with email",
+    "openDashboard": "Open dashboard",
+    "diagram": {
+      "label": "How the registry is organised",
+      "you": "You",
+      "tenant": "Tenant",
+      "issuers": "Issuers",
+      "verifiers": "Verifiers",
+      "identities": "Identities"
+    }
+  },
+  "auth": {
+    "title": "Sign in or create an account",
+    "lead": "We will email you a code. No password needed.",
+    "email": "Email",
+    "sendCode": "Send code",
+    "codeTitle": "Check your email",
+    "codeLead": "Enter the 6-digit code we sent to {email}.",
+    "code": "Code",
+    "verify": "Continue",
+    "resend": "Send a new code",
+    "resent": "We sent you a new code.",
+    "changeEmail": "Use another email",
+    "errors": {
+      "emailInvalid": "Enter a valid email.",
+      "codeFormat": "The code has 6 digits.",
+      "invalidCode": "That code is wrong or has expired.",
+      "tooManyAttempts": "Too many tries. Ask for a new code.",
+      "mailUnavailable": "The email could not be sent. Try again in a moment.",
+      "unavailable": "The registry cannot be reached. Try again in a moment."
+    }
+  },
+  "dashboard": {
+    "nav": {
+      "label": "Sections",
+      "overview": "Overview",
+      "tenants": "Tenants",
+      "issuers": "Issuers",
+      "verifiers": "Verifiers",
+      "identities": "Identities",
+      "settings": "Settings",
+      "soon": "Soon"
+    },
+    "signOut": "Sign out",
+    "overview": {
+      "title": "Overview",
+      "lead": "Everything your tenants hold."
+    },
+    "cards": {
+      "tenants": {
+        "title": "Tenants",
+        "empty": "No tenants yet."
+      },
+      "issuers": {
+        "title": "Issuers",
+        "empty": "No issuers yet."
+      },
+      "verifiers": {
+        "title": "Verifiers",
+        "empty": "No verifiers yet."
+      },
+      "identities": {
+        "title": "Identities",
+        "empty": "No identities yet."
+      }
+    },
+    "account": {
+      "title": "Account",
+      "email": "Email",
+      "since": "Member since"
+    }
+  },
+  "footer": {
+    "rights": "Almena Network",
+    "site": "almena.network"
+  }
+}

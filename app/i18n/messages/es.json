@@ -1,0 +1,101 @@
+{
+  "app": {
+    "name": "Almena Registry",
+    "network": "Almena Network"
+  },
+  "header": {
+    "language": "Idioma",
+    "theme": "Tema",
+    "themes": {
+      "system": "Sistema",
+      "light": "Claro",
+      "dark": "Oscuro"
+    },
+    "timeZone": {
+      "label": "Zona horaria",
+      "searchPlaceholder": "Buscar una zona horaria…",
+      "empty": "Ninguna zona horaria coincide con la búsqueda.",
+      "suggestedHeading": "Detectada en este navegador",
+      "allHeading": "Todas las zonas horarias"
+    }
+  },
+  "home": {
+    "title": "Las identidades de tu organización, en un solo lugar",
+    "lead": "Gestiona tenants, emisores, verificadores y DIDs de Almena Network.",
+    "signIn": "Continuar con email",
+    "openDashboard": "Abrir el panel",
+    "diagram": {
+      "label": "Cómo se organiza el registro",
+      "you": "Tú",
+      "tenant": "Tenant",
+      "issuers": "Emisores",
+      "verifiers": "Verificadores",
+      "identities": "Identidades"
+    }
+  },
+  "auth": {
+    "title": "Entra o crea tu cuenta",
+    "lead": "Te enviaremos un código por correo. Sin contraseñas.",
+    "email": "Correo electrónico",
+    "sendCode": "Enviar código",
+    "codeTitle": "Revisa tu correo",
+    "codeLead": "Introduce el código de 6 cifras que hemos enviado a {email}.",
+    "code": "Código",
+    "verify": "Continuar",
+    "resend": "Enviar un código nuevo",
+    "resent": "Te hemos enviado un código nuevo.",
+    "changeEmail": "Usar otro correo",
+    "errors": {
+      "emailInvalid": "Introduce un correo válido.",
+      "codeFormat": "El código tiene 6 cifras.",
+      "invalidCode": "Ese código no es correcto o ha caducado.",
+      "tooManyAttempts": "Demasiados intentos. Pide un código nuevo.",
+      "mailUnavailable": "No se ha podido enviar el correo. Inténtalo de nuevo en un momento.",
+      "unavailable": "No se puede contactar con el registro. Inténtalo de nuevo en un momento."
+    }
+  },
+  "dashboard": {
+    "nav": {
+      "label": "Secciones",
+      "overview": "Resumen",
+      "tenants": "Tenants",
+      "issuers": "Emisores",
+      "verifiers": "Verificadores",
+      "identities": "Identidades",
+      "settings": "Ajustes",
+      "soon": "Pronto"
+    },
+    "signOut": "Cerrar sesión",
+    "overview": {
+      "title": "Resumen",
+      "lead": "Todo lo que tienen tus tenants."
+    },
+    "cards": {
+      "tenants": {
+        "title": "Tenants",
+        "empty": "Aún no hay tenants."
+      },
+      "issuers": {
+        "title": "Emisores",
+        "empty": "Aún no hay emisores."
+      },
+      "verifiers": {
+        "title": "Verificadores",
+        "empty": "Aún no hay verificadores."
+      },
+      "identities": {
+        "title": "Identidades",
+        "empty": "Aún no hay identidades."
+      }
+    },
+    "account": {
+      "title": "Cuenta",
+      "email": "Correo electrónico",
+      "since": "Miembro desde"
+    }
+  },
+  "footer": {
+    "rights": "Almena Network",
+    "site": "almena.network"
+  }
+}
