@@ -17,6 +17,18 @@
       "empty": "No time zone matches that search.",
       "suggestedHeading": "Detected in this browser",
       "allHeading": "All time zones"
+    },
+    "tenant": {
+      "label": "Tenant",
+      "none": "No tenant",
+      "unnamed": "Unnamed tenant",
+      "heading": "Your tenants",
+      "empty": "No tenants yet."
+    },
+    "account": {
+      "label": "Account",
+      "signOut": "Sign out",
+      "open": "Account details"
     }
   },
   "home": {
@@ -35,7 +47,7 @@
   },
   "auth": {
     "title": "Sign in or create an account",
-    "lead": "We will email you a code. No password needed.",
+    "lead": "No passwords: use an account you already have, or get a code by email.",
     "email": "Email",
     "sendCode": "Send code",
     "codeTitle": "Check your email",
@@ -51,30 +63,41 @@
       "invalidCode": "That code is wrong or has expired.",
       "tooManyAttempts": "Too many tries. Ask for a new code.",
       "mailUnavailable": "The email could not be sent. Try again in a moment.",
-      "unavailable": "The registry cannot be reached. Try again in a moment."
+      "unavailable": "The registry cannot be reached. Try again in a moment.",
+      "invalidState": "The sign-in took too long or was interrupted. Try again.",
+      "emailUnverified": "That account has no verified email. Try another way in.",
+      "providerError": "The provider could not sign you in. Try again.",
+      "providerCancelled": "Sign-in was cancelled."
+    },
+    "social": {
+      "almena": "Continue with Almena",
+      "google": "Continue with Google",
+      "microsoft": "Continue with Microsoft",
+      "apple": "Continue with Apple",
+      "github": "Continue with GitHub",
+      "or": "or",
+      "soon": "Soon",
+      "notConfigured": "Not available yet"
     }
   },
   "dashboard": {
     "nav": {
       "label": "Sections",
       "overview": "Overview",
-      "tenants": "Tenants",
       "issuers": "Issuers",
       "verifiers": "Verifiers",
       "identities": "Identities",
-      "settings": "Settings",
-      "soon": "Soon"
+      "soon": "Soon",
+      "users": "Users",
+      "tenantLabel": "Tenant",
+      "tenant": "Tenant",
+      "billing": "Billing"
     },
-    "signOut": "Sign out",
     "overview": {
       "title": "Overview",
       "lead": "Everything your tenants hold."
     },
     "cards": {
-      "tenants": {
-        "title": "Tenants",
-        "empty": "No tenants yet."
-      },
       "issuers": {
         "title": "Issuers",
         "empty": "No issuers yet."
@@ -90,8 +113,144 @@
     },
     "account": {
       "title": "Account",
+      "lead": "How you appear to the people you work with.",
+      "alias": "Alias",
+      "aliasHint": "The name others see instead of your email.",
       "email": "Email",
+      "emailHint": "You sign in with it; it cannot be changed here.",
+      "save": "Save",
+      "saved": "Saved.",
+      "errors": {
+        "aliasLong": "Use at most 100 characters.",
+        "unavailable": "The registry cannot be reached. Try again in a moment."
+      },
       "since": "Member since"
+    },
+    "sections": {
+      "issuers": {
+        "title": "Issuers",
+        "lead": "Who issues credentials in this tenant.",
+        "empty": "No issuers yet.",
+        "create": "Create",
+        "createTitle": "New issuer",
+        "createLead": "Give it a name people will recognise.",
+        "total": {
+          "one": "{count} issuer",
+          "other": "{count} issuers"
+        }
+      },
+      "verifiers": {
+        "title": "Verifiers",
+        "lead": "Who checks credentials in this tenant.",
+        "empty": "No verifiers yet.",
+        "create": "Create",
+        "createTitle": "New verifier",
+        "createLead": "Give it a name people will recognise.",
+        "total": {
+          "one": "{count} verifier",
+          "other": "{count} verifiers"
+        }
+      },
+      "identities": {
+        "title": "Identities",
+        "lead": "The identities this tenant holds.",
+        "empty": "No identities yet.",
+        "create": "Create",
+        "createTitle": "New identity",
+        "createLead": "Its DID is assigned later, once the method is chosen.",
+        "total": {
+          "one": "{count} identity",
+          "other": "{count} identities"
+        }
+      }
+    },
+    "items": {
+      "name": "Name",
+      "description": "Description",
+      "optional": "Optional",
+      "save": "Create",
+      "cancel": "Cancel",
+      "created": "Created",
+      "loading": "Loading more…",
+      "loadError": "The rest of the list could not be loaded.",
+      "retry": "Try again",
+      "noTenant": "There is no tenant to work in.",
+      "errors": {
+        "nameRequired": "Enter a name.",
+        "nameLong": "Use at most 200 characters.",
+        "descriptionLong": "Use at most 2000 characters.",
+        "unavailable": "The registry cannot be reached. Try again in a moment.",
+        "identityRequired": "Choose an identity.",
+        "identityNotFound": "That identity is no longer available."
+      },
+      "identity": "Identity",
+      "identityHint": "The DID it acts as. One identity can issue and verify.",
+      "identityNew": "New identity",
+      "identityNewHint": "Created with the same name.",
+      "identityExisting": "Existing identity",
+      "identityExistingHint": "Shared with what already uses it.",
+      "identityPick": "Choose an identity",
+      "noIdentities": "This tenant has no identities yet.",
+      "usedBy": {
+        "issuer": "Issuer",
+        "verifier": "Verifier",
+        "tenant": "Tenant"
+      },
+      "unused": "Not used yet"
+    },
+    "users": {
+      "title": "Users",
+      "lead": "Who works in this tenant.",
+      "add": "Add user",
+      "email": "Email",
+      "role": "Role",
+      "since": "Since",
+      "roles": {
+        "admin": "Admin",
+        "member": "Member"
+      },
+      "roleHints": {
+        "admin": "Also adds and manages users.",
+        "member": "Works with issuers, verifiers and identities."
+      },
+      "invited": "Invited",
+      "you": "You",
+      "inviteTitle": "Add user",
+      "inviteLead": "We will email them. They join when they sign in with that address.",
+      "send": "Send invitation",
+      "cancel": "Cancel",
+      "adminOnly": "Only admins can add users.",
+      "errors": {
+        "emailInvalid": "Enter a valid email.",
+        "alreadyMember": "That person already belongs to this tenant.",
+        "notAdmin": "Only admins can add users.",
+        "mailUnavailable": "The email could not be sent. Try again in a moment.",
+        "unavailable": "The registry cannot be reached. Try again in a moment."
+      }
+    },
+    "tenant": {
+      "title": "Tenant",
+      "lead": "The tenant's name and the mediator its issuers and verifiers use.",
+      "name": "Name",
+      "mediator": "Mediator",
+      "mediatorHint": "The public address of an Almena mediator, e.g. https://mediator.almena.network. Every issuer and verifier in this tenant uses it as its mailbox.",
+      "mediatorDid": "Mediator DID",
+      "noMediator": "No mediator yet.",
+      "save": "Save",
+      "saved": "Saved.",
+      "readOnly": "Only admins can change these details.",
+      "errors": {
+        "nameRequired": "Enter a name.",
+        "nameLong": "Use at most 200 characters.",
+        "mediatorInvalid": "Enter a web address, like https://mediator.example.org.",
+        "mediatorInsecure": "Use https:// (plain http is only for localhost).",
+        "mediatorUnreachable": "No answer from that address. Check it and try again.",
+        "mediatorNotAMediator": "That address does not serve an Almena mediator.",
+        "notAdmin": "Only admins can change these details.",
+        "unavailable": "The registry cannot be reached. Try again in a moment."
+      },
+      "identity": "Identity",
+      "identityHint": "The organisation's own DID, named like the tenant."
     }
   },
   "footer": {

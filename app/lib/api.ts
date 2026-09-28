@@ -6,10 +6,24 @@ import { cache } from "react";
 /** The session token from the API, kept on the portal's own origin. */
 export const sessionCookie = "almena.session";
 
-const apiUrl = () => process.env.REGISTRY_API_URL ?? "https://api.almena.network";
+const apiUrl = () =>
+  process.env.REGISTRY_API_URL ?? "https://api.almena.network";
 
-export type User = { id: string; email: string; created_at: string };
+export type User = {
+  id: string;
+  email: string;
+  alias: string | null;
+  created_at: string;
+};
 export type SignedIn = { token: string; expires_at: string; user: User };
+/** `name` is `null` for the tenant an account is created with, until it is given one. */
+export type Role = "admin" | "member";
+export type Tenant = {
+  id: string;
+  name: string | null;
+  created_at: string;
+  role: Role;
+};
 
 /** A call to the API from the server; `null` status when it cannot be reached. */
 export async function api<T>(
@@ -26,7 +40,8 @@ export async function api<T>(
       body: init.body === undefined ? undefined : JSON.stringify(init.body),
       cache: "no-store",
     });
-    const json = response.status === 204 ? null : await response.json().catch(() => null);
+    const json =
+      response.status === 204 ? null : await response.json().catch(() => null);
     const ok = response.ok;
     return {
       status: response.status,
@@ -47,4 +62,26 @@ export const currentUser = cache(async (): Promise<User | null> => {
   if (!token) return null;
   const { data } = await api<User>("/auth/me", { token });
   return data;
+});
+
+export const providerIds = ["google", "microsoft", "apple", "github"] as const;
+export type ProviderId = (typeof providerIds)[number];
+export type Provider = { id: ProviderId; enabled: boolean };
+
+export function isProviderId(value: string): value is ProviderId {
+  return (providerIds as readonly string[]).includes(value);
+}
+
+/** Social sign-in providers and which are configured; all off when the API is unreachable. */
+export async function socialProviders(): Promise<Provider[]> {
+  const { data } = await api<{ providers: Provider[] }>("/auth/providers");
+  return data?.providers ?? providerIds.map((id) => ({ id, enabled: false }));
+}
+
+/** The signed-in account's tenants, oldest first; empty when signed out or unreachable. */
+export const currentTenants = cache(async (): Promise<Tenant[]> => {
+  const token = (await cookies()).get(sessionCookie)?.value;
+  if (!token) return [];
+  const { data } = await api<Tenant[]>("/tenants", { token });
+  return data ?? [];
 });

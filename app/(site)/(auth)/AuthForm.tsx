@@ -3,12 +3,22 @@
 import { useActionState } from "react";
 
 import { useI18n } from "@/app/i18n/client";
+import type { Provider } from "@/app/lib/api";
 import { authenticate, type AuthState } from "@/app/lib/auth-actions";
+import { SocialButtons } from "./SocialButtons";
 
-export function AuthForm() {
+export function AuthForm({
+  providers,
+  initialError,
+}: {
+  providers: Provider[];
+  /** What a social sign-in that came back here went wrong with. */
+  initialError?: NonNullable<AuthState["errors"]>["form"];
+}) {
   const { t } = useI18n();
   const [state, action, pending] = useActionState<AuthState, FormData>(authenticate, {
     step: "email",
+    errors: initialError ? { form: initialError } : undefined,
   });
   const errors = state.errors ?? {};
   const error = (key?: keyof typeof t.auth.errors) => (key ? t.auth.errors[key] : null);
@@ -70,6 +80,7 @@ export function AuthForm() {
           </>
         ) : (
           <>
+            <SocialButtons providers={providers} />
             <Field
               key="email"
               label={t.auth.email}

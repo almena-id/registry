@@ -17,6 +17,18 @@
       "empty": "Ninguna zona horaria coincide con la búsqueda.",
       "suggestedHeading": "Detectada en este navegador",
       "allHeading": "Todas las zonas horarias"
+    },
+    "tenant": {
+      "label": "Tenant",
+      "none": "Sin tenant",
+      "unnamed": "Tenant sin nombre",
+      "heading": "Tus tenants",
+      "empty": "Todavía no hay tenants."
+    },
+    "account": {
+      "label": "Cuenta",
+      "signOut": "Cerrar sesión",
+      "open": "Datos de la cuenta"
     }
   },
   "home": {
@@ -35,7 +47,7 @@
   },
   "auth": {
     "title": "Entra o crea tu cuenta",
-    "lead": "Te enviaremos un código por correo. Sin contraseñas.",
+    "lead": "Sin contraseñas: usa una cuenta que ya tengas o recibe un código por correo.",
     "email": "Correo electrónico",
     "sendCode": "Enviar código",
     "codeTitle": "Revisa tu correo",
@@ -51,30 +63,41 @@
       "invalidCode": "Ese código no es correcto o ha caducado.",
       "tooManyAttempts": "Demasiados intentos. Pide un código nuevo.",
       "mailUnavailable": "No se ha podido enviar el correo. Inténtalo de nuevo en un momento.",
-      "unavailable": "No se puede contactar con el registro. Inténtalo de nuevo en un momento."
+      "unavailable": "No se puede contactar con el registro. Inténtalo de nuevo en un momento.",
+      "invalidState": "El inicio de sesión tardó demasiado o se interrumpió. Inténtalo de nuevo.",
+      "emailUnverified": "Esa cuenta no tiene un correo verificado. Prueba otra forma de entrar.",
+      "providerError": "El proveedor no ha podido iniciar tu sesión. Inténtalo de nuevo.",
+      "providerCancelled": "Se ha cancelado el inicio de sesión."
+    },
+    "social": {
+      "almena": "Continuar con Almena",
+      "google": "Continuar con Google",
+      "microsoft": "Continuar con Microsoft",
+      "apple": "Continuar con Apple",
+      "github": "Continuar con GitHub",
+      "or": "o",
+      "soon": "Pronto",
+      "notConfigured": "Aún no disponible"
     }
   },
   "dashboard": {
     "nav": {
       "label": "Secciones",
       "overview": "Resumen",
-      "tenants": "Tenants",
       "issuers": "Emisores",
       "verifiers": "Verificadores",
       "identities": "Identidades",
-      "settings": "Ajustes",
-      "soon": "Pronto"
+      "soon": "Pronto",
+      "users": "Usuarios",
+      "tenantLabel": "Tenant",
+      "tenant": "Tenant",
+      "billing": "Facturación"
     },
-    "signOut": "Cerrar sesión",
     "overview": {
       "title": "Resumen",
       "lead": "Todo lo que tienen tus tenants."
     },
     "cards": {
-      "tenants": {
-        "title": "Tenants",
-        "empty": "Aún no hay tenants."
-      },
       "issuers": {
         "title": "Emisores",
         "empty": "Aún no hay emisores."
@@ -90,8 +113,144 @@
     },
     "account": {
       "title": "Cuenta",
+      "lead": "Cómo te ven las personas con las que trabajas.",
+      "alias": "Alias",
+      "aliasHint": "El nombre que ven los demás en lugar de tu correo.",
       "email": "Correo electrónico",
+      "emailHint": "Con él inicias sesión; no se puede cambiar aquí.",
+      "save": "Guardar",
+      "saved": "Guardado.",
+      "errors": {
+        "aliasLong": "Usa como mucho 100 caracteres.",
+        "unavailable": "No se puede contactar con el registro. Inténtalo de nuevo en un momento."
+      },
       "since": "Miembro desde"
+    },
+    "sections": {
+      "issuers": {
+        "title": "Emisores",
+        "lead": "Quién emite credenciales en este tenant.",
+        "empty": "Aún no hay emisores.",
+        "create": "Crear",
+        "createTitle": "Nuevo emisor",
+        "createLead": "Dale un nombre que la gente reconozca.",
+        "total": {
+          "one": "{count} emisor",
+          "other": "{count} emisores"
+        }
+      },
+      "verifiers": {
+        "title": "Verificadores",
+        "lead": "Quién comprueba credenciales en este tenant.",
+        "empty": "Aún no hay verificadores.",
+        "create": "Crear",
+        "createTitle": "Nuevo verificador",
+        "createLead": "Dale un nombre que la gente reconozca.",
+        "total": {
+          "one": "{count} verificador",
+          "other": "{count} verificadores"
+        }
+      },
+      "identities": {
+        "title": "Identidades",
+        "lead": "Las identidades que tiene este tenant.",
+        "empty": "Aún no hay identidades.",
+        "create": "Crear",
+        "createTitle": "Nueva identidad",
+        "createLead": "Su DID se asigna más adelante, cuando se elija el método.",
+        "total": {
+          "one": "{count} identidad",
+          "other": "{count} identidades"
+        }
+      }
+    },
+    "items": {
+      "name": "Nombre",
+      "description": "Descripción",
+      "optional": "Opcional",
+      "save": "Crear",
+      "cancel": "Cancelar",
+      "created": "Creado",
+      "loading": "Cargando más…",
+      "loadError": "No se ha podido cargar el resto de la lista.",
+      "retry": "Reintentar",
+      "noTenant": "No hay ningún tenant en el que trabajar.",
+      "errors": {
+        "nameRequired": "Escribe un nombre.",
+        "nameLong": "Usa como mucho 200 caracteres.",
+        "descriptionLong": "Usa como mucho 2000 caracteres.",
+        "unavailable": "No se puede contactar con el registro. Inténtalo de nuevo en un momento.",
+        "identityRequired": "Elige una identidad.",
+        "identityNotFound": "Esa identidad ya no está disponible."
+      },
+      "identity": "Identidad",
+      "identityHint": "El DID con el que actúa. Una misma identidad puede emitir y verificar.",
+      "identityNew": "Identidad nueva",
+      "identityNewHint": "Se crea con el mismo nombre.",
+      "identityExisting": "Identidad existente",
+      "identityExistingHint": "Compartida con lo que ya la usa.",
+      "identityPick": "Elige una identidad",
+      "noIdentities": "Este tenant aún no tiene identidades.",
+      "usedBy": {
+        "issuer": "Emisor",
+        "verifier": "Verificador",
+        "tenant": "Tenant"
+      },
+      "unused": "Aún sin uso"
+    },
+    "users": {
+      "title": "Usuarios",
+      "lead": "Quién trabaja en este tenant.",
+      "add": "Añadir usuario",
+      "email": "Correo electrónico",
+      "role": "Rol",
+      "since": "Desde",
+      "roles": {
+        "admin": "Administrador",
+        "member": "Miembro"
+      },
+      "roleHints": {
+        "admin": "Además añade y gestiona usuarios.",
+        "member": "Trabaja con emisores, verificadores e identidades."
+      },
+      "invited": "Invitado",
+      "you": "Tú",
+      "inviteTitle": "Añadir usuario",
+      "inviteLead": "Le enviaremos un correo. Entra en cuanto inicie sesión con esa dirección.",
+      "send": "Enviar invitación",
+      "cancel": "Cancelar",
+      "adminOnly": "Solo los administradores pueden añadir usuarios.",
+      "errors": {
+        "emailInvalid": "Introduce un correo válido.",
+        "alreadyMember": "Esa persona ya pertenece a este tenant.",
+        "notAdmin": "Solo los administradores pueden añadir usuarios.",
+        "mailUnavailable": "No se ha podido enviar el correo. Inténtalo de nuevo en un momento.",
+        "unavailable": "No se puede contactar con el registro. Inténtalo de nuevo en un momento."
+      }
+    },
+    "tenant": {
+      "title": "Tenant",
+      "lead": "El nombre del tenant y el mediador que usan sus emisores y verificadores.",
+      "name": "Nombre",
+      "mediator": "Mediador",
+      "mediatorHint": "La dirección pública de un mediador de Almena, p. ej. https://mediator.almena.network. Todos los emisores y verificadores de este tenant lo usan como buzón.",
+      "mediatorDid": "DID del mediador",
+      "noMediator": "Aún sin mediador.",
+      "save": "Guardar",
+      "saved": "Guardado.",
+      "readOnly": "Solo los administradores pueden cambiar estos datos.",
+      "errors": {
+        "nameRequired": "Escribe un nombre.",
+        "nameLong": "Usa como mucho 200 caracteres.",
+        "mediatorInvalid": "Escribe una dirección web, como https://mediator.example.org.",
+        "mediatorInsecure": "Usa https:// (http sin cifrar solo vale para localhost).",
+        "mediatorUnreachable": "Esa dirección no responde. Revísala e inténtalo de nuevo.",
+        "mediatorNotAMediator": "Esa dirección no sirve un mediador de Almena.",
+        "notAdmin": "Solo los administradores pueden cambiar estos datos.",
+        "unavailable": "No se puede contactar con el registro. Inténtalo de nuevo en un momento."
+      },
+      "identity": "Identidad",
+      "identityHint": "El DID propio de la organización, con el nombre del tenant."
     }
   },
   "footer": {

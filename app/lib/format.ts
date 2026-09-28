@@ -5,7 +5,11 @@
  * the visitor chose: never hand-assembled, because the locale decides the
  * order of the parts and the words between them.
  */
-export function formatDateTime(value: string | Date, locale: string, timeZone: string): string {
+export function formatDateTime(
+  value: string | Date,
+  locale: string,
+  timeZone: string,
+): string {
   return new Intl.DateTimeFormat(locale, {
     dateStyle: "medium",
     timeStyle: "short",

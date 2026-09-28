@@ -9,5 +9,7 @@ export const defaultTheme: Theme = "system";
 export const themeCookie = "almena.theme";
 
 export function isTheme(value: unknown): value is Theme {
-  return typeof value === "string" && (themes as readonly string[]).includes(value);
+  return (
+    typeof value === "string" && (themes as readonly string[]).includes(value)
+  );
 }

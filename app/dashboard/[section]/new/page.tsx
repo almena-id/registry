@@ -1,0 +1,44 @@
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+
+import { getI18n } from "@/app/i18n/server";
+import { fetchPage } from "@/app/lib/directory";
+import { hasDescription, isSection } from "@/app/lib/directory-types";
+import { CreateForm } from "./CreateForm";
+
+export async function generateMetadata({
+  params,
+}: PageProps<"/dashboard/[section]/new">): Promise<Metadata> {
+  const { section } = await params;
+  if (!isSection(section)) return {};
+  return { title: (await getI18n()).t.dashboard.sections[section].createTitle };
+}
+
+/** Registering something is a decision of its own: it gets its own screen. */
+export default async function NewItemPage({
+  params,
+}: PageProps<"/dashboard/[section]/new">) {
+  const { section } = await params;
+  if (!isSection(section)) notFound();
+  const { t } = await getI18n();
+  const copy = t.dashboard.sections[section];
+  // What an issuer or verifier may act as: the tenant's identities (the first
+  // hundred, newest first — a searchable picker when there are more).
+  const identities = hasDescription(section)
+    ? ((await fetchPage("identities", null, 100))?.items ?? [])
+    : [];
+
+  return (
+    <div className="section">
+      <header className="page-head">
+        <h1 className="page-head__title">{copy.createTitle}</h1>
+        <p className="page-head__lead">{copy.createLead}</p>
+      </header>
+      <CreateForm
+        section={section}
+        described={hasDescription(section)}
+        identities={identities.map(({ id, name }) => ({ id, name }))}
+      />
+    </div>
+  );
+}

@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import type { Dictionary } from "@/app/i18n/config";
 import { getLocale } from "@/app/i18n/server";
 import { api, sessionCookie, type SignedIn } from "./api";
+import { keepSession } from "./session";
 
 type ErrorKey = keyof Dictionary["auth"]["errors"];
 
@@ -23,7 +24,10 @@ export type AuthState = {
 
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-function apiError(status: number | null, detail: string | null): AuthState["errors"] {
+function apiError(
+  status: number | null,
+  detail: string | null,
+): AuthState["errors"] {
   if (detail === "invalid_code") return { code: "invalidCode" };
   if (detail === "too_many_attempts") return { code: "tooManyAttempts" };
   if (detail === "mail_unavailable") return { form: "mailUnavailable" };
@@ -32,14 +36,18 @@ function apiError(status: number | null, detail: string | null): AuthState["erro
   return { form: "unavailable" };
 }
 
-export async function authenticate(state: AuthState, form: FormData): Promise<AuthState> {
+export async function authenticate(
+  state: AuthState,
+  form: FormData,
+): Promise<AuthState> {
   const intent = String(form.get("intent") ?? "");
   const email = String(form.get("email") ?? state.email ?? "").trim();
 
   if (intent === "change") return { step: "email", email };
 
   if (intent === "send" || intent === "resend") {
-    if (!emailPattern.test(email)) return { step: "email", email, errors: { email: "emailInvalid" } };
+    if (!emailPattern.test(email))
+      return { step: "email", email, errors: { email: "emailInvalid" } };
     const { status, detail } = await api("/auth/code", {
       method: "POST",
       body: { email, locale: await getLocale() },
@@ -52,20 +60,16 @@ export async function authenticate(state: AuthState, form: FormData): Promise<Au
   }
 
   const code = String(form.get("code") ?? "").replace(/\s/g, "");
-  if (!/^\d{6}$/.test(code)) return { step: "code", email, errors: { code: "codeFormat" } };
+  if (!/^\d{6}$/.test(code))
+    return { step: "code", email, errors: { code: "codeFormat" } };
   const { status, data, detail } = await api<SignedIn>("/auth/verify", {
     method: "POST",
-    body: { email, code },
+    // The language names the tenant a new account starts with.
+    body: { email, code, locale: await getLocale() },
   });
   if (!data) return { step: "code", email, errors: apiError(status, detail) };
 
-  (await cookies()).set(sessionCookie, data.token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    path: "/",
-    expires: new Date(data.expires_at),
-  });
+  await keepSession(data);
   redirect("/dashboard");
 }
 

@@ -1,20 +1,24 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 import { getI18n, getTimeZone } from "@/app/i18n/server";
 import { currentUser } from "@/app/lib/api";
+import { fetchPage } from "@/app/lib/directory";
+import { sections } from "@/app/lib/directory-types";
 import { formatDateTime } from "@/app/lib/format";
+import { formatCount } from "@/app/lib/plural";
 
 export async function generateMetadata(): Promise<Metadata> {
   return { title: (await getI18n()).t.dashboard.overview.title };
 }
-
-const cards = ["tenants", "issuers", "verifiers", "identities"] as const;
 
 export default async function DashboardPage() {
   const { locale, t } = await getI18n();
   // The layout has already sent anyone signed out to /login.
   const user = (await currentUser())!;
   const timeZone = await getTimeZone();
+  // One item per section is enough to learn how many there are.
+  const totals = await Promise.all(sections.map((s) => fetchPage(s, null, 1)));
 
   return (
     <div className="overview">
@@ -23,14 +27,29 @@ export default async function DashboardPage() {
         <p className="page-head__lead">{t.dashboard.overview.lead}</p>
       </header>
 
-      {/* Nothing is counted yet: each frame says so rather than showing a zero it cannot vouch for. */}
+      {/* A frame the API could not answer for says nothing rather than a zero it cannot vouch for. */}
       <div className="overview__grid">
-        {cards.map((key) => (
-          <section key={key} className="card stat">
-            <h2 className="stat__title">{t.dashboard.cards[key].title}</h2>
-            <p className="stat__empty">{t.dashboard.cards[key].empty}</p>
-          </section>
-        ))}
+        {sections.map((key, index) => {
+          const total = totals[index]?.total;
+          return (
+            <Link
+              key={key}
+              href={`/dashboard/${key}`}
+              className="card stat stat--link"
+            >
+              <h2 className="stat__title">{t.dashboard.cards[key].title}</h2>
+              {total ? (
+                <p className="stat__count">
+                  {formatCount(t.dashboard.sections[key].total, total, locale)}
+                </p>
+              ) : (
+                <p className="stat__empty">
+                  {total === 0 ? t.dashboard.cards[key].empty : "\u00a0"}
+                </p>
+              )}
+            </Link>
+          );
+        })}
       </div>
 
       <section className="card account">

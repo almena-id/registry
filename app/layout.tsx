@@ -28,7 +28,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <I18nProvider locale={locale}>
           <div className="shell">
             {children}
-            <SiteFooter t={t} />
+            <SiteFooter t={t} theme={theme} />
           </div>
         </I18nProvider>
       </body>
