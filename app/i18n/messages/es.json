@@ -23,7 +23,8 @@
       "none": "Sin tenant",
       "unnamed": "Tenant sin nombre",
       "heading": "Tus tenants",
-      "empty": "Todavía no hay tenants."
+      "empty": "Todavía no hay tenants.",
+      "certified": "Certificado por Almena"
     },
     "account": {
       "label": "Cuenta",
@@ -86,12 +87,16 @@
       "overview": "Resumen",
       "issuers": "Emisores",
       "verifiers": "Verificadores",
+      "mediators": "Mediadores",
       "identities": "Identidades",
       "soon": "Pronto",
       "users": "Usuarios",
       "tenantLabel": "Tenant",
       "tenant": "Tenant",
-      "billing": "Facturación"
+      "certification": "Certificación",
+      "billing": "Facturación",
+      "review": "Revisión",
+      "almenaLabel": "Almena"
     },
     "overview": {
       "title": "Resumen",
@@ -105,6 +110,10 @@
       "verifiers": {
         "title": "Verificadores",
         "empty": "Aún no hay verificadores."
+      },
+      "mediators": {
+        "title": "Mediadores",
+        "empty": "Aún no hay mediadores."
       },
       "identities": {
         "title": "Identidades",
@@ -123,8 +132,7 @@
       "errors": {
         "aliasLong": "Usa como mucho 100 caracteres.",
         "unavailable": "No se puede contactar con el registro. Inténtalo de nuevo en un momento."
-      },
-      "since": "Miembro desde"
+      }
     },
     "sections": {
       "issuers": {
@@ -151,13 +159,25 @@
           "other": "{count} verificadores"
         }
       },
+      "mediators": {
+        "title": "Mediadores",
+        "lead": "Donde llegan los mensajes de este tenant.",
+        "empty": "Aún no hay mediadores.",
+        "create": "Crear",
+        "createTitle": "Nuevo mediador",
+        "createLead": "El registro le da un DID propio.",
+        "total": {
+          "one": "{count} mediador",
+          "other": "{count} mediadores"
+        }
+      },
       "identities": {
         "title": "Identidades",
         "lead": "Las identidades que tiene este tenant.",
         "empty": "Aún no hay identidades.",
         "create": "Crear",
         "createTitle": "Nueva identidad",
-        "createLead": "Su DID se asigna más adelante, cuando se elija el método.",
+        "createLead": "Recibe un DID did:web propio.",
         "total": {
           "one": "{count} identidad",
           "other": "{count} identidades"
@@ -180,23 +200,74 @@
         "nameLong": "Usa como mucho 200 caracteres.",
         "descriptionLong": "Usa como mucho 2000 caracteres.",
         "unavailable": "No se puede contactar con el registro. Inténtalo de nuevo en un momento.",
-        "identityRequired": "Elige una identidad.",
-        "identityNotFound": "Esa identidad ya no está disponible."
+        "urlRequired": "Escribe una dirección.",
+        "urlInvalid": "Escribe una dirección, como https://mediator.example.org.",
+        "urlInsecure": "Usa https:// (http sin cifrar solo en localhost).",
+        "mediatorNotFound": "Ese mediador no está en este tenant."
       },
       "identity": "Identidad",
-      "identityHint": "El DID con el que actúa. Una misma identidad puede emitir y verificar.",
-      "identityNew": "Identidad nueva",
-      "identityNewHint": "Se crea con el mismo nombre.",
-      "identityExisting": "Identidad existente",
-      "identityExistingHint": "Compartida con lo que ya la usa.",
-      "identityPick": "Elige una identidad",
-      "noIdentities": "Este tenant aún no tiene identidades.",
       "usedBy": {
         "issuer": "Emisor",
         "verifier": "Verificador",
-        "tenant": "Tenant"
+        "tenant": "Tenant",
+        "mediator": "Mediador"
       },
-      "unused": "Aún sin uso"
+      "unused": "Aún sin uso",
+      "url": "Dirección",
+      "urlHint": "Donde escucha, p. ej. https://mediator.example.org.",
+      "mediator": "Mediador",
+      "noMediator": "Ninguno"
+    },
+    "identity": {
+      "back": "Identidades",
+      "did": "DID",
+      "usedBy": "Usada por",
+      "created": "Creada",
+      "published": "Publicado en",
+      "document": "Documento DID",
+      "noKeys": "Aún sin claves: llegarán cuando se decida su custodia.",
+      "notFound": "Esta identidad no está en este tenant."
+    },
+    "mediator": {
+      "back": "Mediadores",
+      "did": "DID",
+      "identity": "Identidad",
+      "created": "Creado",
+      "save": "Guardar",
+      "saved": "Guardado.",
+      "notFound": "Este mediador no está en este tenant."
+    },
+    "issuer": {
+      "back": "Emisores",
+      "did": "DID",
+      "identity": "Identidad",
+      "created": "Creado",
+      "save": "Guardar",
+      "saved": "Guardado.",
+      "notFound": "Este emisor no está en este tenant."
+    },
+    "verifier": {
+      "back": "Verificadores",
+      "did": "DID",
+      "identity": "Identidad",
+      "created": "Creado",
+      "save": "Guardar",
+      "saved": "Guardado.",
+      "notFound": "Este verificador no está en este tenant."
+    },
+    "publication": {
+      "status": "Estado",
+      "draft": "Borrador",
+      "published": "Publicado",
+      "notPublished": "Sin publicar",
+      "actions": "Operaciones",
+      "publish": "Publicar",
+      "unpublish": "Retirar",
+      "delete": "Eliminar",
+      "failed": "No se pudo hacer. Inténtalo de nuevo.",
+      "deleteTitle": "¿Eliminar {name}?",
+      "deleteLead": "Su DID dejará de resolverse. No se puede deshacer.",
+      "cancel": "Cancelar"
     },
     "users": {
       "title": "Usuarios",
@@ -230,11 +301,10 @@
     },
     "tenant": {
       "title": "Tenant",
-      "lead": "El nombre del tenant y el mediador que usan sus emisores y verificadores.",
+      "lead": "El nombre del tenant y el mediador que usa su propia identidad.",
       "name": "Nombre",
       "mediator": "Mediador",
-      "mediatorHint": "La dirección pública de un mediador de Almena, p. ej. https://mediator.almena.network. Todos los emisores y verificadores de este tenant lo usan como buzón.",
-      "mediatorDid": "DID del mediador",
+      "mediatorHint": "Uno de los mediadores de este tenant.",
       "noMediator": "Aún sin mediador.",
       "save": "Guardar",
       "saved": "Guardado.",
@@ -242,15 +312,107 @@
       "errors": {
         "nameRequired": "Escribe un nombre.",
         "nameLong": "Usa como mucho 200 caracteres.",
-        "mediatorInvalid": "Escribe una dirección web, como https://mediator.example.org.",
-        "mediatorInsecure": "Usa https:// (http sin cifrar solo vale para localhost).",
-        "mediatorUnreachable": "Esa dirección no responde. Revísala e inténtalo de nuevo.",
-        "mediatorNotAMediator": "Esa dirección no sirve un mediador de Almena.",
         "notAdmin": "Solo los administradores pueden cambiar estos datos.",
-        "unavailable": "No se puede contactar con el registro. Inténtalo de nuevo en un momento."
+        "unavailable": "No se puede contactar con el registro. Inténtalo de nuevo en un momento.",
+        "mediatorNotFound": "Ese mediador no está en este tenant."
       },
       "identity": "Identidad",
-      "identityHint": "El DID propio de la organización, con el nombre del tenant."
+      "identityHint": "El DID propio de la organización, con el nombre del tenant.",
+      "noMediators": "Aún no hay mediadores."
+    },
+    "certification": {
+      "title": "Certificación",
+      "lead": "Almena avala quién es este tenant.",
+      "certified": "Certificado",
+      "notCertified": "Aún sin certificar.",
+      "requestTitle": "Solicitud",
+      "changeTitle": "Solicitud de cambio",
+      "status": {
+        "draft": "Borrador",
+        "in_review": "En revisión",
+        "approved": "Aprobada",
+        "rejected": "Rechazada",
+        "superseded": "Sustituida"
+      },
+      "readOnly": "Solo los administradores pueden pedir la certificación.",
+      "waiting": "Almena la está revisando.",
+      "rejected": "Rechazada:",
+      "legalName": "Nombre legal",
+      "domain": "Dominio",
+      "domainHint": "Un dominio que controles, p. ej. acme.com.",
+      "save": "Guardar",
+      "dnsTitle": "Prueba del dominio",
+      "dnsType": "Tipo",
+      "dnsName": "Nombre",
+      "dnsValue": "Valor",
+      "dnsHint": "Añade este registro a tu DNS y comprueba.",
+      "dnsFirst": "Guarda un dominio para obtener su registro.",
+      "dnsVerified": "Dominio comprobado.",
+      "dnsPending": "Sin comprobar",
+      "check": "Comprobar",
+      "logo": "Logo",
+      "logoHint": "PNG, JPEG o WebP, hasta 256 KB. Mejor cuadrado.",
+      "upload": "Subir",
+      "incompleteHint": "Necesita el nombre legal, el dominio comprobado y el logo.",
+      "submit": "Enviar a revisión",
+      "errors": {
+        "legalNameRequired": "Escribe el nombre legal.",
+        "legalNameLong": "Usa como mucho 200 caracteres.",
+        "domainRequired": "Escribe un dominio.",
+        "domainInvalid": "Escribe un dominio, como acme.com.",
+        "dnsNotFound": "El registro aún no está. Los cambios de DNS pueden tardar.",
+        "dnsUnavailable": "El DNS no ha respondido. Inténtalo de nuevo en un momento.",
+        "logoMissing": "Elige una imagen.",
+        "logoInvalid": "Usa una imagen PNG, JPEG o WebP.",
+        "logoTooLarge": "Usa una imagen de 256 KB como mucho.",
+        "incomplete": "Necesita el nombre legal, el dominio comprobado y el logo.",
+        "inReview": "Está en revisión; ahora no se puede cambiar.",
+        "notAdmin": "Solo los administradores pueden pedir la certificación.",
+        "notReviewer": "Solo los revisores de Almena pueden hacer esto.",
+        "decided": "Ya está decidida.",
+        "reasonRequired": "Di por qué se rechaza.",
+        "reasonLong": "Usa como mucho 1000 caracteres.",
+        "unavailable": "No se puede contactar con el registro. Inténtalo de nuevo en un momento."
+      }
+    },
+    "review": {
+      "title": "Revisión",
+      "lead": "Solicitudes de certificación en espera, la más antigua primero.",
+      "empty": "Nada que revisar.",
+      "unnamed": "Tenant sin nombre",
+      "submitted": "Enviada",
+      "notFound": "Esta solicitud no existe.",
+      "tenant": "Tenant",
+      "request": "Solicitud",
+      "inForce": "En vigor hoy",
+      "reason": "Motivo",
+      "reasonHint": "Necesario para rechazar; el tenant lo lee.",
+      "approve": "Aprobar",
+      "reject": "Rechazar"
+    },
+    "detail": {
+      "tabs": "Secciones",
+      "summary": "Resumen",
+      "data": "Datos",
+      "json": "JSON",
+      "loading": "Cargando…",
+      "signing": "Firma"
+    },
+    "signing": {
+      "lead": "Quién firma por él, desde su wallet.",
+      "system": "Sistema de firma",
+      "notConfigured": "Sin configurar",
+      "single_user": "Un usuario concreto",
+      "signer": "Firmante",
+      "chooseSigner": "Elige un miembro",
+      "leftTenant": "ya no es miembro",
+      "save": "Guardar",
+      "saved": "Guardado.",
+      "errors": {
+        "signerRequired": "Elige quién firma.",
+        "signerNotMember": "No es miembro de este tenant.",
+        "unavailable": "No se puede contactar con el registro. Inténtalo de nuevo en un momento."
+      }
     }
   },
   "footer": {

@@ -9,10 +9,9 @@ export type TenantDetail = {
   name: string | null;
   created_at: string;
   role: Role;
-  mediator_url: string | null;
-  mediator_did: string | null;
-  /** The organisation's own identity. */
+  /** The organisation's own identity, and the mediator it receives messages through. */
   identity: { id: string; name: string } | null;
+  mediator: { id: string; name: string } | null;
 };
 
 /** The current tenant's details; `null` when the API cannot be reached. */

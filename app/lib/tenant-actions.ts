@@ -11,26 +11,19 @@ type ErrorKey = keyof Dictionary["dashboard"]["tenant"]["errors"];
 
 export type TenantState = {
   name?: string;
+  /** The chosen mediator's id; empty for none. */
   mediator?: string;
-  did?: string | null;
   saved?: boolean;
   errors?: { name?: ErrorKey; mediator?: ErrorKey; form?: ErrorKey };
 };
 
-const mediatorErrors: Record<string, ErrorKey> = {
-  mediator_invalid: "mediatorInvalid",
-  mediator_insecure: "mediatorInsecure",
-  mediator_unreachable: "mediatorUnreachable",
-  mediator_not_a_mediator: "mediatorNotAMediator",
-};
-
 export async function saveTenant(
-  state: TenantState,
+  _: TenantState,
   form: FormData,
 ): Promise<TenantState> {
   const name = String(form.get("name") ?? "").trim();
   const mediator = String(form.get("mediator") ?? "").trim();
-  const keep = { name, mediator, did: state.did };
+  const keep = { name, mediator };
   if (!name) return { ...keep, errors: { name: "nameRequired" } };
   if (name.length > 200) return { ...keep, errors: { name: "nameLong" } };
 
@@ -41,16 +34,15 @@ export async function saveTenant(
     `/tenants/${tenant.id}`,
     {
       method: "PATCH",
-      body: { name, mediator_url: mediator || null },
+      body: { name, mediator_id: mediator || null },
       token,
     },
   );
   if (!data) {
     if (detail === "name_required")
       return { ...keep, errors: { name: "nameRequired" } };
-    if (detail && mediatorErrors[detail]) {
-      return { ...keep, errors: { mediator: mediatorErrors[detail] } };
-    }
+    if (detail === "mediator_not_found")
+      return { ...keep, errors: { mediator: "mediatorNotFound" } };
     if (status === 403) return { ...keep, errors: { form: "notAdmin" } };
     return { ...keep, errors: { form: "unavailable" } };
   }
@@ -58,8 +50,7 @@ export async function saveTenant(
   revalidatePath("/dashboard", "layout");
   return {
     name: data.name ?? "",
-    mediator: data.mediator_url ?? "",
-    did: data.mediator_did,
+    mediator: data.mediator?.id ?? "",
     saved: true,
   };
 }

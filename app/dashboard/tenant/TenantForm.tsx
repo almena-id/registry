@@ -3,19 +3,23 @@
 import { useActionState } from "react";
 
 import { useI18n } from "@/app/i18n/client";
+import { useAnswerRound } from "@/app/lib/use-answer-round";
+import type { Item } from "@/app/lib/directory-types";
 import { saveTenant, type TenantState } from "@/app/lib/tenant-actions";
 
 /** Admins edit; members see the same fields, read-only. */
 export function TenantForm({
   name,
   mediator,
-  did,
+  mediators,
   identity,
   editable,
 }: {
   name: string;
+  /** The chosen mediator's id; empty for none. */
   mediator: string;
-  did: string | null;
+  /** The tenant's mediators, to pick the one its own identity uses. */
+  mediators: Item[];
   /** The tenant's own identity; renamed with the tenant by the API. */
   identity: string | null;
   editable: boolean;
@@ -24,12 +28,9 @@ export function TenantForm({
   const copy = t.dashboard.tenant;
   const [state, action, pending] = useActionState<TenantState, FormData>(
     saveTenant,
-    {
-      name,
-      mediator,
-      did,
-    },
+    { name, mediator },
   );
+  const round = useAnswerRound(state);
   const errors = state.errors ?? {};
 
   return (
@@ -76,20 +77,27 @@ export function TenantForm({
         <label className="field__label" htmlFor="mediator">
           {copy.mediator}
         </label>
-        <input
+        <select
+          key={round}
           className="field__input"
           id="mediator"
           name="mediator"
-          type="url"
-          inputMode="url"
-          placeholder="https://mediator.almena.network"
-          readOnly={!editable}
+          disabled={!editable}
           defaultValue={state.mediator}
           aria-invalid={errors.mediator ? true : undefined}
           aria-describedby={
             errors.mediator ? "mediator-error" : "mediator-hint"
           }
-        />
+        >
+          <option value="">
+            {mediators.length ? t.dashboard.items.noMediator : copy.noMediators}
+          </option>
+          {mediators.map((m) => (
+            <option key={m.id} value={m.id}>
+              {m.name}
+            </option>
+          ))}
+        </select>
         {errors.mediator ? (
           <p className="field__error" id="mediator-error">
             {copy.errors[errors.mediator]}
@@ -105,12 +113,6 @@ export function TenantForm({
         <div>
           <dt title={copy.identityHint}>{copy.identity}</dt>
           <dd>{identity ?? "—"}</dd>
-        </div>
-        <div>
-          <dt>{copy.mediatorDid}</dt>
-          <dd className={state.did ? "facts__mono" : "facts__empty"}>
-            {state.did ?? copy.noMediator}
-          </dd>
         </div>
       </dl>
 

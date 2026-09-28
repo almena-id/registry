@@ -6,6 +6,9 @@ import { api, currentTenants, sessionCookie, type Role } from "./api";
 
 export type Member = {
   status: "member" | "invited";
+  /** Members only: their account, and what they like to be called. */
+  user_id: string | null;
+  alias: string | null;
   email: string;
   role: Role;
   since: string;

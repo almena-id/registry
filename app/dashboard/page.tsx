@@ -1,11 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import { getI18n, getTimeZone } from "@/app/i18n/server";
-import { currentUser } from "@/app/lib/api";
+import { getI18n } from "@/app/i18n/server";
 import { fetchPage } from "@/app/lib/directory";
 import { sections } from "@/app/lib/directory-types";
-import { formatDateTime } from "@/app/lib/format";
 import { formatCount } from "@/app/lib/plural";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -14,9 +12,6 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function DashboardPage() {
   const { locale, t } = await getI18n();
-  // The layout has already sent anyone signed out to /login.
-  const user = (await currentUser())!;
-  const timeZone = await getTimeZone();
   // One item per section is enough to learn how many there are.
   const totals = await Promise.all(sections.map((s) => fetchPage(s, null, 1)));
 
@@ -51,24 +46,6 @@ export default async function DashboardPage() {
           );
         })}
       </div>
-
-      <section className="card account">
-        <h2 className="account__title">{t.dashboard.account.title}</h2>
-        <dl className="account__rows">
-          <div>
-            <dt>{t.dashboard.account.email}</dt>
-            <dd>{user.email}</dd>
-          </div>
-          <div>
-            <dt>{t.dashboard.account.since}</dt>
-            <dd>
-              <time dateTime={user.created_at}>
-                {formatDateTime(user.created_at, locale, timeZone)}
-              </time>
-            </dd>
-          </div>
-        </dl>
-      </section>
     </div>
   );
 }

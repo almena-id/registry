@@ -14,8 +14,8 @@ The web portal of the Almena Network registry; its data comes from
 `../api` (FastAPI). Everything is written in English. Use `task` for
 everything (`task --list`); `task check` must pass before finishing.
 
-- The portal is `https://registry.almena.network` (`NEXT_PUBLIC_REGISTRY_WEB_URL`),
-  the API `https://api.almena.network`: `process.env.REGISTRY_API_URL`
+- The portal is `https://registry.almena.id` (`NEXT_PUBLIC_REGISTRY_WEB_URL`),
+  the API `https://api.almena.id`: `process.env.REGISTRY_API_URL`
   on the server, `process.env.NEXT_PUBLIC_REGISTRY_API_URL` in the browser
   (inlined at build).
 - `app/health/route.ts` is the Docker health check: keep it dependency-free.
@@ -48,12 +48,14 @@ everything (`task --list`); `task check` must pass before finishing.
   cookie, else UTC). Signed in, the header carries the time zone selector;
   the language and theme menus are in the footer of every page
   (`ChoiceMenu`). All follow almena-id/frontend's combos.
-- Dashboard sections: `/dashboard/{issuers|verifiers|identities}` list the
+- Dashboard sections: `/dashboard/{issuers|verifiers|mediators|identities}` list the
   current tenant's items (the header's tenant) with infinite scroll — the first
   page is rendered on the server, the rest come from the `loadMore` server
   action as the marker under the list nears the viewport (`InfiniteList`).
-  "Create" opens `/dashboard/{section}/new`. Issuers and verifiers have a name
-  and a description; identities only a name until the DID method is decided.
+  "Create" opens `/dashboard/{section}/new`. Issuers and verifiers have a name,
+  a description and, optionally, one of the tenant's mediators; mediators a
+  name and the address they listen on (https); identities only a name
+  until the DID method is decided.
   The tenant has no menu entry: it is chosen in the header.
 - `/dashboard/users` lists the current tenant's members and pending
   invitations; admins see "Add user", which opens `/dashboard/users/new`
@@ -65,12 +67,39 @@ everything (`task --list`); `task check` must pass before finishing.
   alias (editable, `PATCH /auth/me`) beside the email (read-only).
 - Never delete `.next` while a dev server may be running: it breaks it (500s).
   `task check` builds fine alongside `next dev`.
-- `/dashboard/tenant`: the tenant's name and its mediator (the mailbox of all
-  its issuers and verifiers). Admins edit; members see it read-only. The API
-  checks the mediator by reading its did:web document and keeps its DID.
-- Identities are the tenant's register of DIDs. Every issuer and verifier acts
-  as one: creating one offers a new identity named like it (the default) or an
-  existing one, so one DID can issue and verify. Lists show the link both ways
-  (the identity on an issuer or verifier; its uses on an identity).
-  The tenant has an identity of its own too (created and renamed with it),
-  shown on `/dashboard/tenant`; issuers and verifiers may act as it.
+- `/dashboard/tenant`: the tenant's name and the mediator its own identity uses
+  (one of its mediators). Admins edit; members see it read-only.
+- Mediators are registered, not discovered: the API fetches nothing from the
+  address, it gives the mediator an identity of its own whose DID document
+  publishes that address; the DID documents of the tenant, issuers and
+  verifiers name the chosen mediator's DID. A mediator opens at
+  `/dashboard/mediators/{id}`: its name and address (any member edits them) and
+  its DID, which never changes.
+- Identities are the tenant's register of DIDs. The tenant and every issuer,
+  verifier and mediator have one of their own, created with them and named like them
+  (never shared). Lists show the link both ways (the identity on an issuer or
+  verifier; its use on an identity). The tenant's is shown on
+  `/dashboard/tenant`.
+- `/dashboard/certification`: the tenant asks Almena to certify it — legal
+  name, domain (proved by the DNS TXT record the API gives), logo (PNG, JPEG or
+  WebP up to 256 KB, sent to the API as the raw body) — then sends it for
+  review. Admins fill it in; members read it. The one in force stays while a
+  change is reviewed. A certified tenant carries a mark in the header selector
+  (`Tenant.certified`).
+- Almena's reviewers (members of the API's root tenant, created by `init-root`;
+  `User.reviewer`) get a third menu card, "Review": `/dashboard/review` lists
+  the requests waiting, `/dashboard/review/{id}` approves or rejects with a
+  reason. Signed credentials for certified tenants come once key custody is
+  decided.
+- Every item opens at `/dashboard/{section}/{id}`, all laid out alike: the
+  layout in `[section]/[id]/(tabs)/` draws the way back, the name with the
+  operations beside it in one row, and the tabs below — Summary (`/{id}`, the
+  facts), Data (`/{id}/data`, the form; not for identities, which have no
+  fields), Signing (`/{id}/signing`, issuers and verifiers: the signing system
+  — so far one specific member signs; admins set it, members read it) and JSON
+  (`/{id}/json`, the DID document). `load.ts` asks the API
+  for the item once per request; `Detail.tsx` holds the shared shapes. Issuers,
+  verifiers and mediators are edited by any member; admins get the operations
+  as icons (`ResourceActions`): publish or unpublish, and delete, which asks
+  on its own screen (`/{id}/delete`, outside the tabs). A draft's DID does not
+  resolve and the API's public catalogue does not list it.

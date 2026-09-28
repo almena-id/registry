@@ -1,11 +1,17 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { KeyIcon } from "@/app/components/icons";
 import { useI18n } from "@/app/i18n/client";
 import { loadMore } from "@/app/lib/directory-actions";
-import type { Item, Page, Section } from "@/app/lib/directory-types";
+import {
+  opens,
+  type Item,
+  type Page,
+  type Section,
+} from "@/app/lib/directory-types";
 import { formatDateTime } from "@/app/lib/format";
 
 /**
@@ -92,9 +98,22 @@ export function InfiniteList({
         {items.map((item) => (
           <li key={item.id} className="list__row">
             <div className="list__main">
-              <span className="list__name">{item.name}</span>
+              {opens(section) ? (
+                // Identities and mediators open: their DID, and what can change.
+                <Link
+                  className="list__name list__link"
+                  href={`/dashboard/${section}/${item.id}`}
+                >
+                  {item.name}
+                </Link>
+              ) : (
+                <span className="list__name">{item.name}</span>
+              )}
               {item.description && (
                 <span className="list__description">{item.description}</span>
+              )}
+              {item.url && (
+                <span className="list__description list__mono">{item.url}</span>
               )}
               {item.identity && (
                 <span className="list__tags">
@@ -102,6 +121,11 @@ export function InfiniteList({
                     <KeyIcon size={12} />
                     {item.identity.name}
                   </span>
+                  {item.mediator && (
+                    <span className="tag" title={copy.mediator}>
+                      {copy.mediator} · {item.mediator.name}
+                    </span>
+                  )}
                 </span>
               )}
               {item.used_by && (

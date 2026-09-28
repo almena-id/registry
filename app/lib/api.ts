@@ -6,14 +6,15 @@ import { cache } from "react";
 /** The session token from the API, kept on the portal's own origin. */
 export const sessionCookie = "almena.session";
 
-const apiUrl = () =>
-  process.env.REGISTRY_API_URL ?? "https://api.almena.network";
+const apiUrl = () => process.env.REGISTRY_API_URL ?? "https://api.almena.id";
 
 export type User = {
   id: string;
   email: string;
   alias: string | null;
   created_at: string;
+  /** A member of the Almena tenant: reviews certification requests. */
+  reviewer: boolean;
 };
 export type SignedIn = { token: string; expires_at: string; user: User };
 /** `name` is `null` for the tenant an account is created with, until it is given one. */
@@ -23,21 +24,31 @@ export type Tenant = {
   name: string | null;
   created_at: string;
   role: Role;
+  /** Almena has approved a certification of it, in force now. */
+  certified: boolean;
 };
 
 /** A call to the API from the server; `null` status when it cannot be reached. */
 export async function api<T>(
   path: string,
-  init: { method?: string; body?: unknown; token?: string } = {},
+  init: {
+    method?: string;
+    body?: unknown;
+    token?: string;
+    /** A body sent as it is, with its media type, instead of JSON. */
+    raw?: { data: ArrayBuffer; type: string };
+  } = {},
 ): Promise<{ status: number | null; data: T | null; detail: string | null }> {
   try {
     const response = await fetch(`${apiUrl()}/api/v1${path}`, {
       method: init.method ?? "GET",
       headers: {
-        "Content-Type": "application/json",
+        "Content-Type": init.raw?.type ?? "application/json",
         ...(init.token ? { Authorization: `Bearer ${init.token}` } : {}),
       },
-      body: init.body === undefined ? undefined : JSON.stringify(init.body),
+      body:
+        init.raw?.data ??
+        (init.body === undefined ? undefined : JSON.stringify(init.body)),
       cache: "no-store",
     });
     const json =

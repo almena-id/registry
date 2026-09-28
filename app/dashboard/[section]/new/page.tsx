@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { getI18n } from "@/app/i18n/server";
-import { fetchPage } from "@/app/lib/directory";
+import { fetchMediatorChoices } from "@/app/lib/directory";
 import { hasDescription, isSection } from "@/app/lib/directory-types";
 import { CreateForm } from "./CreateForm";
 
@@ -22,11 +22,9 @@ export default async function NewItemPage({
   if (!isSection(section)) notFound();
   const { t } = await getI18n();
   const copy = t.dashboard.sections[section];
-  // What an issuer or verifier may act as: the tenant's identities (the first
-  // hundred, newest first — a searchable picker when there are more).
-  const identities = hasDescription(section)
-    ? ((await fetchPage("identities", null, 100))?.items ?? [])
-    : [];
+  const described = hasDescription(section);
+  // Issuers and verifiers pick one of the tenant's mediators.
+  const mediators = described ? ((await fetchMediatorChoices()) ?? []) : null;
 
   return (
     <div className="section">
@@ -36,8 +34,8 @@ export default async function NewItemPage({
       </header>
       <CreateForm
         section={section}
-        described={hasDescription(section)}
-        identities={identities.map(({ id, name }) => ({ id, name }))}
+        described={described}
+        mediators={mediators}
       />
     </div>
   );

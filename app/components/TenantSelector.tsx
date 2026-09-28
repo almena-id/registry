@@ -4,7 +4,12 @@ import { useId } from "react";
 
 import { useI18n } from "@/app/i18n/client";
 import type { Tenant } from "@/app/lib/api";
-import { BuildingIcon, CheckIcon, ChevronsUpDownIcon } from "./icons";
+import {
+  BadgeCheckIcon,
+  BuildingIcon,
+  CheckIcon,
+  ChevronsUpDownIcon,
+} from "./icons";
 import { usePopover } from "./usePopover";
 
 /**
@@ -46,6 +51,12 @@ export function TenantSelector({ tenants }: { tenants: Tenant[] }) {
         >
           {current ? label(current) : copy.none}
         </span>
+        {current?.certified && (
+          <span className="certified-mark" title={copy.certified}>
+            <BadgeCheckIcon size={14} />
+            <span className="sr-only">{copy.certified}</span>
+          </span>
+        )}
         <ChevronsUpDownIcon size={14} />
       </button>
 

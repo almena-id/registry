@@ -10,7 +10,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const { t } = await getI18n();
   return {
     metadataBase: new URL(
-      process.env.NEXT_PUBLIC_REGISTRY_WEB_URL ?? "https://registry.almena.network",
+      process.env.NEXT_PUBLIC_REGISTRY_WEB_URL ?? "https://registry.almena.id",
     ),
     title: { default: t.app.name, template: `%s · ${t.app.name}` },
     description: t.home.lead,

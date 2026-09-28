@@ -23,7 +23,8 @@
       "none": "No tenant",
       "unnamed": "Unnamed tenant",
       "heading": "Your tenants",
-      "empty": "No tenants yet."
+      "empty": "No tenants yet.",
+      "certified": "Certified by Almena"
     },
     "account": {
       "label": "Account",
@@ -86,12 +87,16 @@
       "overview": "Overview",
       "issuers": "Issuers",
       "verifiers": "Verifiers",
+      "mediators": "Mediators",
       "identities": "Identities",
       "soon": "Soon",
       "users": "Users",
       "tenantLabel": "Tenant",
       "tenant": "Tenant",
-      "billing": "Billing"
+      "certification": "Certification",
+      "billing": "Billing",
+      "review": "Review",
+      "almenaLabel": "Almena"
     },
     "overview": {
       "title": "Overview",
@@ -105,6 +110,10 @@
       "verifiers": {
         "title": "Verifiers",
         "empty": "No verifiers yet."
+      },
+      "mediators": {
+        "title": "Mediators",
+        "empty": "No mediators yet."
       },
       "identities": {
         "title": "Identities",
@@ -123,8 +132,7 @@
       "errors": {
         "aliasLong": "Use at most 100 characters.",
         "unavailable": "The registry cannot be reached. Try again in a moment."
-      },
-      "since": "Member since"
+      }
     },
     "sections": {
       "issuers": {
@@ -151,13 +159,25 @@
           "other": "{count} verifiers"
         }
       },
+      "mediators": {
+        "title": "Mediators",
+        "lead": "Where this tenant's messages arrive.",
+        "empty": "No mediators yet.",
+        "create": "Create",
+        "createTitle": "New mediator",
+        "createLead": "The registry gives it a DID of its own.",
+        "total": {
+          "one": "{count} mediator",
+          "other": "{count} mediators"
+        }
+      },
       "identities": {
         "title": "Identities",
         "lead": "The identities this tenant holds.",
         "empty": "No identities yet.",
         "create": "Create",
         "createTitle": "New identity",
-        "createLead": "Its DID is assigned later, once the method is chosen.",
+        "createLead": "It gets a did:web DID of its own.",
         "total": {
           "one": "{count} identity",
           "other": "{count} identities"
@@ -180,23 +200,74 @@
         "nameLong": "Use at most 200 characters.",
         "descriptionLong": "Use at most 2000 characters.",
         "unavailable": "The registry cannot be reached. Try again in a moment.",
-        "identityRequired": "Choose an identity.",
-        "identityNotFound": "That identity is no longer available."
+        "urlRequired": "Enter an address.",
+        "urlInvalid": "Enter an address, like https://mediator.example.org.",
+        "urlInsecure": "Use https:// (plain http only for localhost).",
+        "mediatorNotFound": "That mediator is not in this tenant."
       },
       "identity": "Identity",
-      "identityHint": "The DID it acts as. One identity can issue and verify.",
-      "identityNew": "New identity",
-      "identityNewHint": "Created with the same name.",
-      "identityExisting": "Existing identity",
-      "identityExistingHint": "Shared with what already uses it.",
-      "identityPick": "Choose an identity",
-      "noIdentities": "This tenant has no identities yet.",
       "usedBy": {
         "issuer": "Issuer",
         "verifier": "Verifier",
-        "tenant": "Tenant"
+        "tenant": "Tenant",
+        "mediator": "Mediator"
       },
-      "unused": "Not used yet"
+      "unused": "Not used yet",
+      "url": "Address",
+      "urlHint": "Where it listens, e.g. https://mediator.example.org.",
+      "mediator": "Mediator",
+      "noMediator": "None"
+    },
+    "identity": {
+      "back": "Identities",
+      "did": "DID",
+      "usedBy": "Used by",
+      "created": "Created",
+      "published": "Published at",
+      "document": "DID document",
+      "noKeys": "No keys yet: they arrive once key custody is decided.",
+      "notFound": "This identity is not in this tenant."
+    },
+    "mediator": {
+      "back": "Mediators",
+      "did": "DID",
+      "identity": "Identity",
+      "created": "Created",
+      "save": "Save",
+      "saved": "Saved.",
+      "notFound": "This mediator is not in this tenant."
+    },
+    "issuer": {
+      "back": "Issuers",
+      "did": "DID",
+      "identity": "Identity",
+      "created": "Created",
+      "save": "Save",
+      "saved": "Saved.",
+      "notFound": "This issuer is not in this tenant."
+    },
+    "verifier": {
+      "back": "Verifiers",
+      "did": "DID",
+      "identity": "Identity",
+      "created": "Created",
+      "save": "Save",
+      "saved": "Saved.",
+      "notFound": "This verifier is not in this tenant."
+    },
+    "publication": {
+      "status": "Status",
+      "draft": "Draft",
+      "published": "Published",
+      "notPublished": "Not published",
+      "actions": "Operations",
+      "publish": "Publish",
+      "unpublish": "Unpublish",
+      "delete": "Delete",
+      "failed": "Could not do it. Try again.",
+      "deleteTitle": "Delete {name}?",
+      "deleteLead": "Its DID stops resolving. This cannot be undone.",
+      "cancel": "Cancel"
     },
     "users": {
       "title": "Users",
@@ -230,11 +301,10 @@
     },
     "tenant": {
       "title": "Tenant",
-      "lead": "The tenant's name and the mediator its issuers and verifiers use.",
+      "lead": "The tenant's name and the mediator its own identity uses.",
       "name": "Name",
       "mediator": "Mediator",
-      "mediatorHint": "The public address of an Almena mediator, e.g. https://mediator.almena.network. Every issuer and verifier in this tenant uses it as its mailbox.",
-      "mediatorDid": "Mediator DID",
+      "mediatorHint": "One of this tenant's mediators.",
       "noMediator": "No mediator yet.",
       "save": "Save",
       "saved": "Saved.",
@@ -242,15 +312,107 @@
       "errors": {
         "nameRequired": "Enter a name.",
         "nameLong": "Use at most 200 characters.",
-        "mediatorInvalid": "Enter a web address, like https://mediator.example.org.",
-        "mediatorInsecure": "Use https:// (plain http is only for localhost).",
-        "mediatorUnreachable": "No answer from that address. Check it and try again.",
-        "mediatorNotAMediator": "That address does not serve an Almena mediator.",
         "notAdmin": "Only admins can change these details.",
-        "unavailable": "The registry cannot be reached. Try again in a moment."
+        "unavailable": "The registry cannot be reached. Try again in a moment.",
+        "mediatorNotFound": "That mediator is not in this tenant."
       },
       "identity": "Identity",
-      "identityHint": "The organisation's own DID, named like the tenant."
+      "identityHint": "The organisation's own DID, named like the tenant.",
+      "noMediators": "No mediators yet."
+    },
+    "certification": {
+      "title": "Certification",
+      "lead": "Almena vouches for who this tenant is.",
+      "certified": "Certified",
+      "notCertified": "Not certified yet.",
+      "requestTitle": "Request",
+      "changeTitle": "Change request",
+      "status": {
+        "draft": "Draft",
+        "in_review": "In review",
+        "approved": "Approved",
+        "rejected": "Rejected",
+        "superseded": "Superseded"
+      },
+      "readOnly": "Only admins can ask for certification.",
+      "waiting": "Almena is reviewing it.",
+      "rejected": "Rejected:",
+      "legalName": "Legal name",
+      "domain": "Domain",
+      "domainHint": "A domain you control, e.g. acme.com.",
+      "save": "Save",
+      "dnsTitle": "Domain proof",
+      "dnsType": "Type",
+      "dnsName": "Name",
+      "dnsValue": "Value",
+      "dnsHint": "Add this record to your DNS, then check.",
+      "dnsFirst": "Save a domain to get its record.",
+      "dnsVerified": "Domain proved.",
+      "dnsPending": "Not proved",
+      "check": "Check",
+      "logo": "Logo",
+      "logoHint": "PNG, JPEG or WebP, up to 256 KB. Square works best.",
+      "upload": "Upload",
+      "incompleteHint": "Needs the legal name, the domain proved and the logo.",
+      "submit": "Send for review",
+      "errors": {
+        "legalNameRequired": "Enter the legal name.",
+        "legalNameLong": "Use at most 200 characters.",
+        "domainRequired": "Enter a domain.",
+        "domainInvalid": "Enter a domain, like acme.com.",
+        "dnsNotFound": "The record is not there yet. DNS changes can take a while.",
+        "dnsUnavailable": "DNS did not answer. Try again in a moment.",
+        "logoMissing": "Choose an image.",
+        "logoInvalid": "Use a PNG, JPEG or WebP image.",
+        "logoTooLarge": "Use an image of at most 256 KB.",
+        "incomplete": "Needs the legal name, the domain proved and the logo.",
+        "inReview": "It is being reviewed; it cannot change now.",
+        "notAdmin": "Only admins can ask for certification.",
+        "notReviewer": "Only Almena's reviewers can do this.",
+        "decided": "It has already been decided.",
+        "reasonRequired": "Say why it is rejected.",
+        "reasonLong": "Use at most 1000 characters.",
+        "unavailable": "The registry cannot be reached. Try again in a moment."
+      }
+    },
+    "review": {
+      "title": "Review",
+      "lead": "Certification requests waiting, oldest first.",
+      "empty": "Nothing to review.",
+      "unnamed": "Unnamed tenant",
+      "submitted": "Sent",
+      "notFound": "This request does not exist.",
+      "tenant": "Tenant",
+      "request": "Request",
+      "inForce": "In force today",
+      "reason": "Reason",
+      "reasonHint": "Needed to reject; the tenant reads it.",
+      "approve": "Approve",
+      "reject": "Reject"
+    },
+    "detail": {
+      "tabs": "Sections",
+      "summary": "Summary",
+      "data": "Data",
+      "json": "JSON",
+      "loading": "Loading…",
+      "signing": "Signing"
+    },
+    "signing": {
+      "lead": "Who signs for it, from their wallet.",
+      "system": "Signing system",
+      "notConfigured": "Not configured",
+      "single_user": "One specific user",
+      "signer": "Signer",
+      "chooseSigner": "Choose a member",
+      "leftTenant": "no longer a member",
+      "save": "Save",
+      "saved": "Saved.",
+      "errors": {
+        "signerRequired": "Choose who signs.",
+        "signerNotMember": "They are not a member of this tenant.",
+        "unavailable": "The registry cannot be reached. Try again in a moment."
+      }
     }
   },
   "footer": {

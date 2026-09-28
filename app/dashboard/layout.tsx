@@ -23,7 +23,7 @@ export default async function DashboardLayout({
       <main className="shell__main">
         <div className="dashboard">
           <aside className="dashboard__side">
-            <DashboardNav />
+            <DashboardNav reviewer={user.reviewer} />
           </aside>
           <div className="dashboard__content">{children}</div>
         </div>

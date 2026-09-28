@@ -979,7 +979,7 @@ a.side-nav__item:hover {
   color: var(--text-muted);
 }
 
-/* Three cards: one column, then a single row. */
+/* Four cards: one column, then two, then a single row. */
 .overview__grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -987,9 +987,15 @@ a.side-nav__item:hover {
   margin-bottom: 16px;
 }
 
-@media (min-width: 900px) {
+@media (min-width: 700px) {
   .overview__grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1200px) {
+  .overview__grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
 
@@ -1027,35 +1033,6 @@ a.side-nav__item:hover {
   margin-top: auto;
   color: var(--text-faint);
   font-size: 14px;
-}
-
-.account {
-  padding: 20px;
-}
-
-.account__title {
-  margin-bottom: 12px;
-  font-size: 15px;
-  font-weight: 600;
-}
-
-.account__rows {
-  display: grid;
-  gap: 8px;
-}
-
-.account__rows div {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 8px;
-  padding-top: 8px;
-  border-top: 1px solid var(--border);
-  font-size: 14px;
-}
-
-.account__rows dt {
-  color: var(--text-muted);
 }
 
 /* ----------------------------------------------------- sections, lists */
@@ -1097,12 +1074,22 @@ a.side-nav__item:hover {
   font-weight: 600;
 }
 
+.list__link:hover {
+  color: var(--brand);
+  text-decoration: underline;
+}
+
 .list__description {
   overflow: hidden;
   color: var(--text-muted);
   font-size: 14px;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.list__mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 13px;
 }
 
 .list__date {
@@ -1290,8 +1277,256 @@ a.side-nav__item:hover {
   gap: 4px;
 }
 
-.field__select {
-  margin-top: 8px;
-  padding-right: 12px;
-  cursor: pointer;
+.identity {
+  display: grid;
+  gap: 16px;
+}
+
+.identity__back {
+  justify-self: start;
+}
+
+.identity__card {
+  padding: 20px;
+}
+
+.identity__card .facts div:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.identity__title {
+  margin-bottom: 4px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.identity__hint {
+  margin-bottom: 12px;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.identity__document {
+  overflow-x: auto;
+  padding: 14px 16px;
+  border-radius: var(--radius-control);
+  background: var(--surface-sunk);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* --------------------------------------------------- certification */
+
+.certified-mark {
+  display: inline-flex;
+  color: var(--brand);
+}
+
+.tag--certified {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--brand-soft);
+  color: var(--brand);
+}
+
+.tag--status-in_review {
+  background: var(--brand-soft);
+  color: var(--brand);
+}
+
+.tag--status-rejected {
+  color: var(--danger);
+}
+
+.cert {
+  max-width: 720px;
+  margin-bottom: 16px;
+  padding: 20px 24px;
+}
+
+.cert--empty {
+  color: var(--text-faint);
+  text-align: center;
+}
+
+.cert__current {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 16px;
+}
+
+.cert__who {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.cert__name {
+  font-weight: 600;
+}
+
+.cert__domain {
+  color: var(--text-muted);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 13px;
+}
+
+.cert__logo {
+  flex: none;
+  width: 48px;
+  height: 48px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  background: var(--surface-sunk);
+  object-fit: contain;
+}
+
+.cert__logo--large {
+  width: 96px;
+  height: 96px;
+}
+
+.cert__logo--empty {
+  display: inline-block;
+  border-style: dashed;
+  background: transparent;
+}
+
+.cert__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.cert__step {
+  display: grid;
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.cert__record {
+  gap: 8px;
+}
+
+.cert__logo-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.cert__file {
+  min-width: 0;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.cert__send {
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+/* ------------------------------------------------ resource actions */
+
+/* An icon alone: its name is its title and aria-label. */
+.button--icon {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+}
+
+.button--danger {
+  color: var(--danger);
+}
+
+.button--danger:hover {
+  border-color: var(--danger);
+  background: var(--danger-soft);
+}
+
+/* The operations on what the page shows, beside its title. */
+.toolbar {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+/* The buttons themselves: always one row. */
+.toolbar__buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.toolbar form {
+  display: contents;
+}
+
+.toolbar .alert {
+  margin: 0;
+}
+
+.tag--published {
+  background: var(--brand-soft);
+  color: var(--brand);
+}
+
+.confirm {
+  padding: 20px;
+}
+
+.confirm__lead {
+  margin-bottom: 16px;
+  color: var(--text-muted);
+}
+
+/* The detail head keeps the operations on the title's line. */
+.page-head--detail {
+  flex-wrap: nowrap;
+  align-items: center;
+  margin-bottom: 0;
+}
+
+.page-head--detail .page-head__title {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* ------------------------------------------------------------ tabs */
+
+.tabs {
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  border-bottom: 1px solid var(--border);
+}
+
+.tabs__item {
+  margin-bottom: -1px;
+  padding: 10px 14px;
+  border-bottom: 2px solid transparent;
+  color: var(--text-muted);
+  font-size: 15px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.tabs__item:hover {
+  color: var(--text);
+  text-decoration: none;
+}
+
+.tabs__item[aria-current="page"] {
+  border-bottom-color: var(--brand);
+  color: var(--brand);
+  font-weight: 600;
 }

@@ -1,19 +1,33 @@
 /** A tenant's registered things, as the dashboard lists them. Client-safe. */
-export const sections = ["issuers", "verifiers", "identities"] as const;
+export const sections = [
+  "issuers",
+  "verifiers",
+  "mediators",
+  "identities",
+] as const;
 export type Section = (typeof sections)[number];
 
 export function isSection(value: string): value is Section {
   return (sections as readonly string[]).includes(value);
 }
 
-/** Issuers and verifiers are described; identities only named, for now. */
+/**
+ * Issuers and verifiers are described and pick one of the tenant's mediators;
+ * mediators have an address; identities only a name, for now.
+ */
 export function hasDescription(section: Section): boolean {
-  return section !== "identities";
+  return section === "issuers" || section === "verifiers";
+}
+
+/** The sections whose items open on a screen of their own: all of them. */
+export function opens(section: Section): boolean {
+  return isSection(section);
 }
 
 export type IdentityRef = { id: string; name: string };
+export type MediatorRef = { id: string; name: string };
 export type Use = {
-  kind: "tenant" | "issuer" | "verifier";
+  kind: "tenant" | "issuer" | "verifier" | "mediator";
   id: string;
   name: string;
 };
@@ -23,10 +37,59 @@ export type Item = {
   name: string;
   description: string | null;
   created_at: string;
-  /** Issuers and verifiers: the identity (DID) they act as. */
+  /** Issuers, verifiers and mediators: the identity (DID) they act as. */
   identity?: IdentityRef | null;
-  /** Identities: the issuers and verifiers that act as them. */
+  /** Issuers and verifiers: the mediator they receive messages through. */
+  mediator?: MediatorRef | null;
+  /** Mediators: where they listen. */
+  url?: string | null;
+  /** Identities: the tenant, issuer, verifier or mediator that acts as them. */
   used_by?: Use[] | null;
+  /** Issuers, verifiers and mediators: when published; `null` while a draft. */
+  published_at?: string | null;
+};
+
+/**
+ * An issuer, verifier or mediator, opened from the list: its DID, the document
+ * it resolves to, and where that is published (a draft's is not).
+ */
+export type DescribedDetail = Item & {
+  did: string;
+  identity: IdentityRef;
+  document: Record<string, unknown>;
+  document_url: string;
+};
+
+/** One mediator, opened from the list: its address and its DID. */
+export type MediatorDetail = DescribedDetail & { url: string };
+
+/** One identity, opened from the list: its DID and the document it publishes. */
+export type IdentityDetail = {
+  id: string;
+  name: string;
+  created_at: string;
+  did: string;
+  used_by: Use[];
+  document: Record<string, unknown>;
+  document_url: string;
+  /** Whether `document_url` answers: not while what acts as it is a draft. */
+  published: boolean;
+};
+
+/**
+ * How an issuer or verifier signs. People sign from their wallets; the
+ * catalogue so far has one system, `single_user`: one member signs alone.
+ */
+export type SigningSystem = "single_user";
+export type Signing = {
+  system: SigningSystem | null;
+  signer: {
+    id: string;
+    email: string;
+    alias: string | null;
+    /** A signer who left the tenant signs nothing. */
+    member: boolean;
+  } | null;
 };
 
 export type Page = { items: Item[]; next_cursor: string | null; total: number };

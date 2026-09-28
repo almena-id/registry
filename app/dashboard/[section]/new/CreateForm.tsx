@@ -1,24 +1,26 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState, useState } from "react";
+import { useActionState } from "react";
 
 import { useI18n } from "@/app/i18n/client";
+import { useAnswerRound } from "@/app/lib/use-answer-round";
 import { createItem, type CreateState } from "@/app/lib/directory-actions";
-import type { IdentityRef, Section } from "@/app/lib/directory-types";
+import type { Item, Section } from "@/app/lib/directory-types";
 
 /**
- * Issuers and verifiers are `described`, and act as an identity: a new one
- * named like them, or one the tenant already has.
+ * Issuers and verifiers are `described` and pick one of the tenant's
+ * `mediators`; mediators have an address. Each gets an identity of its own,
+ * named like it, which the API creates.
  */
 export function CreateForm({
   section,
   described,
-  identities,
+  mediators,
 }: {
   section: Section;
   described: boolean;
-  identities: IdentityRef[];
+  mediators: Item[] | null;
 }) {
   const { t } = useI18n();
   const copy = t.dashboard.items;
@@ -26,10 +28,8 @@ export function CreateForm({
     createItem.bind(null, section),
     {},
   );
+  const round = useAnswerRound(state);
   const errors = state.errors ?? {};
-  const [mode, setMode] = useState<"new" | "existing">(
-    state.identityMode ?? "new",
-  );
   const error = (key?: keyof typeof copy.errors) =>
     key ? copy.errors[key] : null;
 
@@ -89,69 +89,65 @@ export function CreateForm({
         </div>
       )}
 
-      {described && (
-        <fieldset className="field">
-          <legend className="field__label">{copy.identity}</legend>
-          <p className="field__hint">{copy.identityHint}</p>
-          <div className="choices">
-            <label className="choice">
-              <input
-                type="radio"
-                name="identity_mode"
-                value="new"
-                checked={mode === "new"}
-                onChange={() => setMode("new")}
-              />
-              <span className="choice__text">
-                <span className="choice__title">{copy.identityNew}</span>
-                <span className="choice__hint">{copy.identityNewHint}</span>
-              </span>
-            </label>
-            <label className="choice">
-              <input
-                type="radio"
-                name="identity_mode"
-                value="existing"
-                checked={mode === "existing"}
-                disabled={identities.length === 0}
-                onChange={() => setMode("existing")}
-              />
-              <span className="choice__text">
-                <span className="choice__title">{copy.identityExisting}</span>
-                <span className="choice__hint">
-                  {identities.length
-                    ? copy.identityExistingHint
-                    : copy.noIdentities}
-                </span>
-              </span>
-            </label>
-          </div>
-          {mode === "existing" && (
-            <select
-              className="field__input field__select"
-              name="identity_id"
-              aria-label={copy.identityPick}
-              defaultValue={state.identityId ?? ""}
-              aria-invalid={errors.identity ? true : undefined}
-              aria-describedby={errors.identity ? "identity-error" : undefined}
-            >
-              <option value="" disabled>
-                {copy.identityPick}
-              </option>
-              {identities.map((identity) => (
-                <option key={identity.id} value={identity.id}>
-                  {identity.name}
-                </option>
-              ))}
-            </select>
-          )}
-          {errors.identity && (
-            <p className="field__error" id="identity-error">
-              {error(errors.identity)}
+      {section === "mediators" && (
+        <div className="field">
+          <label className="field__label" htmlFor="url">
+            {copy.url}
+          </label>
+          <input
+            className="field__input"
+            id="url"
+            name="url"
+            inputMode="url"
+            maxLength={2048}
+            required
+            placeholder="https://mediator.example.org"
+            defaultValue={state.url}
+            aria-invalid={errors.url ? true : undefined}
+            aria-describedby={errors.url ? "url-error" : "url-hint"}
+          />
+          {errors.url ? (
+            <p className="field__error" id="url-error">
+              {error(errors.url)}
+            </p>
+          ) : (
+            <p className="field__hint" id="url-hint">
+              {copy.urlHint}
             </p>
           )}
-        </fieldset>
+        </div>
       )}
+
+      {mediators && (
+        <div className="field">
+          <label className="field__label" htmlFor="mediator">
+            {copy.mediator}{" "}
+            <span className="field__optional">{copy.optional}</span>
+          </label>
+          <select
+            key={round}
+            className="field__input"
+            id="mediator"
+            name="mediator"
+            defaultValue={state.mediator ?? ""}
+            aria-invalid={errors.mediator ? true : undefined}
+            aria-describedby={errors.mediator ? "mediator-error" : undefined}
+          >
+            <option value="">{copy.noMediator}</option>
+            {mediators.map((mediator) => (
+              <option key={mediator.id} value={mediator.id}>
+                {mediator.name}
+              </option>
+            ))}
+          </select>
+          {errors.mediator && (
+            <p className="field__error" id="mediator-error">
+              {error(errors.mediator)}
+            </p>
+          )}
+        </div>
+      )}
+
       <div className="form__actions">
         <Link className="button button--ghost" href={`/dashboard/${section}`}>
           {copy.cancel}
