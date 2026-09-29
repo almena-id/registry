@@ -2,9 +2,16 @@
 
 import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
 import type { Dictionary } from "@/app/i18n/config";
-import { api, currentTenants, sessionCookie } from "./api";
+import {
+  api,
+  currentTenant,
+  currentTenants,
+  sessionCookie,
+  tenantCookie,
+} from "./api";
 import type { TenantDetail } from "./tenant";
 
 type ErrorKey = keyof Dictionary["dashboard"]["tenant"]["errors"];
@@ -28,7 +35,7 @@ export async function saveTenant(
   if (name.length > 200) return { ...keep, errors: { name: "nameLong" } };
 
   const token = (await cookies()).get(sessionCookie)?.value;
-  const tenant = (await currentTenants())[0];
+  const tenant = await currentTenant();
   if (!token || !tenant) return { ...keep, errors: { form: "unavailable" } };
   const { status, data, detail } = await api<TenantDetail>(
     `/tenants/${tenant.id}`,
@@ -53,4 +60,19 @@ export async function saveTenant(
     mediator: data.mediator?.id ?? "",
     saved: true,
   };
+}
+
+/**
+ * Work in another of the account's tenants. The overview is where it lands:
+ * whatever was open belonged to the tenant left behind.
+ */
+export async function chooseTenant(id: string): Promise<void> {
+  if (!(await currentTenants()).some((tenant) => tenant.id === id)) return;
+  (await cookies()).set(tenantCookie, id, {
+    maxAge: 60 * 60 * 24 * 365,
+    httpOnly: true,
+    sameSite: "lax",
+  });
+  revalidatePath("/dashboard", "layout");
+  redirect("/dashboard");
 }

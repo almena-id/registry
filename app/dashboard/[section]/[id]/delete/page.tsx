@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 
+import { Card } from "@/app/components/ui/card";
 import { getI18n } from "@/app/i18n/server";
-import { currentTenants } from "@/app/lib/api";
+import { currentTenant } from "@/app/lib/api";
 import { DetailHead, NotFound } from "../Detail";
 import { isKind, ITEM, loadItem } from "../load";
 import { DeleteForm } from "./DeleteForm";
@@ -30,17 +31,17 @@ export default async function DeletePage({
   const { t } = await getI18n();
   const copy = t.dashboard.publication;
   const own = t.dashboard[ITEM[section]];
-  const [loaded, tenants] = await Promise.all([
+  const [loaded, tenant] = await Promise.all([
     loadItem(section, id),
-    currentTenants(),
+    currentTenant(),
   ]);
   const item = loaded?.item;
   // Only admins delete; anyone else goes back to the item.
-  if (item && tenants[0]?.role !== "admin")
+  if (item && tenant?.role !== "admin")
     redirect(`/dashboard/${section}/${id}`);
 
   return (
-    <div className="section identity">
+    <div className="grid gap-4">
       <DetailHead
         back={`/dashboard/${section}/${id}`}
         backLabel={item?.name ?? own.back}
@@ -49,15 +50,15 @@ export default async function DeletePage({
         <NotFound message={own.notFound} />
       ) : (
         <>
-          <header className="page-head">
-            <h1 className="page-head__title">
+          <header className="mb-6">
+            <h1 className="text-[28px] font-bold tracking-tight">
               {copy.deleteTitle.replace("{name}", item.name)}
             </h1>
           </header>
-          <div className="card confirm">
-            <p className="confirm__lead">{copy.deleteLead}</p>
+          <Card className="gap-0 p-5">
+            <p className="mb-4 text-muted-foreground">{copy.deleteLead}</p>
             <DeleteForm section={section} id={item.id} />
-          </div>
+          </Card>
         </>
       )}
     </div>

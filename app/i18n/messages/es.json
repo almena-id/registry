@@ -19,32 +19,49 @@
       "allHeading": "Todas las zonas horarias"
     },
     "tenant": {
-      "label": "Tenant",
-      "none": "Sin tenant",
-      "unnamed": "Tenant sin nombre",
-      "heading": "Tus tenants",
-      "empty": "Todavía no hay tenants.",
-      "certified": "Certificado por Almena"
+      "label": "Cuenta",
+      "none": "Sin cuenta",
+      "unnamed": "Cuenta sin nombre",
+      "heading": "Tus cuentas",
+      "empty": "Todavía no hay cuentas."
     },
     "account": {
-      "label": "Cuenta",
+      "label": "Perfil",
       "signOut": "Cerrar sesión",
-      "open": "Datos de la cuenta"
+      "open": "Datos del perfil"
     }
   },
   "home": {
     "title": "Las identidades de tu organización, en un solo lugar",
-    "lead": "Gestiona tenants, emisores, verificadores y DIDs de Almena Network.",
-    "signIn": "Continuar con email",
+    "lead": "Cuentas, emisores, verificadores y mediators, con DIDs que firmas desde tu wallet.",
+    "signIn": "Continuar con Almena",
+    "otherWays": "Otras formas de entrar",
     "openDashboard": "Abrir el panel",
     "diagram": {
       "label": "Cómo se organiza el registro",
+      "tenant": "Tu cuenta",
+      "signs": "firma",
       "you": "Tú",
-      "tenant": "Tenant",
+      "wallet": "tu wallet",
       "issuers": "Emisores",
       "verifiers": "Verificadores",
-      "identities": "Identidades"
-    }
+      "mediators": "Mediators",
+      "caption": "Cada DID es did:webvh: cada versión, firmada desde un wallet."
+    },
+    "points": [
+      {
+        "title": "Tu wallet es la llave",
+        "body": "Entras y firmas sin contraseñas. El registro no guarda ninguna clave."
+      },
+      {
+        "title": "DIDs con historia",
+        "body": "Cada versión de cada DID se firma y se publica, así que lo firmado sigue verificándose."
+      },
+      {
+        "title": "Avalado por tu organización",
+        "body": "Todo lo que publicas lleva el aval firmado de tu organización, verificable por cualquiera."
+      }
+    ]
   },
   "auth": {
     "title": "Entra o crea tu cuenta",
@@ -91,16 +108,12 @@
       "identities": "Identidades",
       "soon": "Pronto",
       "users": "Usuarios",
-      "tenantLabel": "Tenant",
-      "tenant": "Tenant",
-      "certification": "Certificación",
-      "billing": "Facturación",
-      "review": "Revisión",
-      "almenaLabel": "Almena"
+      "tenantLabel": "Cuenta",
+      "tenant": "Cuenta"
     },
     "overview": {
       "title": "Resumen",
-      "lead": "Todo lo que tienen tus tenants."
+      "lead": "Lo que te espera y lo que tiene tu cuenta."
     },
     "cards": {
       "issuers": {
@@ -121,23 +134,74 @@
       }
     },
     "account": {
-      "title": "Cuenta",
-      "lead": "Cómo te ven las personas con las que trabajas.",
+      "title": "Perfil",
+      "lead": "Cómo te ven los demás y cómo inicias sesión.",
       "alias": "Alias",
       "aliasHint": "El nombre que ven los demás en lugar de tu correo.",
-      "email": "Correo electrónico",
-      "emailHint": "Con él inicias sesión; no se puede cambiar aquí.",
       "save": "Guardar",
       "saved": "Guardado.",
       "errors": {
         "aliasLong": "Usa como mucho 100 caracteres.",
-        "unavailable": "No se puede contactar con el registro. Inténtalo de nuevo en un momento."
+        "unavailable": "No se puede contactar con el registro. Inténtalo de nuevo en un momento.",
+        "emailInvalid": "Escribe un correo válido.",
+        "codeFormat": "El código tiene 6 dígitos.",
+        "invalidCode": "Ese código es incorrecto o ha caducado.",
+        "tooManyAttempts": "Demasiados intentos. Pide un código nuevo.",
+        "mailUnavailable": "No se pudo enviar el correo. Inténtalo de nuevo en un momento.",
+        "lastWayIn": "Es tu única forma de entrar.",
+        "invalidState": "La vinculación tardó demasiado o se interrumpió. Inténtalo de nuevo.",
+        "providerError": "El proveedor no pudo vincular la cuenta. Inténtalo de nuevo.",
+        "providerCancelled": "Se canceló la vinculación.",
+        "invalidTicket": "Pasó demasiado tiempo. Vuelve a vincular.",
+        "notEmpty": "Este perfil ya tiene trabajo, así que se queda."
+      },
+      "waysIn": {
+        "title": "Formas de entrar",
+        "hint": "Cómo inicias sesión. Conserva al menos una.",
+        "email": "Correo electrónico",
+        "noEmail": "Ninguno: no te pueden llegar invitaciones.",
+        "add": "Añadir",
+        "change": "Cambiar",
+        "remove": "Quitar",
+        "lastOne": "Tu única forma de entrar",
+        "link": "Vincular {provider}",
+        "almena": "Wallet de Almena",
+        "linked": "Vinculado.",
+        "moved": "Ahora estás en el perfil que ya lo tenía.",
+        "providers": {
+          "google": "Google",
+          "microsoft": "Microsoft",
+          "apple": "Apple",
+          "github": "GitHub"
+        },
+        "linkWallet": "Vincular"
+      },
+      "emailLink": {
+        "title": "Vincular un correo",
+        "lead": "Sustituye al que tengas, si tienes uno.",
+        "codeTitle": "Revisa tu correo",
+        "codeLead": "Escribe el código de 6 dígitos que enviamos a {email}.",
+        "code": "Código",
+        "send": "Enviar código",
+        "verify": "Vincular",
+        "resend": "Enviar un código nuevo",
+        "resent": "Te hemos enviado un código nuevo.",
+        "changeEmail": "Usar otro correo",
+        "cancel": "Cancelar"
+      },
+      "taken": {
+        "title": "Pertenece a otro perfil",
+        "emptyLead": "Este perfil aún no tiene nada. Bórralo y continúa en el otro; sus formas de entrar van contigo.",
+        "move": "Borrar este perfil y continuar",
+        "busyLead": "Este perfil tiene trabajo, así que se queda. Entra de esa forma y vincula desde allí las formas de entrar de este perfil.",
+        "back": "Volver a tu perfil",
+        "cancel": "Cancelar"
       }
     },
     "sections": {
       "issuers": {
         "title": "Emisores",
-        "lead": "Quién emite credenciales en este tenant.",
+        "lead": "Quién emite credenciales en esta cuenta.",
         "empty": "Aún no hay emisores.",
         "create": "Crear",
         "createTitle": "Nuevo emisor",
@@ -149,7 +213,7 @@
       },
       "verifiers": {
         "title": "Verificadores",
-        "lead": "Quién comprueba credenciales en este tenant.",
+        "lead": "Quién comprueba credenciales en esta cuenta.",
         "empty": "Aún no hay verificadores.",
         "create": "Crear",
         "createTitle": "Nuevo verificador",
@@ -161,11 +225,11 @@
       },
       "mediators": {
         "title": "Mediadores",
-        "lead": "Donde llegan los mensajes de este tenant.",
+        "lead": "Donde llegan los mensajes de esta cuenta.",
         "empty": "Aún no hay mediadores.",
         "create": "Crear",
         "createTitle": "Nuevo mediador",
-        "createLead": "El registro le da un DID propio.",
+        "createLead": "Su DID se crea cuando un admin lo firma.",
         "total": {
           "one": "{count} mediador",
           "other": "{count} mediadores"
@@ -173,11 +237,11 @@
       },
       "identities": {
         "title": "Identidades",
-        "lead": "Las identidades que tiene este tenant.",
+        "lead": "Las identidades que tiene esta cuenta.",
         "empty": "Aún no hay identidades.",
         "create": "Crear",
         "createTitle": "Nueva identidad",
-        "createLead": "Recibe un DID did:web propio.",
+        "createLead": "Su DID did:webvh se crea cuando un admin lo firma.",
         "total": {
           "one": "{count} identidad",
           "other": "{count} identidades"
@@ -194,7 +258,7 @@
       "loading": "Cargando más…",
       "loadError": "No se ha podido cargar el resto de la lista.",
       "retry": "Reintentar",
-      "noTenant": "No hay ningún tenant en el que trabajar.",
+      "noTenant": "No hay ninguna cuenta en la que trabajar.",
       "errors": {
         "nameRequired": "Escribe un nombre.",
         "nameLong": "Usa como mucho 200 caracteres.",
@@ -203,13 +267,13 @@
         "urlRequired": "Escribe una dirección.",
         "urlInvalid": "Escribe una dirección, como https://mediator.example.org.",
         "urlInsecure": "Usa https:// (http sin cifrar solo en localhost).",
-        "mediatorNotFound": "Ese mediador no está en este tenant."
+        "mediatorNotFound": "Ese mediador no está en esta cuenta."
       },
       "identity": "Identidad",
       "usedBy": {
         "issuer": "Emisor",
         "verifier": "Verificador",
-        "tenant": "Tenant",
+        "tenant": "Cuenta",
         "mediator": "Mediador"
       },
       "unused": "Aún sin uso",
@@ -225,8 +289,7 @@
       "created": "Creada",
       "published": "Publicado en",
       "document": "Documento DID",
-      "noKeys": "Aún sin claves: llegarán cuando se decida su custodia.",
-      "notFound": "Esta identidad no está en este tenant."
+      "notFound": "Esta identidad no está en esta cuenta."
     },
     "mediator": {
       "back": "Mediadores",
@@ -235,7 +298,7 @@
       "created": "Creado",
       "save": "Guardar",
       "saved": "Guardado.",
-      "notFound": "Este mediador no está en este tenant."
+      "notFound": "Este mediador no está en esta cuenta."
     },
     "issuer": {
       "back": "Emisores",
@@ -244,7 +307,7 @@
       "created": "Creado",
       "save": "Guardar",
       "saved": "Guardado.",
-      "notFound": "Este emisor no está en este tenant."
+      "notFound": "Este emisor no está en esta cuenta."
     },
     "verifier": {
       "back": "Verificadores",
@@ -253,7 +316,7 @@
       "created": "Creado",
       "save": "Guardar",
       "saved": "Guardado.",
-      "notFound": "Este verificador no está en este tenant."
+      "notFound": "Este verificador no está en esta cuenta."
     },
     "publication": {
       "status": "Estado",
@@ -267,11 +330,17 @@
       "failed": "No se pudo hacer. Inténtalo de nuevo.",
       "deleteTitle": "¿Eliminar {name}?",
       "deleteLead": "Su DID dejará de resolverse. No se puede deshacer.",
-      "cancel": "Cancelar"
+      "cancel": "Cancelar",
+      "identityPending": "Firma primero su identidad.",
+      "publishTitle": "Publicar {name}",
+      "publishLead": "Tu organización lo avala, firmado desde tu wallet; entonces se publica.",
+      "endorsement": "Aval",
+      "endorsedUntil": "hasta {date}",
+      "notEndorsed": "Sin aval"
     },
     "users": {
       "title": "Usuarios",
-      "lead": "Quién trabaja en este tenant.",
+      "lead": "Quién trabaja en esta cuenta.",
       "add": "Añadir usuario",
       "email": "Correo electrónico",
       "role": "Rol",
@@ -293,18 +362,19 @@
       "adminOnly": "Solo los administradores pueden añadir usuarios.",
       "errors": {
         "emailInvalid": "Introduce un correo válido.",
-        "alreadyMember": "Esa persona ya pertenece a este tenant.",
+        "alreadyMember": "Esa persona ya pertenece a esta cuenta.",
         "notAdmin": "Solo los administradores pueden añadir usuarios.",
         "mailUnavailable": "No se ha podido enviar el correo. Inténtalo de nuevo en un momento.",
         "unavailable": "No se puede contactar con el registro. Inténtalo de nuevo en un momento."
-      }
+      },
+      "noEmail": "Sin correo"
     },
     "tenant": {
-      "title": "Tenant",
-      "lead": "El nombre del tenant y el mediador que usa su propia identidad.",
+      "title": "Cuenta",
+      "lead": "Tu organización: sus datos, sus dominios y su DID.",
       "name": "Nombre",
       "mediator": "Mediador",
-      "mediatorHint": "Uno de los mediadores de este tenant.",
+      "mediatorHint": "Uno de los mediadores de esta cuenta.",
       "noMediator": "Aún sin mediador.",
       "save": "Guardar",
       "saved": "Guardado.",
@@ -314,81 +384,11 @@
         "nameLong": "Usa como mucho 200 caracteres.",
         "notAdmin": "Solo los administradores pueden cambiar estos datos.",
         "unavailable": "No se puede contactar con el registro. Inténtalo de nuevo en un momento.",
-        "mediatorNotFound": "Ese mediador no está en este tenant."
+        "mediatorNotFound": "Ese mediador no está en esta cuenta."
       },
       "identity": "Identidad",
-      "identityHint": "El DID propio de la organización, con el nombre del tenant.",
+      "identityHint": "El DID propio de la organización, con el nombre de la cuenta.",
       "noMediators": "Aún no hay mediadores."
-    },
-    "certification": {
-      "title": "Certificación",
-      "lead": "Almena avala quién es este tenant.",
-      "certified": "Certificado",
-      "notCertified": "Aún sin certificar.",
-      "requestTitle": "Solicitud",
-      "changeTitle": "Solicitud de cambio",
-      "status": {
-        "draft": "Borrador",
-        "in_review": "En revisión",
-        "approved": "Aprobada",
-        "rejected": "Rechazada",
-        "superseded": "Sustituida"
-      },
-      "readOnly": "Solo los administradores pueden pedir la certificación.",
-      "waiting": "Almena la está revisando.",
-      "rejected": "Rechazada:",
-      "legalName": "Nombre legal",
-      "domain": "Dominio",
-      "domainHint": "Un dominio que controles, p. ej. acme.com.",
-      "save": "Guardar",
-      "dnsTitle": "Prueba del dominio",
-      "dnsType": "Tipo",
-      "dnsName": "Nombre",
-      "dnsValue": "Valor",
-      "dnsHint": "Añade este registro a tu DNS y comprueba.",
-      "dnsFirst": "Guarda un dominio para obtener su registro.",
-      "dnsVerified": "Dominio comprobado.",
-      "dnsPending": "Sin comprobar",
-      "check": "Comprobar",
-      "logo": "Logo",
-      "logoHint": "PNG, JPEG o WebP, hasta 256 KB. Mejor cuadrado.",
-      "upload": "Subir",
-      "incompleteHint": "Necesita el nombre legal, el dominio comprobado y el logo.",
-      "submit": "Enviar a revisión",
-      "errors": {
-        "legalNameRequired": "Escribe el nombre legal.",
-        "legalNameLong": "Usa como mucho 200 caracteres.",
-        "domainRequired": "Escribe un dominio.",
-        "domainInvalid": "Escribe un dominio, como acme.com.",
-        "dnsNotFound": "El registro aún no está. Los cambios de DNS pueden tardar.",
-        "dnsUnavailable": "El DNS no ha respondido. Inténtalo de nuevo en un momento.",
-        "logoMissing": "Elige una imagen.",
-        "logoInvalid": "Usa una imagen PNG, JPEG o WebP.",
-        "logoTooLarge": "Usa una imagen de 256 KB como mucho.",
-        "incomplete": "Necesita el nombre legal, el dominio comprobado y el logo.",
-        "inReview": "Está en revisión; ahora no se puede cambiar.",
-        "notAdmin": "Solo los administradores pueden pedir la certificación.",
-        "notReviewer": "Solo los revisores de Almena pueden hacer esto.",
-        "decided": "Ya está decidida.",
-        "reasonRequired": "Di por qué se rechaza.",
-        "reasonLong": "Usa como mucho 1000 caracteres.",
-        "unavailable": "No se puede contactar con el registro. Inténtalo de nuevo en un momento."
-      }
-    },
-    "review": {
-      "title": "Revisión",
-      "lead": "Solicitudes de certificación en espera, la más antigua primero.",
-      "empty": "Nada que revisar.",
-      "unnamed": "Tenant sin nombre",
-      "submitted": "Enviada",
-      "notFound": "Esta solicitud no existe.",
-      "tenant": "Tenant",
-      "request": "Solicitud",
-      "inForce": "En vigor hoy",
-      "reason": "Motivo",
-      "reasonHint": "Necesario para rechazar; el tenant lo lee.",
-      "approve": "Aprobar",
-      "reject": "Rechazar"
     },
     "detail": {
       "tabs": "Secciones",
@@ -410,7 +410,67 @@
       "saved": "Guardado.",
       "errors": {
         "signerRequired": "Elige quién firma.",
-        "signerNotMember": "No es miembro de este tenant.",
+        "signerNotMember": "No es miembro de esta cuenta.",
+        "unavailable": "No se puede contactar con el registro. Inténtalo de nuevo en un momento."
+      },
+      "noWallet": "Aún no tiene un wallet de Almena vinculado: hasta que lo vincule, el documento DID no tiene clave para lo que firme."
+    },
+    "signature": {
+      "title": "Firma",
+      "status": {
+        "pending": "Pendiente de firma",
+        "signed": "Firmada",
+        "outdated": "Cambios por firmar"
+      },
+      "sign": "Firmar",
+      "noDid": "Ninguno hasta que se firme",
+      "signTitle": "Firmar {name}",
+      "firstLead": "Un admin la firma desde su wallet de Almena; eso crea su DID.",
+      "lead": "Su documento DID ha cambiado: firma la nueva versión desde tu wallet de Almena."
+    },
+    "attention": {
+      "title": "Pendiente",
+      "nothing": "No hay nada pendiente.",
+      "noWallet": "Vincula tu wallet de Almena para firmar.",
+      "linkWallet": "Vincular wallet",
+      "more": "y {count} más"
+    },
+    "json": {
+      "published": "Documento publicado",
+      "publishedHint": "Firmado y servido por su log.",
+      "toSign": "Documento por firmar",
+      "pendingHint": "Sale cuando un admin lo firma.",
+      "outdatedHint": "Difiere del publicado en: {fields}."
+    },
+    "billing": {
+      "title": "Facturación",
+      "soon": "La facturación está en camino."
+    },
+    "domains": {
+      "title": "Dominios",
+      "hint": "Probados por DNS, entran en el documento DID de la cuenta.",
+      "empty": "Aún no hay dominios.",
+      "verified": "Verificado",
+      "notVerified": "Sin verificar",
+      "remove": "Quitar",
+      "type": "Tipo",
+      "name": "Nombre",
+      "value": "Valor",
+      "recordHint": "Añade este registro a tu DNS y comprueba.",
+      "check": "Comprobar",
+      "add": "Vincular un dominio",
+      "addButton": "Añadir",
+      "addLead": "Después viene su registro DNS: publícalo y comprueba.",
+      "cancel": "Cancelar",
+      "added": "Añadido",
+      "record": "Registro DNS",
+      "errors": {
+        "domainRequired": "Escribe un dominio.",
+        "domainInvalid": "Escribe un dominio, como acme.com.",
+        "domainExists": "Ya está vinculado.",
+        "recordNotFound": "El registro aún no está. El DNS puede tardar un poco.",
+        "dnsUnavailable": "El DNS no respondió. Inténtalo de nuevo en un momento.",
+        "notAdmin": "Solo los admins pueden cambiar los dominios.",
         "unavailable": "No se puede contactar con el registro. Inténtalo de nuevo en un momento."
       }
     }
@@ -418,5 +478,26 @@
   "footer": {
     "rights": "Almena Network",
     "site": "almena.network"
+  },
+  "wallet": {
+    "signInTitle": "Continuar con Almena",
+    "linkTitle": "Vincular tu wallet de Almena",
+    "lead": "Escanea el código con tu wallet de Almena, o abre el wallet en este dispositivo.",
+    "qr": "Código para el wallet de Almena",
+    "open": "Abrir en el wallet",
+    "waiting": "Esperando a tu wallet…",
+    "expiresIn": "El código caduca en {time}.",
+    "expired": "El código ha caducado.",
+    "retry": "Código nuevo",
+    "failed": "No se puede contactar con el registro. Inténtalo de nuevo en un momento.",
+    "other": "Usar otra forma de entrar",
+    "errors": {
+      "no_signers": "Ningún admin de esta cuenta tiene aún un wallet de Almena vinculado.",
+      "not_a_signer": "Vincula tu wallet de Almena a tu perfil para firmar.",
+      "up_to_date": "Nada que firmar: está al día.",
+      "tenant_pending": "El DID de la cuenta aún no está firmado.",
+      "identity_pending": "Su DID aún no está firmado: fírmalo primero.",
+      "identity_outdated": "Su DID aún no incluye tu clave: vuelve a firmarlo primero."
+    }
   }
 }

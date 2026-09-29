@@ -1,9 +1,11 @@
 "use client";
 
+import { TrashIcon } from "lucide-react";
 import Link from "next/link";
 import { useActionState } from "react";
 
-import { TrashIcon } from "@/app/components/icons";
+import { Alert, AlertDescription } from "@/app/components/ui/alert";
+import { Button } from "@/app/components/ui/button";
 import { useI18n } from "@/app/i18n/client";
 import { deleteItem, type PublicationState } from "@/app/lib/directory-actions";
 
@@ -24,25 +26,18 @@ export function DeleteForm({
   return (
     <form action={action}>
       {state.failed && !pending && (
-        <p className="alert" role="alert">
-          {copy.failed}
-        </p>
+        <Alert variant="destructive" role="alert">
+          <AlertDescription>{copy.failed}</AlertDescription>
+        </Alert>
       )}
-      <div className="form__actions">
-        <Link
-          className="button button--ghost"
-          href={`/dashboard/${section}/${id}`}
-        >
-          {copy.cancel}
-        </Link>
-        <button
-          className="button button--danger"
-          type="submit"
-          disabled={pending}
-        >
+      <div className="flex justify-end gap-2">
+        <Button asChild variant="ghost">
+          <Link href={`/dashboard/${section}/${id}`}>{copy.cancel}</Link>
+        </Button>
+        <Button type="submit" variant="danger" disabled={pending}>
           <TrashIcon />
           {copy.delete}
-        </button>
+        </Button>
       </div>
     </form>
   );

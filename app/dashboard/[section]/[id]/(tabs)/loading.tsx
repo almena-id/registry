@@ -1,3 +1,4 @@
+import { Card } from "@/app/components/ui/card";
 import { getI18n } from "@/app/i18n/server";
 
 /**
@@ -7,8 +8,8 @@ import { getI18n } from "@/app/i18n/server";
 export default async function TabLoading() {
   const { t } = await getI18n();
   return (
-    <div className="card identity__card" aria-busy="true">
-      <p className="facts__empty">{t.dashboard.detail.loading}</p>
-    </div>
+    <Card className="min-w-0 gap-0 p-5" aria-busy="true">
+      <p className="text-faint">{t.dashboard.detail.loading}</p>
+    </Card>
   );
 }

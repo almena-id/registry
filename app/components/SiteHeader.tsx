@@ -8,34 +8,40 @@ import { TimeZoneSelector } from "./TimeZoneSelector";
 import { UserMenu } from "./UserMenu";
 
 /**
- * The bar across the top. Signed in (`email`), it also carries the tenant
+ * The bar across the top. Signed in (`account`: how the person reads), it also carries the tenant
  * the dashboard works in, the time zone every date is shown in and, in the
  * corner, the account menu; public pages have none of them.
  */
 export function SiteHeader({
   t,
   timeZone,
-  email,
+  account,
   tenants = [],
+  tenant = null,
 }: {
   t: Dictionary;
   timeZone?: string;
-  email?: string;
+  account?: string;
   tenants?: Tenant[];
+  tenant?: Tenant | null;
 }) {
   return (
-    <header className="site-header">
-      <div className="site-header__inner">
-        <Link href="/" className="brand" aria-label={t.app.name}>
+    <header className="sticky top-0 z-10 border-b bg-background/80 backdrop-blur-md">
+      <div className="page-frame flex flex-wrap items-center justify-between gap-x-4 gap-y-2 py-3">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-2.5 text-[17px] tracking-tight whitespace-nowrap"
+          aria-label={t.app.name}
+        >
           <Logo size={28} />
-          <span className="brand__name">
-            Almena <strong>Registry</strong>
+          <span>
+            Almena <strong className="font-semibold">Registry</strong>
           </span>
         </Link>
-        <div className="site-header__controls">
-          {email && <TenantSelector tenants={tenants} />}
+        <div className="flex flex-none items-center gap-2">
+          {account && <TenantSelector tenants={tenants} current={tenant} />}
           {timeZone && <TimeZoneSelector timeZone={timeZone} />}
-          {email && <UserMenu email={email} />}
+          {account && <UserMenu account={account} />}
         </div>
       </div>
     </header>

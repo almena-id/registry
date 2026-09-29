@@ -1,9 +1,13 @@
 "use client";
 
+import { KeyIcon } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { KeyIcon } from "@/app/components/icons";
+import { Alert, AlertDescription } from "@/app/components/ui/alert";
+import { Badge } from "@/app/components/ui/badge";
+import { Button } from "@/app/components/ui/button";
+import { Card } from "@/app/components/ui/card";
 import { useI18n } from "@/app/i18n/client";
 import { loadMore } from "@/app/lib/directory-actions";
 import {
@@ -13,6 +17,13 @@ import {
   type Section,
 } from "@/app/lib/directory-types";
 import { formatDateTime } from "@/app/lib/format";
+
+/** A signature: signed is the brand's, pending waits, outdated warns. */
+const SIGNATURE_BADGE = {
+  signed: "brand",
+  pending: "pending",
+  outdated: "danger",
+} as const;
 
 /**
  * The list keeps going as it is scrolled: when the marker under the last row
@@ -32,6 +43,8 @@ export function InfiniteList({
 }) {
   const { t } = useI18n();
   const copy = t.dashboard.items;
+  const publication = t.dashboard.publication;
+  const signature = t.dashboard.signature;
   const [items, setItems] = useState<Item[]>(initial?.items ?? []);
   const [cursor, setCursor] = useState<string | null>(
     initial?.next_cursor ?? null,
@@ -76,93 +89,125 @@ export function InfiniteList({
 
   if (initial === null) {
     return (
-      <div className="card list list--empty">
-        <p className="alert" role="alert">
-          {copy.errors.unavailable}
-        </p>
-      </div>
+      <Card className="gap-0 px-5 py-10 text-center">
+        <Alert variant="destructive" role="alert">
+          <AlertDescription>{copy.errors.unavailable}</AlertDescription>
+        </Alert>
+      </Card>
     );
   }
 
   if (items.length === 0) {
     return (
-      <div className="card list list--empty">
-        <p className="list__empty">{t.dashboard.sections[section].empty}</p>
-      </div>
+      <Card className="gap-0 px-5 py-10 text-center">
+        <p className="text-faint">{t.dashboard.sections[section].empty}</p>
+      </Card>
     );
   }
 
   return (
-    <div className="card list">
-      <ul className="list__rows">
+    <Card className="gap-0 py-0">
+      <ul className="flex flex-col">
         {items.map((item) => (
-          <li key={item.id} className="list__row">
-            <div className="list__main">
+          <li
+            key={item.id}
+            className="flex items-center justify-between gap-4 border-t px-5 py-3.5 first:border-t-0 max-sm:flex-col max-sm:items-start max-sm:gap-1"
+          >
+            <div className="flex min-w-0 flex-col gap-0.5">
               {opens(section) ? (
                 // Identities and mediators open: their DID, and what can change.
                 <Link
-                  className="list__name list__link"
+                  className="font-semibold hover:text-primary hover:underline"
                   href={`/dashboard/${section}/${item.id}`}
                 >
                   {item.name}
                 </Link>
               ) : (
-                <span className="list__name">{item.name}</span>
+                <span className="font-semibold">{item.name}</span>
               )}
               {item.description && (
-                <span className="list__description">{item.description}</span>
+                <span className="truncate text-sm text-muted-foreground">
+                  {item.description}
+                </span>
               )}
               {item.url && (
-                <span className="list__description list__mono">{item.url}</span>
+                <span className="truncate font-mono text-[13px] text-muted-foreground">
+                  {item.url}
+                </span>
               )}
               {item.identity && (
-                <span className="list__tags">
-                  <span className="tag tag--identity" title={copy.identity}>
-                    <KeyIcon size={12} />
+                <span className="mt-0.5 flex flex-wrap gap-1.5">
+                  <Badge variant="muted" title={copy.identity}>
+                    <KeyIcon />
                     {item.identity.name}
-                  </span>
+                  </Badge>
                   {item.mediator && (
-                    <span className="tag" title={copy.mediator}>
+                    <Badge variant="muted" title={copy.mediator}>
                       {copy.mediator} · {item.mediator.name}
-                    </span>
+                    </Badge>
                   )}
                 </span>
               )}
               {item.used_by && (
-                <span className="list__tags">
+                <span className="mt-0.5 flex flex-wrap gap-1.5">
                   {item.used_by.length === 0 ? (
-                    <span className="tag tag--invited">{copy.unused}</span>
+                    <Badge variant="pending">{copy.unused}</Badge>
                   ) : (
                     item.used_by.map((use) => (
-                      <span key={use.id} className="tag">
-                        {copy.usedBy[use.kind]} · {use.name}
-                      </span>
+                      <Badge key={use.id} variant="muted">
+                        {copy.usedBy[use.kind]} ·{" "}
+                        {use.name || t.header.tenant.unnamed}
+                      </Badge>
                     ))
                   )}
                 </span>
               )}
             </div>
-            <time
-              className="list__date"
-              dateTime={item.created_at}
-              title={copy.created}
-            >
-              {formatDateTime(item.created_at, locale, timeZone)}
-            </time>
+            {/* Where it stands, at a glance: published or not, and its DID's signature. */}
+            <div className="flex flex-none flex-col items-end gap-1">
+              <span className="flex flex-wrap justify-end gap-1.5">
+                {section !== "identities" && (
+                  <Badge variant={item.published_at ? "brand" : "muted"}>
+                    {item.published_at ? publication.published : publication.draft}
+                  </Badge>
+                )}
+                {item.signature && (
+                  <Badge variant={SIGNATURE_BADGE[item.signature]}>
+                    {signature.status[item.signature]}
+                  </Badge>
+                )}
+              </span>
+              <time
+                className="flex-none text-[13px] text-faint tabular-nums"
+                dateTime={item.created_at}
+                title={copy.created}
+              >
+                {formatDateTime(item.created_at, locale, timeZone)}
+              </time>
+            </div>
           </li>
         ))}
       </ul>
-      <div ref={marker} className="list__foot" aria-live="polite">
-        {loading && <span className="list__status">{copy.loading}</span>}
+      <div ref={marker} className="min-h-px" aria-live="polite">
+        {loading && (
+          <span className="block border-t px-5 py-3 text-center text-sm text-muted-foreground">
+            {copy.loading}
+          </span>
+        )}
         {failed && cursor && (
-          <span className="list__status">
+          <span className="block border-t px-5 py-3 text-center text-sm text-muted-foreground">
             {copy.loadError}{" "}
-            <button type="button" className="link" onClick={() => void next()}>
+            <Button
+              type="button"
+              variant="link"
+              className="h-auto p-0"
+              onClick={() => void next()}
+            >
               {copy.retry}
-            </button>
+            </Button>
           </span>
         )}
       </div>
-    </div>
+    </Card>
   );
 }

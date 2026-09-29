@@ -2,6 +2,11 @@
 
 import { useActionState } from "react";
 
+import { Alert, AlertDescription } from "@/app/components/ui/alert";
+import { Button } from "@/app/components/ui/button";
+import { Card } from "@/app/components/ui/card";
+import { Input } from "@/app/components/ui/input";
+import { Label } from "@/app/components/ui/label";
 import { useI18n } from "@/app/i18n/client";
 import type { Provider } from "@/app/lib/api";
 import { authenticate, type AuthState } from "@/app/lib/auth-actions";
@@ -25,84 +30,104 @@ export function AuthForm({
   const onCode = state.step === "code";
 
   return (
-    <div className="auth">
-      <form className="card auth__card" action={action} noValidate>
-        <div className="auth__head">
-          <h1 className="auth__title">{onCode ? t.auth.codeTitle : t.auth.title}</h1>
-          <p className="auth__lead">
-            {onCode ? t.auth.codeLead.replace("{email}", state.email ?? "") : t.auth.lead}
-          </p>
-        </div>
+    <div className="flex flex-1 flex-col items-center justify-center gap-4">
+      <Card className="w-full max-w-[400px] gap-0 px-7 py-8">
+        <form className="flex flex-col gap-[18px]" action={action} noValidate>
+          <div className="flex flex-col gap-1.5">
+            <h1 className="text-2xl font-bold tracking-[-0.015em]">
+              {onCode ? t.auth.codeTitle : t.auth.title}
+            </h1>
+            <p className="text-[15px] wrap-anywhere text-muted-foreground">
+              {onCode ? t.auth.codeLead.replace("{email}", state.email ?? "") : t.auth.lead}
+            </p>
+          </div>
 
-        {errors.form && (
-          <p className="alert" role="alert">
-            {error(errors.form)}
-          </p>
-        )}
-        {onCode && state.resent && !errors.code && (
-          <p className="notice" role="status">
-            {t.auth.resent}
-          </p>
-        )}
+          {errors.form && (
+            <Alert variant="destructive" role="alert">
+              <AlertDescription>{error(errors.form)}</AlertDescription>
+            </Alert>
+          )}
+          {onCode && state.resent && !errors.code && (
+            <Alert variant="notice" role="status">
+              <AlertDescription>{t.auth.resent}</AlertDescription>
+            </Alert>
+          )}
 
-        {onCode ? (
-          <>
-            <input type="hidden" name="email" value={state.email} />
-            <Field
-              key="code"
-              label={t.auth.code}
-              name="code"
-              className="field__input field__input--code"
-              inputMode="numeric"
-              autoComplete="one-time-code"
-              pattern="\d{6}"
-              maxLength={6}
-              autoFocus
-              error={error(errors.code)}
-            />
-            <button
-              className="button button--primary button--block"
-              type="submit"
-              name="intent"
-              value="verify"
-              disabled={pending}
-            >
-              {t.auth.verify}
-            </button>
-            <div className="auth__links">
-              <button className="link" type="submit" name="intent" value="resend" disabled={pending}>
-                {t.auth.resend}
-              </button>
-              <button className="link" type="submit" name="intent" value="change" disabled={pending}>
-                {t.auth.changeEmail}
-              </button>
-            </div>
-          </>
-        ) : (
-          <>
-            <SocialButtons providers={providers} />
-            <Field
-              key="email"
-              label={t.auth.email}
-              name="email"
-              type="email"
-              autoComplete="email"
-              autoFocus
-              defaultValue={state.email}
-              error={error(errors.email)}
-            />
-            <button
-              className="button button--primary button--block"
-              type="submit"
-              name="intent"
-              value="send"
-              disabled={pending}
-            >
-              {t.auth.sendCode}
-            </button>
-          </>
-        )}
-      </form>
+          {onCode ? (
+            <>
+              <input type="hidden" name="email" value={state.email} />
+              <Field
+                key="code"
+                label={t.auth.code}
+                name="code"
+                className="h-14 text-center text-[26px] tracking-[0.4em] tabular-nums md:text-[26px]"
+                inputMode="numeric"
+                autoComplete="one-time-code"
+                pattern="\d{6}"
+                maxLength={6}
+                autoFocus
+                error={error(errors.code)}
+              />
+              <Button
+                className="w-full"
+                size="lg"
+                type="submit"
+                name="intent"
+                value="verify"
+                disabled={pending}
+              >
+                {t.auth.verify}
+              </Button>
+              <div className="flex flex-wrap justify-between gap-2">
+                <Button
+                  variant="link"
+                  className="h-auto p-0"
+                  type="submit"
+                  name="intent"
+                  value="resend"
+                  disabled={pending}
+                >
+                  {t.auth.resend}
+                </Button>
+                <Button
+                  variant="link"
+                  className="h-auto p-0"
+                  type="submit"
+                  name="intent"
+                  value="change"
+                  disabled={pending}
+                >
+                  {t.auth.changeEmail}
+                </Button>
+              </div>
+            </>
+          ) : (
+            <>
+              <SocialButtons providers={providers} />
+              <Field
+                key="email"
+                label={t.auth.email}
+                name="email"
+                type="email"
+                autoComplete="email"
+                autoFocus
+                defaultValue={state.email}
+                error={error(errors.email)}
+              />
+              <Button
+                className="w-full"
+                size="lg"
+                type="submit"
+                name="intent"
+                value="send"
+                disabled={pending}
+              >
+                {t.auth.sendCode}
+              </Button>
+            </>
+          )}
+        </form>
+      </Card>
     </div>
   );
 }
@@ -111,7 +136,7 @@ function Field({
   label,
   name,
   error,
-  className = "field__input",
+  className,
   ...input
 }: {
   label: string;
@@ -119,11 +144,9 @@ function Field({
   error: string | null;
 } & React.InputHTMLAttributes<HTMLInputElement>) {
   return (
-    <div className="field">
-      <label className="field__label" htmlFor={name}>
-        {label}
-      </label>
-      <input
+    <div className="grid gap-1.5">
+      <Label htmlFor={name}>{label}</Label>
+      <Input
         className={className}
         id={name}
         name={name}
@@ -133,7 +156,7 @@ function Field({
         {...input}
       />
       {error && (
-        <p className="field__error" id={`${name}-error`}>
+        <p className="text-[13px] text-destructive" id={`${name}-error`}>
           {error}
         </p>
       )}

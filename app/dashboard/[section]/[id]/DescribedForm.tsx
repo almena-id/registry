@@ -2,6 +2,13 @@
 
 import { useActionState } from "react";
 
+import { Select } from "@/app/components/Select";
+import { Alert, AlertDescription } from "@/app/components/ui/alert";
+import { Button } from "@/app/components/ui/button";
+import { Card } from "@/app/components/ui/card";
+import { Input } from "@/app/components/ui/input";
+import { Label } from "@/app/components/ui/label";
+import { Textarea } from "@/app/components/ui/textarea";
 import { useI18n } from "@/app/i18n/client";
 import { useAnswerRound } from "@/app/lib/use-answer-round";
 import {
@@ -40,100 +47,93 @@ export function DescribedForm({
   const errors = state.errors ?? {};
 
   return (
-    <form className="card form form--wide" action={action} noValidate>
-      {errors.form && (
-        <p className="alert" role="alert">
-          {copy.errors[errors.form]}
-        </p>
-      )}
-      {state.saved && !pending && (
-        <p className="notice" role="status">
-          {own.saved}
-        </p>
-      )}
-
-      <div className="field">
-        <label className="field__label" htmlFor="name">
-          {copy.name}
-        </label>
-        <input
-          className="field__input"
-          id="name"
-          name="name"
-          maxLength={200}
-          required
-          defaultValue={state.name}
-          aria-invalid={errors.name ? true : undefined}
-          aria-describedby={errors.name ? "name-error" : undefined}
-        />
-        {errors.name && (
-          <p className="field__error" id="name-error">
-            {copy.errors[errors.name]}
-          </p>
+    <Card className="max-w-[720px] gap-0 p-6">
+      <form className="flex flex-col gap-[18px]" action={action} noValidate>
+        {errors.form && (
+          <Alert variant="destructive" role="alert">
+            <AlertDescription>{copy.errors[errors.form]}</AlertDescription>
+          </Alert>
         )}
-      </div>
-
-      <div className="field">
-        <label className="field__label" htmlFor="description">
-          {copy.description}{" "}
-          <span className="field__optional">{copy.optional}</span>
-        </label>
-        <textarea
-          className="field__input field__input--area"
-          id="description"
-          name="description"
-          rows={4}
-          maxLength={2000}
-          defaultValue={state.description}
-          aria-invalid={errors.description ? true : undefined}
-          aria-describedby={
-            errors.description ? "description-error" : undefined
-          }
-        />
-        {errors.description && (
-          <p className="field__error" id="description-error">
-            {copy.errors[errors.description]}
-          </p>
+        {state.saved && !pending && (
+          <Alert variant="notice" role="status">
+            <AlertDescription>{own.saved}</AlertDescription>
+          </Alert>
         )}
-      </div>
 
-      <div className="field">
-        <label className="field__label" htmlFor="mediator">
-          {copy.mediator}{" "}
-          <span className="field__optional">{copy.optional}</span>
-        </label>
-        <select
-          key={round}
-          className="field__input"
-          id="mediator"
-          name="mediator"
-          defaultValue={state.mediator ?? ""}
-          aria-invalid={errors.mediator ? true : undefined}
-          aria-describedby={errors.mediator ? "mediator-error" : undefined}
-        >
-          <option value="">{copy.noMediator}</option>
-          {mediators.map((choice) => (
-            <option key={choice.id} value={choice.id}>
-              {choice.name}
-            </option>
-          ))}
-        </select>
-        {errors.mediator && (
-          <p className="field__error" id="mediator-error">
-            {copy.errors[errors.mediator]}
-          </p>
-        )}
-      </div>
+        <div className="grid gap-1.5">
+          <Label htmlFor="name">{copy.name}</Label>
+          <Input
+            id="name"
+            name="name"
+            maxLength={200}
+            required
+            defaultValue={state.name}
+            aria-invalid={errors.name ? true : undefined}
+            aria-describedby={errors.name ? "name-error" : undefined}
+          />
+          {errors.name && (
+            <p className="text-[13px] text-destructive" id="name-error">
+              {copy.errors[errors.name]}
+            </p>
+          )}
+        </div>
 
-      <div className="form__actions">
-        <button
-          className="button button--primary"
-          type="submit"
-          disabled={pending}
-        >
-          {own.save}
-        </button>
-      </div>
-    </form>
+        <div className="grid gap-1.5">
+          <Label htmlFor="description">
+            {copy.description}{" "}
+            <span className="font-normal text-faint">{copy.optional}</span>
+          </Label>
+          <Textarea
+            id="description"
+            name="description"
+            rows={4}
+            maxLength={2000}
+            defaultValue={state.description}
+            aria-invalid={errors.description ? true : undefined}
+            aria-describedby={
+              errors.description ? "description-error" : undefined
+            }
+          />
+          {errors.description && (
+            <p className="text-[13px] text-destructive" id="description-error">
+              {copy.errors[errors.description]}
+            </p>
+          )}
+        </div>
+
+        <div className="grid gap-1.5">
+          <Label htmlFor="mediator">
+            {copy.mediator}{" "}
+            <span className="font-normal text-faint">{copy.optional}</span>
+          </Label>
+          <Select
+            key={round}
+            id="mediator"
+            name="mediator"
+            defaultValue={state.mediator ?? ""}
+            aria-invalid={errors.mediator ? true : undefined}
+            aria-describedby={errors.mediator ? "mediator-error" : undefined}
+            options={[
+              { value: "", label: copy.noMediator },
+              ...mediators.map((choice) => ({
+                value: choice.id,
+                label: choice.name,
+              })),
+            ]}
+          />
+          {errors.mediator && (
+            <p className="text-[13px] text-destructive" id="mediator-error">
+              {copy.errors[errors.mediator]}
+            </p>
+          )}
+        </div>
+
+        <div className="flex justify-end gap-2">
+          <Button type="submit" disabled={pending}>
+            {own.save}
+          </Button>
+        </div>
+      </form>
+    </Card>
   );
 }

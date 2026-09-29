@@ -1,89 +1,95 @@
 "use client";
 
-import { useId } from "react";
+import { BuildingIcon, CheckIcon, ChevronsUpDownIcon } from "lucide-react";
+import { useState, useTransition } from "react";
 
+import { Button } from "@/app/components/ui/button";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandItem,
+  CommandList,
+} from "@/app/components/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@/app/components/ui/popover";
 import { useI18n } from "@/app/i18n/client";
 import type { Tenant } from "@/app/lib/api";
-import {
-  BadgeCheckIcon,
-  BuildingIcon,
-  CheckIcon,
-  ChevronsUpDownIcon,
-} from "./icons";
-import { usePopover } from "./usePopover";
+import { chooseTenant } from "@/app/lib/tenant-actions";
+import { cn } from "@/app/lib/utils";
 
 /**
- * The tenant everything in the dashboard is scoped to. Every account is
- * created with one, so the oldest is the one worked in; choosing another
- * arrives when an account can belong to more than one.
+ * The tenant everything in the dashboard is scoped to. An account belongs to
+ * one or more (its own, and those it was invited to); choosing one keeps it
+ * in a cookie and goes back to the overview.
  */
-export function TenantSelector({ tenants }: { tenants: Tenant[] }) {
+export function TenantSelector({
+  tenants,
+  current,
+}: {
+  tenants: Tenant[];
+  current: Tenant | null;
+}) {
   const { t } = useI18n();
   const copy = t.header.tenant;
-  const { open, setOpen, root, trigger } = usePopover();
-  const listId = useId();
-  const current = tenants[0];
+  const [open, setOpen] = useState(false);
+  const [pending, startTransition] = useTransition();
   const label = (tenant: Tenant) => tenant.name ?? copy.unnamed;
 
-  function close() {
+  function choose(tenant: Tenant) {
     setOpen(false);
-    trigger.current?.focus();
+    if (tenant.id === current?.id) return;
+    startTransition(() => chooseTenant(tenant.id));
   }
 
   return (
-    <div className="popover" ref={root}>
-      <button
-        ref={trigger}
-        type="button"
-        className="ghost-trigger"
-        role="combobox"
-        aria-expanded={open}
-        aria-controls={listId}
-        aria-label={copy.label}
-        title={current ? label(current) : undefined}
-        onClick={() => setOpen(!open)}
-      >
-        <BuildingIcon />
-        <span
-          className={
-            current?.name ? "ghost-trigger__text" : "ghost-trigger__text ghost-trigger__text--muted"
-          }
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button
+          variant="ghost"
+          size="sm"
+          role="combobox"
+          aria-expanded={open}
+          aria-label={copy.label}
+          aria-busy={pending}
+          title={current ? label(current) : undefined}
         >
-          {current ? label(current) : copy.none}
-        </span>
-        {current?.certified && (
-          <span className="certified-mark" title={copy.certified}>
-            <BadgeCheckIcon size={14} />
-            <span className="sr-only">{copy.certified}</span>
+          <BuildingIcon className="text-muted-foreground" />
+          <span
+            className={cn(
+              "hidden max-w-48 truncate sm:inline",
+              !current?.name && "text-muted-foreground",
+            )}
+          >
+            {current ? label(current) : copy.none}
           </span>
-        )}
-        <ChevronsUpDownIcon size={14} />
-      </button>
-
-      {open && (
-        <div className="popover__panel popover__panel--command">
-          <ul className="command__list" id={listId} role="listbox" aria-label={copy.label}>
-            <li role="presentation" className="popover__label">
-              {copy.heading}
-            </li>
-            {tenants.length === 0 && <li className="command__empty">{copy.empty}</li>}
-            {tenants.map((tenant) => (
-              <li
-                key={tenant.id}
-                role="option"
-                aria-selected={tenant.id === current?.id}
-                className="popover__item"
-                onClick={close}
-              >
-                <span className="popover__check" data-on={tenant.id === current?.id}>
-                  <CheckIcon />
-                </span>
-                {label(tenant)}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-    </div>
+          <ChevronsUpDownIcon className="size-3.5 text-muted-foreground" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent align="end" className="w-72 p-0">
+        <Command>
+          <CommandList>
+            <CommandEmpty>{copy.empty}</CommandEmpty>
+            <CommandGroup heading={copy.heading}>
+              {tenants.map((tenant) => (
+                <CommandItem
+                  key={tenant.id}
+                  value={tenant.id}
+                  keywords={[label(tenant)]}
+                  onSelect={() => choose(tenant)}
+                >
+                  <CheckIcon
+                    className={cn(
+                      "text-primary",
+                      tenant.id === current?.id ? "opacity-100" : "opacity-0",
+                    )}
+                  />
+                  {label(tenant)}
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
   );
 }

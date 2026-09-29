@@ -1,9 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import { PlusIcon } from "@/app/components/icons";
+import { PlusIcon } from "lucide-react";
+
+import { Alert, AlertDescription } from "@/app/components/ui/alert";
+import { Badge } from "@/app/components/ui/badge";
+import { Button } from "@/app/components/ui/button";
+import { Card } from "@/app/components/ui/card";
 import { getI18n, getTimeZone } from "@/app/i18n/server";
-import { currentTenants, currentUser } from "@/app/lib/api";
+import { currentTenant, currentUser } from "@/app/lib/api";
 import { formatDateTime } from "@/app/lib/format";
 import { fetchMembers } from "@/app/lib/members";
 
@@ -15,61 +20,63 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function UsersPage() {
   const { locale, t } = await getI18n();
   const copy = t.dashboard.users;
-  const [members, tenants, me, timeZone] = await Promise.all([
+  const [members, tenant, me, timeZone] = await Promise.all([
     fetchMembers(),
-    currentTenants(),
+    currentTenant(),
     currentUser(),
     getTimeZone(),
   ]);
-  const isAdmin = tenants[0]?.role === "admin";
+  const isAdmin = tenant?.role === "admin";
 
   return (
-    <div className="section">
-      <header className="page-head page-head--actions">
+    <div>
+      <header className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="page-head__title">{copy.title}</h1>
-          <p className="page-head__lead">{copy.lead}</p>
+          <h1 className="text-[28px] font-bold tracking-tight">{copy.title}</h1>
+          <p className="text-muted-foreground">{copy.lead}</p>
         </div>
         {isAdmin && (
-          <Link className="button button--primary" href="/dashboard/users/new">
-            <PlusIcon />
-            {copy.add}
-          </Link>
+          <Button asChild>
+            <Link href="/dashboard/users/new">
+              <PlusIcon />
+              {copy.add}
+            </Link>
+          </Button>
         )}
       </header>
 
       {members === null ? (
-        <div className="card list list--empty">
-          <p className="alert" role="alert">
-            {copy.errors.unavailable}
-          </p>
-        </div>
+        <Card className="gap-0 px-5 py-10 text-center">
+          <Alert variant="destructive" role="alert">
+            <AlertDescription>{copy.errors.unavailable}</AlertDescription>
+          </Alert>
+        </Card>
       ) : (
-        <div className="card list">
-          <ul className="list__rows">
+        <Card className="gap-0 py-0">
+          <ul>
             {members.map((member) => (
               <li
-                key={`${member.status}:${member.email}`}
-                className="list__row"
+                key={`${member.status}:${member.user_id ?? member.email}`}
+                className="flex items-center justify-between gap-4 border-t px-5 py-3.5 first:border-t-0 max-sm:flex-col max-sm:items-start max-sm:gap-1"
               >
-                <div className="list__main">
-                  <span className="list__name">
-                    {member.email}
-                    {member.email === me?.email && (
-                      <span className="list__you"> · {copy.you}</span>
+                <div className="flex min-w-0 flex-col gap-0.5">
+                  <span className="font-semibold">
+                    {member.email ?? member.alias ?? copy.noEmail}
+                    {member.user_id !== null && member.user_id === me?.id && (
+                      <span className="font-normal text-faint"> · {copy.you}</span>
                     )}
                   </span>
-                  <span className="list__tags">
-                    <span className={`tag tag--${member.role}`}>
+                  <span className="mt-0.5 flex flex-wrap gap-1.5">
+                    <Badge variant={member.role === "admin" ? "brand" : "muted"}>
                       {copy.roles[member.role]}
-                    </span>
+                    </Badge>
                     {member.status === "invited" && (
-                      <span className="tag tag--invited">{copy.invited}</span>
+                      <Badge variant="pending">{copy.invited}</Badge>
                     )}
                   </span>
                 </div>
                 <time
-                  className="list__date"
+                  className="flex-none text-[13px] text-faint tabular-nums"
                   dateTime={member.since}
                   title={copy.since}
                 >
@@ -78,7 +85,7 @@ export default async function UsersPage() {
               </li>
             ))}
           </ul>
-        </div>
+        </Card>
       )}
     </div>
   );

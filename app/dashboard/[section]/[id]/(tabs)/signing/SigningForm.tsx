@@ -2,6 +2,11 @@
 
 import { useActionState, useState } from "react";
 
+import { Select } from "@/app/components/Select";
+import { Alert, AlertDescription } from "@/app/components/ui/alert";
+import { Button } from "@/app/components/ui/button";
+import { Card } from "@/app/components/ui/card";
+import { Label } from "@/app/components/ui/label";
 import { useI18n } from "@/app/i18n/client";
 import { useAnswerRound } from "@/app/lib/use-answer-round";
 import { saveSigning, type SigningState } from "@/app/lib/directory-actions";
@@ -44,73 +49,66 @@ export function SigningForm({
   const errors = state.errors ?? {};
 
   return (
-    <form className="card form form--wide" action={action} noValidate>
-      {errors.form && (
-        <p className="alert" role="alert">
-          {copy.errors[errors.form]}
-        </p>
-      )}
-      {state.saved && !pending && (
-        <p className="notice" role="status">
-          {copy.saved}
-        </p>
-      )}
+    <Card className="max-w-[720px] gap-0 p-6">
+      <form className="flex flex-col gap-[18px]" action={action} noValidate>
+        {errors.form && (
+          <Alert variant="destructive" role="alert">
+            <AlertDescription>{copy.errors[errors.form]}</AlertDescription>
+          </Alert>
+        )}
+        {state.saved && !pending && (
+          <Alert variant="notice" role="status">
+            <AlertDescription>{copy.saved}</AlertDescription>
+          </Alert>
+        )}
 
-      <div className="field">
-        <label className="field__label" htmlFor="system">
-          {copy.system}
-        </label>
-        <select
-          key={round}
-          className="field__input"
-          id="system"
-          name="system"
-          defaultValue={state.system}
-          onChange={(event) => setChosen(event.target.value)}
-        >
-          <option value="">{copy.notConfigured}</option>
-          <option value="single_user">{copy.single_user}</option>
-        </select>
-      </div>
-
-      {chosen === "single_user" && (
-        <div className="field">
-          <label className="field__label" htmlFor="signer">
-            {copy.signer}
-          </label>
-          <select
+        <div className="grid gap-1.5">
+          <Label htmlFor="system">{copy.system}</Label>
+          <Select
             key={round}
-            className="field__input"
-            id="signer"
-            name="signer"
-            defaultValue={state.signer}
-            aria-invalid={errors.signer ? true : undefined}
-            aria-describedby={errors.signer ? "signer-error" : undefined}
-          >
-            <option value="">{copy.chooseSigner}</option>
-            {members.map((member) => (
-              <option key={member.id} value={member.id}>
-                {member.label}
-              </option>
-            ))}
-          </select>
-          {errors.signer && (
-            <p className="field__error" id="signer-error">
-              {copy.errors[errors.signer]}
-            </p>
-          )}
+            id="system"
+            name="system"
+            defaultValue={state.system}
+            onChange={setChosen}
+            options={[
+              { value: "", label: copy.notConfigured },
+              { value: "single_user", label: copy.single_user },
+            ]}
+          />
         </div>
-      )}
 
-      <div className="form__actions">
-        <button
-          className="button button--primary"
-          type="submit"
-          disabled={pending}
-        >
-          {copy.save}
-        </button>
-      </div>
-    </form>
+        {chosen === "single_user" && (
+          <div className="grid gap-1.5">
+            <Label htmlFor="signer">{copy.signer}</Label>
+            <Select
+              key={round}
+              id="signer"
+              name="signer"
+              defaultValue={state.signer}
+              aria-invalid={errors.signer ? true : undefined}
+              aria-describedby={errors.signer ? "signer-error" : undefined}
+              options={[
+                { value: "", label: copy.chooseSigner },
+                ...members.map((member) => ({
+                  value: member.id,
+                  label: member.label,
+                })),
+              ]}
+            />
+            {errors.signer && (
+              <p className="text-[13px] text-destructive" id="signer-error">
+                {copy.errors[errors.signer]}
+              </p>
+            )}
+          </div>
+        )}
+
+        <div className="flex justify-end gap-2">
+          <Button type="submit" disabled={pending}>
+            {copy.save}
+          </Button>
+        </div>
+      </form>
+    </Card>
   );
 }

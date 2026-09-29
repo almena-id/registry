@@ -1,11 +1,18 @@
 import { notFound } from "next/navigation";
 
+import { Alert, AlertDescription } from "@/app/components/ui/alert";
+import { Card } from "@/app/components/ui/card";
 import { getI18n } from "@/app/i18n/server";
-import { currentTenants } from "@/app/lib/api";
+import { currentTenant } from "@/app/lib/api";
+import { personLabel } from "@/app/lib/person";
 import { fetchSigning } from "@/app/lib/directory";
 import { fetchMembers } from "@/app/lib/members";
 import { loadItem } from "../../load";
 import { SigningForm } from "./SigningForm";
+
+/** One fact: its name on the left, its value on the right. */
+const FACT =
+  "flex flex-wrap justify-between gap-2 border-t pt-3 text-sm first:border-t-0 first:pt-0";
 
 /**
  * Signing: how an issuer or verifier signs — nobody signs on the server,
@@ -25,66 +32,79 @@ export default async function SigningTab({
   if (!loaded.item) return null;
   const { t } = await getI18n();
   const copy = t.dashboard.signing;
-  const [signing, members, tenants] = await Promise.all([
+  const [signing, members, tenant] = await Promise.all([
     fetchSigning(loaded.section, id),
     fetchMembers(),
-    currentTenants(),
+    currentTenant(),
   ]);
   if (!signing)
     return (
-      <div className="card identity__card">
-        <p className="alert" role="alert">
-          {copy.errors.unavailable}
-        </p>
-      </div>
+      <Card className="min-w-0 gap-0 p-5">
+        <Alert variant="destructive" role="alert">
+          <AlertDescription>{copy.errors.unavailable}</AlertDescription>
+        </Alert>
+      </Card>
     );
 
   const signer = signing.signer;
   const signerLabel = signer
-    ? `${signer.alias ?? signer.email}${signer.alias ? ` · ${signer.email}` : ""}${
+    ? `${personLabel(signer, t.dashboard.users.noEmail)}${
         signer.member ? "" : ` (${copy.leftTenant})`
       }`
     : null;
+  // Without a wallet there is no key for the DID document: what they sign cannot be checked.
+  const noWallet =
+    signing.system === "single_user" && signer?.member && !signer.wallet ? (
+      <Alert variant="notice" role="status" className="mb-3 max-w-[560px]">
+        <AlertDescription>{copy.noWallet}</AlertDescription>
+      </Alert>
+    ) : null;
 
-  if (tenants[0]?.role !== "admin")
+  if (tenant?.role !== "admin")
     return (
-      <div className="card identity__card">
-        <dl className="facts">
-          <div>
-            <dt>{copy.system}</dt>
-            {signing.system ? (
-              <dd>{copy[signing.system]}</dd>
-            ) : (
-              <dd className="facts__empty">{copy.notConfigured}</dd>
-            )}
-          </div>
-          {signing.system === "single_user" && (
-            <div>
-              <dt>{copy.signer}</dt>
-              <dd>{signerLabel}</dd>
+      <>
+        {noWallet}
+        <Card className="min-w-0 gap-0 p-5">
+          <dl className="grid gap-3">
+            <div className={FACT}>
+              <dt className="text-muted-foreground">{copy.system}</dt>
+              {signing.system ? (
+                <dd>{copy[signing.system]}</dd>
+              ) : (
+                <dd className="text-faint">{copy.notConfigured}</dd>
+              )}
             </div>
-          )}
-        </dl>
-      </div>
+            {signing.system === "single_user" && (
+              <div className={FACT}>
+                <dt className="text-muted-foreground">{copy.signer}</dt>
+                <dd>{signerLabel}</dd>
+              </div>
+            )}
+          </dl>
+        </Card>
+      </>
     );
 
   const choices = (members ?? [])
     .filter((member) => member.status === "member" && member.user_id)
     .map((member) => ({
       id: member.user_id!,
-      label: member.alias ? `${member.alias} · ${member.email}` : member.email,
+      label: personLabel(member, t.dashboard.users.noEmail),
     }));
   // A signer who left stays visible until somebody else is chosen.
   if (signer && !choices.some((choice) => choice.id === signer.id))
     choices.push({ id: signer.id, label: signerLabel! });
 
   return (
-    <SigningForm
-      section={loaded.section}
-      id={id}
-      system={signing.system ?? ""}
-      signer={signer?.id ?? ""}
-      members={choices}
-    />
+    <>
+      {noWallet}
+      <SigningForm
+        section={loaded.section}
+        id={id}
+        system={signing.system ?? ""}
+        signer={signer?.id ?? ""}
+        members={choices}
+      />
+    </>
   );
 }

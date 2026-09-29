@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { getI18n } from "@/app/i18n/server";
-import { currentTenants } from "@/app/lib/api";
+import { currentTenant } from "@/app/lib/api";
 import { DetailHead, NotFound } from "../Detail";
 import { DetailTabs } from "../DetailTabs";
 import { isKind, ITEM, loadItem } from "../load";
@@ -37,17 +37,17 @@ export default async function DetailLayout({
 
   if (!item)
     return (
-      <div className="section identity">
+      <div className="grid gap-4">
         <DetailHead back={back} backLabel={own.back} />
         <NotFound message={own.notFound} />
       </div>
     );
 
-  const admin = (await currentTenants())[0]?.role === "admin";
+  const admin = (await currentTenant())?.role === "admin";
   const resource = isKind(section) && "published_at" in item;
 
   return (
-    <div className="section identity">
+    <div className="grid gap-4">
       <DetailHead
         back={back}
         backLabel={own.back}

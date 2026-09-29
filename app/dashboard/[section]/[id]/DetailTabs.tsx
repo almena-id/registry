@@ -1,8 +1,6 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-
+import { Tabs } from "@/app/components/Tabs";
 import { useI18n } from "@/app/i18n/client";
 
 /**
@@ -22,26 +20,15 @@ export function DetailTabs({
 }) {
   const { t } = useI18n();
   const copy = t.dashboard.detail;
-  const pathname = usePathname();
-  const tabs = [
-    { href: base, label: copy.summary },
-    ...(editable ? [{ href: `${base}/data`, label: copy.data }] : []),
-    ...(signs ? [{ href: `${base}/signing`, label: copy.signing }] : []),
-    { href: `${base}/json`, label: copy.json },
-  ];
-
   return (
-    <nav className="tabs" aria-label={copy.tabs}>
-      {tabs.map(({ href, label }) => (
-        <Link
-          key={href}
-          href={href}
-          className="tabs__item"
-          aria-current={pathname === href ? "page" : undefined}
-        >
-          {label}
-        </Link>
-      ))}
-    </nav>
+    <Tabs
+      label={copy.tabs}
+      tabs={[
+        { href: base, label: copy.summary },
+        ...(editable ? [{ href: `${base}/data`, label: copy.data }] : []),
+        ...(signs ? [{ href: `${base}/signing`, label: copy.signing }] : []),
+        { href: `${base}/json`, label: copy.json },
+      ]}
+    />
   );
 }

@@ -27,10 +27,12 @@ export default async function NewItemPage({
   const mediators = described ? ((await fetchMediatorChoices()) ?? []) : null;
 
   return (
-    <div className="section">
-      <header className="page-head">
-        <h1 className="page-head__title">{copy.createTitle}</h1>
-        <p className="page-head__lead">{copy.createLead}</p>
+    <div>
+      <header className="mb-6">
+        <h1 className="text-[28px] font-bold tracking-tight">
+          {copy.createTitle}
+        </h1>
+        <p className="text-muted-foreground">{copy.createLead}</p>
       </header>
       <CreateForm
         section={section}

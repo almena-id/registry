@@ -5,7 +5,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 import type { Dictionary } from "@/app/i18n/config";
-import { api, currentTenants, sessionCookie } from "./api";
+import { api, currentTenant, sessionCookie } from "./api";
 import { fetchPage } from "./directory";
 import {
   hasDescription,
@@ -67,7 +67,7 @@ export async function createItem(
   if (Object.keys(errors).length) return { ...keep, errors };
 
   const token = (await cookies()).get(sessionCookie)?.value;
-  const tenant = (await currentTenants())[0];
+  const tenant = await currentTenant();
   if (!token || !tenant) return { ...keep, errors: { form: "unavailable" } };
   // Issuers, verifiers and mediators get an identity of their own, which the
   // API creates with the same name.
@@ -114,7 +114,7 @@ export async function saveMediator(
   if (Object.keys(errors).length) return { ...keep, errors };
 
   const token = (await cookies()).get(sessionCookie)?.value;
-  const tenant = (await currentTenants())[0];
+  const tenant = await currentTenant();
   if (!token || !tenant) return { ...keep, errors: { form: "unavailable" } };
   const { data, detail } = await api<MediatorDetail>(
     `/tenants/${tenant.id}/mediators/${encodeURIComponent(id)}`,
@@ -162,7 +162,7 @@ export async function saveDescribed(
   if (Object.keys(errors).length) return { ...keep, errors };
 
   const token = (await cookies()).get(sessionCookie)?.value;
-  const tenant = (await currentTenants())[0];
+  const tenant = await currentTenant();
   if (!token || !tenant) return { ...keep, errors: { form: "unavailable" } };
   const { data, detail } = await api<DescribedDetail>(
     `/tenants/${tenant.id}/${section}/${encodeURIComponent(id)}`,
@@ -192,22 +192,33 @@ export async function saveDescribed(
   };
 }
 
-export type PublicationState = { published: boolean; failed?: boolean };
+/** `pendingIdentity`: refused because its identity is not signed yet. */
+export type PublicationState = {
+  published: boolean;
+  failed?: boolean;
+  pendingIdentity?: boolean;
+};
 
-/** Publish one (its DID resolves, the catalogue lists it) or take it back. */
+/**
+ * Take one back (its DID stops resolving, the catalogue drops it, its
+ * `whois.vp` goes). Publishing is endorsing, signed from a wallet: see the
+ * publish screen.
+ */
 export async function setPublished(
   section: "issuers" | "verifiers" | "mediators",
   id: string,
   state: PublicationState,
 ): Promise<PublicationState> {
   const token = (await cookies()).get(sessionCookie)?.value;
-  const tenant = (await currentTenants())[0];
+  const tenant = await currentTenant();
   if (!token || !tenant) return { ...state, failed: true };
   const verb = state.published ? "unpublish" : "publish";
-  const { data } = await api<DescribedDetail>(
+  const { data, detail } = await api<DescribedDetail>(
     `/tenants/${tenant.id}/${section}/${encodeURIComponent(id)}/${verb}`,
     { method: "POST", token },
   );
+  if (detail === "identity_pending")
+    return { ...state, pendingIdentity: true };
   if (!data) return { ...state, failed: true };
   revalidatePath(`/dashboard/${section}/${id}`);
   return { published: data.published_at !== null };
@@ -220,7 +231,7 @@ export async function deleteItem(
   _: PublicationState,
 ): Promise<PublicationState> {
   const token = (await cookies()).get(sessionCookie)?.value;
-  const tenant = (await currentTenants())[0];
+  const tenant = await currentTenant();
   if (!token || !tenant) return { ..._, failed: true };
   const { status } = await api(
     `/tenants/${tenant.id}/${section}/${encodeURIComponent(id)}`,
@@ -255,7 +266,7 @@ export async function saveSigning(
     return { ...keep, errors: { signer: "signerRequired" } };
 
   const token = (await cookies()).get(sessionCookie)?.value;
-  const tenant = (await currentTenants())[0];
+  const tenant = await currentTenant();
   if (!token || !tenant) return { ...keep, errors: { form: "unavailable" } };
   const body =
     system === "single_user"

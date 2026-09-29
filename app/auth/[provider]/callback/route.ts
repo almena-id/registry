@@ -2,8 +2,19 @@ import { cookies } from "next/headers";
 import { NextResponse, type NextRequest } from "next/server";
 
 import { getLocale } from "@/app/i18n/server";
-import { api, isProviderId, type SignedIn } from "@/app/lib/api";
-import { keepSession, oauthStateCookie } from "@/app/lib/session";
+import {
+  api,
+  isProviderId,
+  sessionCookie,
+  type LinkResult,
+  type SignedIn,
+} from "@/app/lib/api";
+import {
+  keepMove,
+  keepSession,
+  oauthLinkCookie,
+  oauthStateCookie,
+} from "@/app/lib/session";
 
 type Context = RouteContext<"/auth/[provider]/callback">;
 
@@ -17,10 +28,13 @@ export async function GET(request: NextRequest, ctx: Context) {
   const params = request.nextUrl.searchParams;
   const store = await cookies();
   const expected = store.get(oauthStateCookie)?.value;
+  const link = store.get(oauthLinkCookie)?.value === "1";
   store.delete({ name: oauthStateCookie, path: "/auth" });
+  store.delete({ name: oauthLinkCookie, path: "/auth" });
 
+  const back = link ? "/dashboard/account" : "/login";
   const failed = (error: string) =>
-    NextResponse.redirect(new URL(`/login?error=${error}`, request.nextUrl));
+    NextResponse.redirect(new URL(`${back}?error=${error}`, request.nextUrl));
   if (!isProviderId(provider)) return failed("provider_error");
   // The person closed the provider's screen or said no.
   if (params.get("error")) return failed("provider_cancelled");
@@ -28,6 +42,21 @@ export async function GET(request: NextRequest, ctx: Context) {
   const code = params.get("code");
   const state = params.get("state");
   if (!code || !state || !expected || state !== expected) return failed("invalid_state");
+
+  if (link) {
+    const token = store.get(sessionCookie)?.value;
+    if (!token) return NextResponse.redirect(new URL("/login", request.nextUrl));
+    const { data, detail } = await api<LinkResult>(`/auth/me/accounts/${provider}/callback`, {
+      method: "POST",
+      body: { code, state },
+      token,
+    });
+    if (!data) return failed(detail ?? "unavailable");
+    if (data.status === "linked")
+      return NextResponse.redirect(new URL("/dashboard/account?linked=1", request.nextUrl));
+    await keepMove(data.move_ticket);
+    return NextResponse.redirect(new URL("/dashboard/account/taken", request.nextUrl));
+  }
 
   const { data, detail } = await api<SignedIn>(`/auth/oauth/${provider}/callback`, {
     method: "POST",

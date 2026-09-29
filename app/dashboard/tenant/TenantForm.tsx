@@ -2,6 +2,12 @@
 
 import { useActionState } from "react";
 
+import { Select } from "@/app/components/Select";
+import { Alert, AlertDescription } from "@/app/components/ui/alert";
+import { Button } from "@/app/components/ui/button";
+import { Card } from "@/app/components/ui/card";
+import { Input } from "@/app/components/ui/input";
+import { Label } from "@/app/components/ui/label";
 import { useI18n } from "@/app/i18n/client";
 import { useAnswerRound } from "@/app/lib/use-answer-round";
 import type { Item } from "@/app/lib/directory-types";
@@ -34,99 +40,98 @@ export function TenantForm({
   const errors = state.errors ?? {};
 
   return (
-    <form className="card form form--wide" action={action} noValidate>
-      {!editable && (
-        <p className="notice" role="status">
-          {copy.readOnly}
-        </p>
-      )}
-      {errors.form && (
-        <p className="alert" role="alert">
-          {copy.errors[errors.form]}
-        </p>
-      )}
-      {state.saved && !pending && (
-        <p className="notice" role="status">
-          {copy.saved}
-        </p>
-      )}
-
-      <div className="field">
-        <label className="field__label" htmlFor="name">
-          {copy.name}
-        </label>
-        <input
-          className="field__input"
-          id="name"
-          name="name"
-          maxLength={200}
-          required
-          readOnly={!editable}
-          defaultValue={state.name}
-          aria-invalid={errors.name ? true : undefined}
-          aria-describedby={errors.name ? "name-error" : undefined}
-        />
-        {errors.name && (
-          <p className="field__error" id="name-error">
-            {copy.errors[errors.name]}
-          </p>
+    <Card className="max-w-[720px] gap-0 p-6">
+      <form className="flex flex-col gap-[18px]" action={action} noValidate>
+        {!editable && (
+          <Alert variant="notice" role="status">
+            <AlertDescription>{copy.readOnly}</AlertDescription>
+          </Alert>
         )}
-      </div>
-
-      <div className="field">
-        <label className="field__label" htmlFor="mediator">
-          {copy.mediator}
-        </label>
-        <select
-          key={round}
-          className="field__input"
-          id="mediator"
-          name="mediator"
-          disabled={!editable}
-          defaultValue={state.mediator}
-          aria-invalid={errors.mediator ? true : undefined}
-          aria-describedby={
-            errors.mediator ? "mediator-error" : "mediator-hint"
-          }
-        >
-          <option value="">
-            {mediators.length ? t.dashboard.items.noMediator : copy.noMediators}
-          </option>
-          {mediators.map((m) => (
-            <option key={m.id} value={m.id}>
-              {m.name}
-            </option>
-          ))}
-        </select>
-        {errors.mediator ? (
-          <p className="field__error" id="mediator-error">
-            {copy.errors[errors.mediator]}
-          </p>
-        ) : (
-          <p className="field__hint" id="mediator-hint">
-            {copy.mediatorHint}
-          </p>
+        {errors.form && (
+          <Alert variant="destructive" role="alert">
+            <AlertDescription>{copy.errors[errors.form]}</AlertDescription>
+          </Alert>
         )}
-      </div>
+        {state.saved && !pending && (
+          <Alert variant="notice" role="status">
+            <AlertDescription>{copy.saved}</AlertDescription>
+          </Alert>
+        )}
 
-      <dl className="facts">
-        <div>
-          <dt title={copy.identityHint}>{copy.identity}</dt>
-          <dd>{identity ?? "—"}</dd>
+        <div className="grid gap-1.5">
+          <Label htmlFor="name">{copy.name}</Label>
+          <Input
+            className={
+              editable
+                ? undefined
+                : "border-dashed bg-transparent text-muted-foreground"
+            }
+            id="name"
+            name="name"
+            maxLength={200}
+            required
+            readOnly={!editable}
+            defaultValue={state.name}
+            aria-invalid={errors.name ? true : undefined}
+            aria-describedby={errors.name ? "name-error" : undefined}
+          />
+          {errors.name && (
+            <p className="text-[13px] text-destructive" id="name-error">
+              {copy.errors[errors.name]}
+            </p>
+          )}
         </div>
-      </dl>
 
-      {editable && (
-        <div className="form__actions">
-          <button
-            className="button button--primary"
-            type="submit"
-            disabled={pending}
-          >
-            {copy.save}
-          </button>
+        <div className="grid gap-1.5">
+          <Label htmlFor="mediator">{copy.mediator}</Label>
+          <Select
+            key={round}
+            id="mediator"
+            name="mediator"
+            disabled={!editable}
+            defaultValue={state.mediator}
+            aria-invalid={errors.mediator ? true : undefined}
+            aria-describedby={
+              errors.mediator ? "mediator-error" : "mediator-hint"
+            }
+            options={[
+              {
+                value: "",
+                label: mediators.length
+                  ? t.dashboard.items.noMediator
+                  : copy.noMediators,
+              },
+              ...mediators.map((m) => ({ value: m.id, label: m.name })),
+            ]}
+          />
+          {errors.mediator ? (
+            <p className="text-[13px] text-destructive" id="mediator-error">
+              {copy.errors[errors.mediator]}
+            </p>
+          ) : (
+            <p className="text-[13px] text-faint" id="mediator-hint">
+              {copy.mediatorHint}
+            </p>
+          )}
         </div>
-      )}
-    </form>
+
+        <dl className="grid gap-3">
+          <div className="flex flex-wrap justify-between gap-2 border-t pt-3 text-sm">
+            <dt className="text-muted-foreground" title={copy.identityHint}>
+              {copy.identity}
+            </dt>
+            <dd>{identity ?? "—"}</dd>
+          </div>
+        </dl>
+
+        {editable && (
+          <div className="flex justify-end gap-2">
+            <Button type="submit" disabled={pending}>
+              {copy.save}
+            </Button>
+          </div>
+        )}
+      </form>
+    </Card>
   );
 }

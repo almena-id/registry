@@ -1,13 +1,30 @@
 import Link from "next/link";
 
+import { Badge } from "@/app/components/ui/badge";
+import { Button } from "@/app/components/ui/button";
+import { Card } from "@/app/components/ui/card";
 import { getI18n, getTimeZone } from "@/app/i18n/server";
+import { currentTenant } from "@/app/lib/api";
+import type { Signed } from "@/app/lib/directory-types";
 import { formatDateTime } from "@/app/lib/format";
 import { ITEM, loadItem } from "../load";
 
+/** One fact: its name on the left, its value on the right. */
+const FACT =
+  "flex flex-wrap justify-between gap-2 border-t pt-3 text-sm first:border-t-0 first:pt-0";
+
+/** A signature: signed is the brand's, pending waits, outdated warns. */
+const SIGNATURE_BADGE = {
+  signed: "brand",
+  pending: "pending",
+  outdated: "danger",
+} as const;
+
 /**
- * Summary: what the item is, to read. An identity's DID, who uses it and
- * where its document is published; an issuer's, verifier's or mediator's DID,
- * identity, description or address, mediator, status and publication.
+ * Summary: what the item is, to read. An identity's DID and where its
+ * signature stands, who uses it and where its log is published; an issuer's,
+ * verifier's or mediator's DID and signature, identity, description or
+ * address, mediator, status and publication. Admins sign from here.
  */
 export default async function SummaryTab({
   params,
@@ -20,9 +37,39 @@ export default async function SummaryTab({
   const own = t.dashboard[ITEM[loaded.section]];
   const items = t.dashboard.items;
   const status = t.dashboard.publication;
+  const signature = t.dashboard.signature;
+  const admin = (await currentTenant())?.role === "admin";
+  // The DID, then where its signature stands, with the way to sign it.
+  const signed = (item: Signed) => (
+    <>
+      <div className={FACT}>
+        <dt className="text-muted-foreground">{own.did}</dt>
+        {item.did ? (
+          <dd className="font-mono text-[13px] break-all">{item.did}</dd>
+        ) : (
+          <dd className="text-faint">{signature.noDid}</dd>
+        )}
+      </div>
+      <div className={FACT}>
+        <dt className="text-muted-foreground">{signature.title}</dt>
+        <dd className="flex flex-wrap items-center gap-2.5">
+          <Badge variant={SIGNATURE_BADGE[item.signature]}>
+            {signature.status[item.signature]}
+          </Badge>
+          {admin && item.signature !== "signed" && (
+            <Button asChild size="sm">
+              <Link href={`/dashboard/${section}/${id}/sign`}>
+                {signature.sign}
+              </Link>
+            </Button>
+          )}
+        </dd>
+      </div>
+    </>
+  );
   const created = (
-    <div>
-      <dt>{own.created}</dt>
+    <div className={FACT}>
+      <dt className="text-muted-foreground">{own.created}</dt>
       <dd>
         <time dateTime={loaded.item.created_at}>
           {formatDateTime(loaded.item.created_at, locale, timeZone)}
@@ -31,16 +78,16 @@ export default async function SummaryTab({
     </div>
   );
   const publishedAt = (url: string | null) => (
-    <div>
-      <dt>{t.dashboard.identity.published}</dt>
+    <div className={FACT}>
+      <dt className="text-muted-foreground">{t.dashboard.identity.published}</dt>
       {url ? (
-        <dd className="facts__mono">
-          <a className="link" href={url} target="_blank" rel="noreferrer">
+        <dd className="font-mono text-[13px] break-all">
+          <a className="text-primary hover:underline" href={url} target="_blank" rel="noreferrer">
             {url}
           </a>
         </dd>
       ) : (
-        <dd className="facts__empty">{status.notPublished}</dd>
+        <dd className="text-faint">{status.notPublished}</dd>
       )}
     </div>
   );
@@ -48,43 +95,42 @@ export default async function SummaryTab({
   if (loaded.section === "identities") {
     const identity = loaded.item;
     return (
-      <div className="card identity__card">
-        <dl className="facts">
-          <div>
-            <dt>{own.did}</dt>
-            <dd className="facts__mono">{identity.did}</dd>
-          </div>
-          <div>
-            <dt>{t.dashboard.identity.usedBy}</dt>
+      <Card className="min-w-0 gap-0 p-5">
+        <dl className="grid gap-3">
+          {signed(identity)}
+          <div className={FACT}>
+            <dt className="text-muted-foreground">
+              {t.dashboard.identity.usedBy}
+            </dt>
             <dd>
               {identity.used_by.length === 0
                 ? items.unused
                 : identity.used_by
-                    .map((use) => `${items.usedBy[use.kind]} · ${use.name}`)
+                    .map(
+                      (use) =>
+                        `${items.usedBy[use.kind]} · ${use.name || t.header.tenant.unnamed}`,
+                    )
                     .join(", ")}
             </dd>
           </div>
           {created}
-          {publishedAt(identity.published ? identity.document_url : null)}
+          {publishedAt(identity.published ? identity.log_url : null)}
         </dl>
-      </div>
+      </Card>
     );
   }
 
   const item = loaded.item;
   const published = Boolean(item.published_at);
   return (
-    <div className="card identity__card">
-      <dl className="facts">
-        <div>
-          <dt>{own.did}</dt>
-          <dd className="facts__mono">{item.did}</dd>
-        </div>
-        <div>
-          <dt>{items.identity}</dt>
+    <Card className="min-w-0 gap-0 p-5">
+      <dl className="grid gap-3">
+        {signed(item)}
+        <div className={FACT}>
+          <dt className="text-muted-foreground">{items.identity}</dt>
           <dd>
             <Link
-              className="link"
+              className="text-primary hover:underline"
               href={`/dashboard/identities/${item.identity.id}`}
             >
               {item.identity.name}
@@ -92,50 +138,71 @@ export default async function SummaryTab({
           </dd>
         </div>
         {loaded.section === "mediators" ? (
-          <div>
-            <dt>{items.url}</dt>
-            <dd className="facts__mono">{item.url}</dd>
+          <div className={FACT}>
+            <dt className="text-muted-foreground">{items.url}</dt>
+            <dd className="font-mono text-[13px] break-all">{item.url}</dd>
           </div>
         ) : (
           <>
-            <div>
-              <dt>{items.description}</dt>
+            <div className={FACT}>
+              <dt className="text-muted-foreground">{items.description}</dt>
               {item.description ? (
                 <dd>{item.description}</dd>
               ) : (
-                <dd className="facts__empty">—</dd>
+                <dd className="text-faint">—</dd>
               )}
             </div>
-            <div>
-              <dt>{items.mediator}</dt>
+            <div className={FACT}>
+              <dt className="text-muted-foreground">{items.mediator}</dt>
               {item.mediator ? (
                 <dd>
                   <Link
-                    className="link"
+                    className="text-primary hover:underline"
                     href={`/dashboard/mediators/${item.mediator.id}`}
                   >
                     {item.mediator.name}
                   </Link>
                 </dd>
               ) : (
-                <dd className="facts__empty">{items.noMediator}</dd>
+                <dd className="text-faint">{items.noMediator}</dd>
               )}
             </div>
           </>
         )}
-        <div>
-          <dt>{status.status}</dt>
+        <div className={FACT}>
+          <dt className="text-muted-foreground">{status.status}</dt>
           <dd>
-            <span
-              className={`tag ${published ? "tag--published" : "tag--draft"}`}
-            >
+            <Badge variant={published ? "brand" : "muted"}>
               {published ? status.published : status.draft}
-            </span>
+            </Badge>
           </dd>
         </div>
         {created}
-        {publishedAt(published ? item.document_url : null)}
+        {publishedAt(published ? item.log_url : null)}
+        {/* Its tenant's endorsement: its whois.vp, and until when it holds. */}
+        <div className={FACT}>
+          <dt className="text-muted-foreground">{status.endorsement}</dt>
+          {item.whois_url && item.endorsed_until ? (
+            <dd className="font-mono text-[13px] break-all">
+              <a
+                className="text-primary hover:underline"
+                href={item.whois_url}
+                target="_blank"
+                rel="noreferrer"
+              >
+                {item.whois_url}
+              </a>{" "}
+              ·{" "}
+              {status.endorsedUntil.replace(
+                "{date}",
+                formatDateTime(item.endorsed_until, locale, timeZone),
+              )}
+            </dd>
+          ) : (
+            <dd className="text-faint">{status.notEndorsed}</dd>
+          )}
+        </div>
       </dl>
-    </div>
+    </Card>
   );
 }

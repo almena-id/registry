@@ -12,16 +12,11 @@ type Entry =
   | "mediators"
   | "identities"
   | "tenant"
-  | "certification"
-  | "billing"
-  | "users"
-  | "review";
+  | "users";
 
-// Two cards: what the tenant works with, then the tenant itself — its
-// details, its certification, its billing and its people. Almena's reviewers
-// get a third. An entry with no `href` has no screen yet: it is shown, marked
-// "Soon", so the shape of the portal is visible.
-const groups: { key: Entry; href?: string }[][] = [
+// Two cards: what the account (the tenant) works with, then the account
+// itself — its details, billing among them, and its people.
+const groups: { key: Entry; href: string }[][] = [
   [
     { key: "overview", href: "/dashboard" },
     { key: "issuers", href: "/dashboard/issuers" },
@@ -31,19 +26,16 @@ const groups: { key: Entry; href?: string }[][] = [
   ],
   [
     { key: "tenant", href: "/dashboard/tenant" },
-    { key: "certification", href: "/dashboard/certification" },
-    { key: "billing" },
     { key: "users", href: "/dashboard/users" },
   ],
 ];
 
-const almena: { key: Entry; href?: string }[] = [
-  { key: "review", href: "/dashboard/review" },
-];
+const labels = ["label", "tenantLabel"] as const;
 
-const labels = ["label", "tenantLabel", "almenaLabel"] as const;
+const item =
+  "flex items-center justify-between gap-2 rounded-[10px] px-3 py-[9px] text-[15px] whitespace-nowrap";
 
-export function DashboardNav({ reviewer }: { reviewer: boolean }) {
+export function DashboardNav() {
   const { t } = useI18n();
   const pathname = usePathname();
   // An entry stays marked on its own screens too (…/new).
@@ -54,29 +46,22 @@ export function DashboardNav({ reviewer }: { reviewer: boolean }) {
 
   return (
     <>
-      {(reviewer ? [...groups, almena] : groups).map((entries, index) => (
+      {groups.map((entries, index) => (
         <nav
           key={index}
-          className="side-nav"
+          className="flex flex-col gap-0.5 rounded-2xl border bg-card p-2 max-[859px]:flex-row max-[859px]:overflow-x-auto"
           aria-label={t.dashboard.nav[labels[index]]}
         >
-          {entries.map(({ key, href }) =>
-            href ? (
-              <Link
-                key={key}
-                href={href}
-                className="side-nav__item"
-                aria-current={current(href) ? "page" : undefined}
-              >
-                {t.dashboard.nav[key]}
-              </Link>
-            ) : (
-              <span key={key} className="side-nav__item" aria-disabled="true">
-                {t.dashboard.nav[key]}
-                <span className="badge">{t.dashboard.nav.soon}</span>
-              </span>
-            ),
-          )}
+          {entries.map(({ key, href }) => (
+            <Link
+              key={key}
+              href={href}
+              className={`${item} hover:bg-accent aria-[current=page]:bg-brand-soft aria-[current=page]:font-semibold aria-[current=page]:text-primary`}
+              aria-current={current(href) ? "page" : undefined}
+            >
+              {t.dashboard.nav[key]}
+            </Link>
+          ))}
         </nav>
       ))}
     </>

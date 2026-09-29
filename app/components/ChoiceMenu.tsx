@@ -1,9 +1,15 @@
 "use client";
 
-import { useRef } from "react";
-
-import { CheckIcon } from "./icons";
-import { usePopover } from "./usePopover";
+import { Button } from "@/app/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/app/components/ui/dropdown-menu";
 
 export type Choice<T extends string> = {
   value: T;
@@ -34,72 +40,37 @@ export function ChoiceMenu<T extends string>({
   disabled?: boolean;
   placement?: "below" | "above";
 }) {
-  const { open, setOpen, root, trigger } = usePopover();
-  const items = useRef<(HTMLButtonElement | null)[]>([]);
   const current = choices.find((choice) => choice.value === value);
 
-  function select(next: T) {
-    setOpen(false);
-    trigger.current?.focus();
-    if (next !== value) onSelect(next);
-  }
-
-  function onMenuKey(event: React.KeyboardEvent) {
-    const index = items.current.findIndex((item) => item === document.activeElement);
-    const step = event.key === "ArrowDown" ? 1 : event.key === "ArrowUp" ? -1 : 0;
-    if (!step) return;
-    event.preventDefault();
-    items.current[(index + step + choices.length) % choices.length]?.focus();
-  }
-
   return (
-    <div className={placement === "above" ? "popover popover--up" : "popover"} ref={root}>
-      <button
-        ref={trigger}
-        type="button"
-        className="ghost-trigger"
-        aria-haspopup="menu"
-        aria-expanded={open}
-        aria-label={label}
-        disabled={disabled}
-        onClick={() => {
-          setOpen(!open);
-          // Focus the checked item once the menu is on screen.
-          requestAnimationFrame(() =>
-            items.current[choices.findIndex((choice) => choice.value === value)]?.focus(),
-          );
-        }}
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" size="sm" aria-label={label} disabled={disabled}>
+          <span className="text-muted-foreground">{current?.icon ?? icon}</span>
+          {current?.label}
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent
+        side={placement === "above" ? "top" : "bottom"}
+        align="end"
+        className="w-44"
       >
-        {current?.icon ?? icon}
-        <span className="ghost-trigger__text">{current?.label}</span>
-      </button>
-
-      {open && (
-        <div className="popover__panel popover__panel--menu" role="menu" onKeyDown={onMenuKey}>
-          <p className="popover__label">{label}</p>
-          <div className="popover__separator" />
-          {choices.map((choice, index) => (
-            <button
-              key={choice.value}
-              ref={(node) => {
-                items.current[index] = node;
-              }}
-              type="button"
-              role="menuitemradio"
-              aria-checked={choice.value === value}
-              lang={choice.lang}
-              className="popover__item"
-              onClick={() => select(choice.value)}
-            >
-              <span className="popover__check" data-on={choice.value === value}>
-                <CheckIcon />
-              </span>
+        <DropdownMenuLabel className="text-xs text-muted-foreground">{label}</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuRadioGroup
+          value={value}
+          onValueChange={(next) => {
+            if (next !== value) onSelect(next as T);
+          }}
+        >
+          {choices.map((choice) => (
+            <DropdownMenuRadioItem key={choice.value} value={choice.value} lang={choice.lang}>
               {choice.icon}
               {choice.label}
-            </button>
+            </DropdownMenuRadioItem>
           ))}
-        </div>
-      )}
-    </div>
+        </DropdownMenuRadioGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

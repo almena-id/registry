@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { PlusIcon } from "lucide-react";
 import { notFound } from "next/navigation";
 
-import { PlusIcon } from "@/app/components/icons";
+import { Button } from "@/app/components/ui/button";
 import { getI18n, getTimeZone } from "@/app/i18n/server";
 import { fetchPage } from "@/app/lib/directory";
 import { isSection } from "@/app/lib/directory-types";
@@ -28,23 +29,22 @@ export default async function SectionPage({
   const page = await fetchPage(section);
 
   return (
-    <div className="section">
-      <header className="page-head page-head--actions">
+    <div>
+      <header className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="page-head__title">{copy.title}</h1>
-          <p className="page-head__lead">
+          <h1 className="text-[28px] font-bold tracking-tight">{copy.title}</h1>
+          <p className="text-muted-foreground">
             {page && page.total > 0
               ? formatCount(copy.total, page.total, locale)
               : copy.lead}
           </p>
         </div>
-        <Link
-          className="button button--primary"
-          href={`/dashboard/${section}/new`}
-        >
-          <PlusIcon />
-          {copy.create}
-        </Link>
+        <Button asChild>
+          <Link href={`/dashboard/${section}/new`}>
+            <PlusIcon />
+            {copy.create}
+          </Link>
+        </Button>
       </header>
 
       <InfiniteList

@@ -2,16 +2,15 @@
 
 import { useActionState } from "react";
 
+import { Alert, AlertDescription } from "@/app/components/ui/alert";
+import { Button } from "@/app/components/ui/button";
+import { Card } from "@/app/components/ui/card";
+import { Input } from "@/app/components/ui/input";
+import { Label } from "@/app/components/ui/label";
 import { useI18n } from "@/app/i18n/client";
 import { saveAccount, type AccountState } from "@/app/lib/account-actions";
 
-export function AccountForm({
-  email,
-  alias,
-}: {
-  email: string;
-  alias: string;
-}) {
+export function AccountForm({ alias }: { alias: string }) {
   const { t } = useI18n();
   const copy = t.dashboard.account;
   const [state, action, pending] = useActionState<AccountState, FormData>(
@@ -23,68 +22,47 @@ export function AccountForm({
   const errors = state.errors ?? {};
 
   return (
-    <form className="card form" action={action} noValidate>
-      {errors.form && (
-        <p className="alert" role="alert">
-          {copy.errors[errors.form]}
-        </p>
-      )}
-      {state.saved && !pending && (
-        <p className="notice" role="status">
-          {copy.saved}
-        </p>
-      )}
-
-      <div className="field">
-        <label className="field__label" htmlFor="alias">
-          {copy.alias}
-        </label>
-        <input
-          className="field__input"
-          id="alias"
-          name="alias"
-          maxLength={100}
-          autoComplete="nickname"
-          defaultValue={state.alias}
-          aria-invalid={errors.alias ? true : undefined}
-          aria-describedby={errors.alias ? "alias-error" : "alias-hint"}
-        />
-        {errors.alias ? (
-          <p className="field__error" id="alias-error">
-            {copy.errors[errors.alias]}
-          </p>
-        ) : (
-          <p className="field__hint" id="alias-hint">
-            {copy.aliasHint}
-          </p>
+    <Card className="max-w-[560px] gap-0 p-6">
+      <form className="flex flex-col gap-[18px]" action={action} noValidate>
+        {errors.form && (
+          <Alert variant="destructive" role="alert">
+            <AlertDescription>{copy.errors[errors.form]}</AlertDescription>
+          </Alert>
         )}
-      </div>
+        {state.saved && !pending && (
+          <Alert variant="notice" role="status">
+            <AlertDescription>{copy.saved}</AlertDescription>
+          </Alert>
+        )}
 
-      <div className="field">
-        <label className="field__label" htmlFor="email">
-          {copy.email}
-        </label>
-        <input
-          className="field__input"
-          id="email"
-          value={email}
-          readOnly
-          aria-describedby="email-hint"
-        />
-        <p className="field__hint" id="email-hint">
-          {copy.emailHint}
-        </p>
-      </div>
+        <div className="grid gap-1.5">
+          <Label htmlFor="alias">{copy.alias}</Label>
+          <Input
+            id="alias"
+            name="alias"
+            maxLength={100}
+            autoComplete="nickname"
+            defaultValue={state.alias}
+            aria-invalid={errors.alias ? true : undefined}
+            aria-describedby={errors.alias ? "alias-error" : "alias-hint"}
+          />
+          {errors.alias ? (
+            <p className="text-[13px] text-destructive" id="alias-error">
+              {copy.errors[errors.alias]}
+            </p>
+          ) : (
+            <p className="text-[13px] text-faint" id="alias-hint">
+              {copy.aliasHint}
+            </p>
+          )}
+        </div>
 
-      <div className="form__actions">
-        <button
-          className="button button--primary"
-          type="submit"
-          disabled={pending}
-        >
-          {copy.save}
-        </button>
-      </div>
-    </form>
+        <div className="flex justify-end gap-2">
+          <Button type="submit" disabled={pending}>
+            {copy.save}
+          </Button>
+        </div>
+      </form>
+    </Card>
   );
 }

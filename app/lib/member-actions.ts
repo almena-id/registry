@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 
 import type { Dictionary } from "@/app/i18n/config";
 import { getLocale } from "@/app/i18n/server";
-import { api, currentTenants, sessionCookie } from "./api";
+import { api, currentTenant, sessionCookie } from "./api";
 
 type ErrorKey = keyof Dictionary["dashboard"]["users"]["errors"];
 
@@ -27,7 +27,7 @@ export async function invite(
     return { email, role, errors: { email: "emailInvalid" } };
 
   const token = (await cookies()).get(sessionCookie)?.value;
-  const tenant = (await currentTenants())[0];
+  const tenant = await currentTenant();
   if (!token || !tenant)
     return { email, role, errors: { form: "unavailable" } };
   const { status, detail } = await api(`/tenants/${tenant.id}/invitations`, {

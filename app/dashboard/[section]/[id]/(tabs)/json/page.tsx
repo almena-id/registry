@@ -1,8 +1,8 @@
 import { getI18n } from "@/app/i18n/server";
-import { DocumentCard } from "../../Detail";
+import { DidDocuments } from "../../Detail";
 import { loadItem } from "../../load";
 
-/** JSON: the DID document the item resolves to, as the API publishes it. */
+/** JSON: the item's DID document — published, to sign, or both. */
 export default async function JsonTab({
   params,
 }: PageProps<"/dashboard/[section]/[id]/json">) {
@@ -10,11 +10,5 @@ export default async function JsonTab({
   const loaded = await loadItem(section, id);
   if (!loaded?.item) return null;
   const { t } = await getI18n();
-  return (
-    <DocumentCard
-      title={t.dashboard.identity.document}
-      hint={t.dashboard.identity.noKeys}
-      document={loaded.item.document}
-    />
-  );
+  return <DidDocuments item={loaded.item} copy={t.dashboard.json} />;
 }

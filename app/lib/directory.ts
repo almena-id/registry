@@ -2,7 +2,7 @@ import "server-only";
 
 import { cookies } from "next/headers";
 
-import { api, currentTenants, sessionCookie } from "./api";
+import { api, currentTenant, sessionCookie } from "./api";
 import {
   pageSize,
   type DescribedDetail,
@@ -24,7 +24,7 @@ export async function fetchPage(
   limit = pageSize,
 ): Promise<Page | null> {
   const token = (await cookies()).get(sessionCookie)?.value;
-  const tenant = (await currentTenants())[0];
+  const tenant = await currentTenant();
   if (!token || !tenant) return null;
   const query = new URLSearchParams({ limit: String(limit) });
   if (cursor) query.set("cursor", cursor);
@@ -40,7 +40,7 @@ export async function fetchIdentity(
   id: string,
 ): Promise<IdentityDetail | null> {
   const token = (await cookies()).get(sessionCookie)?.value;
-  const tenant = (await currentTenants())[0];
+  const tenant = await currentTenant();
   if (!token || !tenant) return null;
   const { data } = await api<IdentityDetail>(
     `/tenants/${tenant.id}/identities/${encodeURIComponent(id)}`,
@@ -54,7 +54,7 @@ export async function fetchMediator(
   id: string,
 ): Promise<MediatorDetail | null> {
   const token = (await cookies()).get(sessionCookie)?.value;
-  const tenant = (await currentTenants())[0];
+  const tenant = await currentTenant();
   if (!token || !tenant) return null;
   const { data } = await api<MediatorDetail>(
     `/tenants/${tenant.id}/mediators/${encodeURIComponent(id)}`,
@@ -69,7 +69,7 @@ export async function fetchDescribed(
   id: string,
 ): Promise<DescribedDetail | null> {
   const token = (await cookies()).get(sessionCookie)?.value;
-  const tenant = (await currentTenants())[0];
+  const tenant = await currentTenant();
   if (!token || !tenant) return null;
   const { data } = await api<DescribedDetail>(
     `/tenants/${tenant.id}/${section}/${encodeURIComponent(id)}`,
@@ -92,11 +92,23 @@ export async function fetchSigning(
   id: string,
 ): Promise<Signing | null> {
   const token = (await cookies()).get(sessionCookie)?.value;
-  const tenant = (await currentTenants())[0];
+  const tenant = await currentTenant();
   if (!token || !tenant) return null;
   const { data } = await api<Signing>(
     `/tenants/${tenant.id}/${section}/${encodeURIComponent(id)}/signing`,
     { token },
   );
+  return data;
+}
+
+/** An identity whose DID waits for a signature. */
+export type Waiting = { id: string; name: string; signature: "pending" | "outdated" };
+
+/** The current tenant's identities waiting for a signature; `null` when unreachable. */
+export async function fetchWaiting(): Promise<Waiting[] | null> {
+  const token = (await cookies()).get(sessionCookie)?.value;
+  const tenant = await currentTenant();
+  if (!token || !tenant) return null;
+  const { data } = await api<Waiting[]>(`/tenants/${tenant.id}/signatures`, { token });
   return data;
 }

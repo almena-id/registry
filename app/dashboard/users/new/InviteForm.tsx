@@ -3,6 +3,12 @@
 import Link from "next/link";
 import { useActionState } from "react";
 
+import { Alert, AlertDescription } from "@/app/components/ui/alert";
+import { Button } from "@/app/components/ui/button";
+import { Card } from "@/app/components/ui/card";
+import { Input } from "@/app/components/ui/input";
+import { Label } from "@/app/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/app/components/ui/radio-group";
 import { useI18n } from "@/app/i18n/client";
 import { invite, type InviteState } from "@/app/lib/member-actions";
 
@@ -19,68 +25,67 @@ export function InviteForm() {
   const chosen = state.role === "admin" ? "admin" : "member";
 
   return (
-    <form className="card form" action={action} noValidate>
-      {errors.form && (
-        <p className="alert" role="alert">
-          {copy.errors[errors.form]}
-        </p>
-      )}
-
-      <div className="field">
-        <label className="field__label" htmlFor="email">
-          {copy.email}
-        </label>
-        <input
-          className="field__input"
-          id="email"
-          name="email"
-          type="email"
-          autoComplete="off"
-          autoFocus
-          required
-          defaultValue={state.email}
-          aria-invalid={errors.email ? true : undefined}
-          aria-describedby={errors.email ? "email-error" : undefined}
-        />
-        {errors.email && (
-          <p className="field__error" id="email-error">
-            {copy.errors[errors.email]}
-          </p>
+    <Card className="max-w-[560px] gap-0 p-6">
+      <form className="flex flex-col gap-[18px]" action={action} noValidate>
+        {errors.form && (
+          <Alert variant="destructive" role="alert">
+            <AlertDescription>{copy.errors[errors.form]}</AlertDescription>
+          </Alert>
         )}
-      </div>
 
-      <fieldset className="field">
-        <legend className="field__label">{copy.role}</legend>
-        <div className="choices">
-          {roles.map((role) => (
-            <label key={role} className="choice">
-              <input
-                type="radio"
-                name="role"
-                value={role}
-                defaultChecked={role === chosen}
-              />
-              <span className="choice__text">
-                <span className="choice__title">{copy.roles[role]}</span>
-                <span className="choice__hint">{copy.roleHints[role]}</span>
-              </span>
-            </label>
-          ))}
+        <div className="grid gap-1.5">
+          <Label htmlFor="email">{copy.email}</Label>
+          <Input
+            id="email"
+            name="email"
+            type="email"
+            autoComplete="off"
+            autoFocus
+            required
+            defaultValue={state.email}
+            aria-invalid={errors.email ? true : undefined}
+            aria-describedby={errors.email ? "email-error" : undefined}
+          />
+          {errors.email && (
+            <p className="text-[13px] text-destructive" id="email-error">
+              {copy.errors[errors.email]}
+            </p>
+          )}
         </div>
-      </fieldset>
 
-      <div className="form__actions">
-        <Link className="button button--ghost" href="/dashboard/users">
-          {copy.cancel}
-        </Link>
-        <button
-          className="button button--primary"
-          type="submit"
-          disabled={pending}
-        >
-          {copy.send}
-        </button>
-      </div>
-    </form>
+        <fieldset className="grid gap-1.5">
+          <legend className="mb-1.5 text-sm font-medium">{copy.role}</legend>
+          <RadioGroup
+            name="role"
+            defaultValue={chosen}
+            className="grid gap-2 sm:grid-cols-2"
+          >
+            {roles.map((role) => (
+              <Label
+                key={role}
+                className="flex cursor-pointer items-start gap-2.5 rounded-lg border border-input px-3.5 py-3 font-normal has-[[data-state=checked]]:border-primary has-[[data-state=checked]]:bg-brand-soft"
+              >
+                <RadioGroupItem value={role} className="mt-0.5" />
+                <span className="grid gap-0.5">
+                  <span className="font-semibold">{copy.roles[role]}</span>
+                  <span className="text-[13px] text-muted-foreground">
+                    {copy.roleHints[role]}
+                  </span>
+                </span>
+              </Label>
+            ))}
+          </RadioGroup>
+        </fieldset>
+
+        <div className="flex justify-end gap-2">
+          <Button asChild variant="ghost">
+            <Link href="/dashboard/users">{copy.cancel}</Link>
+          </Button>
+          <Button type="submit" disabled={pending}>
+            {copy.send}
+          </Button>
+        </div>
+      </form>
+    </Card>
   );
 }

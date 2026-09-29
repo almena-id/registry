@@ -11,7 +11,7 @@ export default async function SiteLayout({
   return (
     <>
       <SiteHeader t={t} />
-      <main className="shell__main">{children}</main>
+      <main className="page-frame flex flex-1 flex-col pt-8 pb-12">{children}</main>
     </>
   );
 }

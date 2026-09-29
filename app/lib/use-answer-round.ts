@@ -4,7 +4,7 @@ import { useState } from "react";
 
 /**
  * A number that changes with every answer a form action gives (`state`, from
- * `useActionState`). Key a form's `<select>`s with it.
+ * `useActionState`). Key a form's selects (`Select`, `<select>`) with it.
  *
  * After an action React resets the form's fields to their defaults. An input
  * takes its new `defaultValue` along, but a select resets to the option it was

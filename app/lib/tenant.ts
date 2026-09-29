@@ -2,7 +2,7 @@ import "server-only";
 
 import { cookies } from "next/headers";
 
-import { api, currentTenants, sessionCookie, type Role } from "./api";
+import { api, currentTenant, sessionCookie, type Role } from "./api";
 
 export type TenantDetail = {
   id: string;
@@ -17,7 +17,7 @@ export type TenantDetail = {
 /** The current tenant's details; `null` when the API cannot be reached. */
 export async function fetchTenant(): Promise<TenantDetail | null> {
   const token = (await cookies()).get(sessionCookie)?.value;
-  const tenant = (await currentTenants())[0];
+  const tenant = await currentTenant();
   if (!token || !tenant) return null;
   const { data } = await api<TenantDetail>(`/tenants/${tenant.id}`, { token });
   return data;

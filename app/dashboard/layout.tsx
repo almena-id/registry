@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 
 import { SiteHeader } from "@/app/components/SiteHeader";
 import { getI18n, getTimeZone } from "@/app/i18n/server";
-import { currentTenants, currentUser } from "@/app/lib/api";
+import { currentTenant, currentTenants, currentUser } from "@/app/lib/api";
 import { DashboardNav } from "./DashboardNav";
 
 export default async function DashboardLayout({
@@ -17,15 +17,16 @@ export default async function DashboardLayout({
       <SiteHeader
         t={t}
         timeZone={await getTimeZone()}
-        email={user.email}
+        account={user.email ?? user.alias ?? t.header.account.label}
         tenants={await currentTenants()}
+        tenant={await currentTenant()}
       />
-      <main className="shell__main">
-        <div className="dashboard">
-          <aside className="dashboard__side">
-            <DashboardNav reviewer={user.reviewer} />
+      <main className="page-frame flex flex-1 flex-col pt-8 pb-12">
+        <div className="grid flex-1 grid-cols-[minmax(0,1fr)] content-start gap-6 min-[860px]:grid-cols-[232px_minmax(0,1fr)] min-[860px]:gap-8">
+          <aside className="flex flex-col gap-4 min-[860px]:sticky min-[860px]:top-[88px] min-[860px]:self-start">
+            <DashboardNav />
           </aside>
-          <div className="dashboard__content">{children}</div>
+          <div className="min-w-0">{children}</div>
         </div>
       </main>
     </>

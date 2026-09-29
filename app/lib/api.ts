@@ -10,11 +10,10 @@ const apiUrl = () => process.env.REGISTRY_API_URL ?? "https://api.almena.id";
 
 export type User = {
   id: string;
-  email: string;
+  /** `null` for an account that signs in only through a provider or its wallet. */
+  email: string | null;
   alias: string | null;
   created_at: string;
-  /** A member of the Almena tenant: reviews certification requests. */
-  reviewer: boolean;
 };
 export type SignedIn = { token: string; expires_at: string; user: User };
 /** `name` is `null` for the tenant an account is created with, until it is given one. */
@@ -24,8 +23,6 @@ export type Tenant = {
   name: string | null;
   created_at: string;
   role: Role;
-  /** Almena has approved a certification of it, in force now. */
-  certified: boolean;
 };
 
 /** A call to the API from the server; `null` status when it cannot be reached. */
@@ -79,6 +76,25 @@ export const providerIds = ["google", "microsoft", "apple", "github"] as const;
 export type ProviderId = (typeof providerIds)[number];
 export type Provider = { id: ProviderId; enabled: boolean };
 
+/** A provider account linked to the signed-in account; `email` as the provider showed it. */
+export type LinkedAccount = {
+  id: string;
+  /** `almena`: a wallet, known by its `did`. */
+  provider: ProviderId | "almena";
+  did: string | null;
+  email: string | null;
+  created_at: string;
+};
+export type WaysIn = { email: string | null; accounts: LinkedAccount[] };
+/**
+ * Linking a way in: `taken` when it belongs to another account, with the
+ * ticket that moves this one there when it is still empty.
+ */
+export type LinkResult = {
+  status: "linked" | "taken";
+  move_ticket: string | null;
+};
+
 export function isProviderId(value: string): value is ProviderId {
   return (providerIds as readonly string[]).includes(value);
 }
@@ -95,4 +111,19 @@ export const currentTenants = cache(async (): Promise<Tenant[]> => {
   if (!token) return [];
   const { data } = await api<Tenant[]>("/tenants", { token });
   return data ?? [];
+});
+
+/** The tenant chosen in the header, kept by id; not an authority — the API checks membership. */
+export const tenantCookie = "almena.tenant";
+
+/**
+ * The tenant the dashboard works in: the one chosen in the header while the
+ * account still belongs to it, else the oldest; `null` with none.
+ */
+export const currentTenant = cache(async (): Promise<Tenant | null> => {
+  const [tenants, chosen] = await Promise.all([
+    currentTenants(),
+    cookies().then((jar) => jar.get(tenantCookie)?.value),
+  ]);
+  return tenants.find((tenant) => tenant.id === chosen) ?? tenants[0] ?? null;
 });

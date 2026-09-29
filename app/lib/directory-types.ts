@@ -47,32 +47,49 @@ export type Item = {
   used_by?: Use[] | null;
   /** Issuers, verifiers and mediators: when published; `null` while a draft. */
   published_at?: string | null;
+  /** In lists: where its DID's signature stands. */
+  signature?: Signature | null;
 };
 
 /**
- * An issuer, verifier or mediator, opened from the list: its DID, the document
- * it resolves to, and where that is published (a draft's is not).
+ * Where an identity's DID stands. People sign it from their wallets: until the
+ * first entry of its did:webvh log is signed it is `pending` and has no DID;
+ * `outdated` when what it should publish (`document`) differs from what was
+ * last signed. The log and the did:web document are served once it has a DID.
  */
-export type DescribedDetail = Item & {
-  did: string;
-  identity: IdentityRef;
+export type Signature = "pending" | "signed" | "outdated";
+export type Signed = {
+  did: string | null;
+  signature: Signature;
   document: Record<string, unknown>;
-  document_url: string;
+  /** What its log says now, as signed; `null` while pending. */
+  signed_document: Record<string, unknown> | null;
+  log_url: string | null;
+  document_url: string | null;
+  /** A published issuer's, verifier's or mediator's endorsement by its tenant. */
+  whois_url?: string | null;
+  endorsed_until?: string | null;
 };
+
+/**
+ * An issuer, verifier or mediator, opened from the list: its identity's DID,
+ * the document it should publish, and where it is (a draft's is not).
+ */
+export type DescribedDetail = Item &
+  Signed & {
+    identity: IdentityRef;
+  };
 
 /** One mediator, opened from the list: its address and its DID. */
 export type MediatorDetail = DescribedDetail & { url: string };
 
 /** One identity, opened from the list: its DID and the document it publishes. */
-export type IdentityDetail = {
+export type IdentityDetail = Signed & {
   id: string;
   name: string;
   created_at: string;
-  did: string;
   used_by: Use[];
-  document: Record<string, unknown>;
-  document_url: string;
-  /** Whether `document_url` answers: not while what acts as it is a draft. */
+  /** Whether the URLs answer: not while what acts as it is a draft. */
   published: boolean;
 };
 
@@ -89,6 +106,8 @@ export type Signing = {
     alias: string | null;
     /** A signer who left the tenant signs nothing. */
     member: boolean;
+    /** Has an Almena wallet linked: without one there is no key to publish. */
+    wallet: boolean;
   } | null;
 };
 

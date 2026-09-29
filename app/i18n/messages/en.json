@@ -19,32 +19,49 @@
       "allHeading": "All time zones"
     },
     "tenant": {
-      "label": "Tenant",
-      "none": "No tenant",
-      "unnamed": "Unnamed tenant",
-      "heading": "Your tenants",
-      "empty": "No tenants yet.",
-      "certified": "Certified by Almena"
+      "label": "Account",
+      "none": "No account",
+      "unnamed": "Unnamed account",
+      "heading": "Your accounts",
+      "empty": "No accounts yet."
     },
     "account": {
-      "label": "Account",
+      "label": "Profile",
       "signOut": "Sign out",
-      "open": "Account details"
+      "open": "Profile details"
     }
   },
   "home": {
     "title": "Your organisation's identities, in one place",
-    "lead": "Manage tenants, issuers, verifiers and DIDs for the Almena Network.",
-    "signIn": "Continue with email",
+    "lead": "Accounts, issuers, verifiers and mediators, with DIDs you sign from your wallet.",
+    "signIn": "Continue with Almena",
+    "otherWays": "Other ways in",
     "openDashboard": "Open dashboard",
     "diagram": {
       "label": "How the registry is organised",
+      "tenant": "Your account",
+      "signs": "signs",
       "you": "You",
-      "tenant": "Tenant",
+      "wallet": "your wallet",
       "issuers": "Issuers",
       "verifiers": "Verifiers",
-      "identities": "Identities"
-    }
+      "mediators": "Mediators",
+      "caption": "Every DID is did:webvh: each version signed from a wallet."
+    },
+    "points": [
+      {
+        "title": "Your wallet is the key",
+        "body": "Sign in and sign without passwords. The registry holds no keys."
+      },
+      {
+        "title": "DIDs with history",
+        "body": "Every version of every DID is signed and published, so what was signed still verifies."
+      },
+      {
+        "title": "Endorsed by your organisation",
+        "body": "Everything you publish carries your organisation's signed endorsement, verifiable by anyone."
+      }
+    ]
   },
   "auth": {
     "title": "Sign in or create an account",
@@ -91,16 +108,12 @@
       "identities": "Identities",
       "soon": "Soon",
       "users": "Users",
-      "tenantLabel": "Tenant",
-      "tenant": "Tenant",
-      "certification": "Certification",
-      "billing": "Billing",
-      "review": "Review",
-      "almenaLabel": "Almena"
+      "tenantLabel": "Account",
+      "tenant": "Account"
     },
     "overview": {
       "title": "Overview",
-      "lead": "Everything your tenants hold."
+      "lead": "What waits for you, and what your account holds."
     },
     "cards": {
       "issuers": {
@@ -121,23 +134,74 @@
       }
     },
     "account": {
-      "title": "Account",
-      "lead": "How you appear to the people you work with.",
+      "title": "Profile",
+      "lead": "How you appear to others, and how you sign in.",
       "alias": "Alias",
       "aliasHint": "The name others see instead of your email.",
-      "email": "Email",
-      "emailHint": "You sign in with it; it cannot be changed here.",
       "save": "Save",
       "saved": "Saved.",
       "errors": {
         "aliasLong": "Use at most 100 characters.",
-        "unavailable": "The registry cannot be reached. Try again in a moment."
+        "unavailable": "The registry cannot be reached. Try again in a moment.",
+        "emailInvalid": "Enter a valid email.",
+        "codeFormat": "The code has 6 digits.",
+        "invalidCode": "That code is wrong or has expired.",
+        "tooManyAttempts": "Too many tries. Ask for a new code.",
+        "mailUnavailable": "The email could not be sent. Try again in a moment.",
+        "lastWayIn": "That is your only way in.",
+        "invalidState": "Linking took too long or was interrupted. Try again.",
+        "providerError": "The provider could not link the account. Try again.",
+        "providerCancelled": "Linking was cancelled.",
+        "invalidTicket": "That took too long. Try linking again.",
+        "notEmpty": "This profile holds work now, so it stays."
+      },
+      "waysIn": {
+        "title": "Ways in",
+        "hint": "How you sign in. Keep at least one.",
+        "email": "Email",
+        "noEmail": "None — invitations cannot reach you.",
+        "add": "Add",
+        "change": "Change",
+        "remove": "Remove",
+        "lastOne": "Your only way in",
+        "link": "Link {provider}",
+        "almena": "Almena wallet",
+        "linked": "Linked.",
+        "moved": "You are now in the profile that had it.",
+        "providers": {
+          "google": "Google",
+          "microsoft": "Microsoft",
+          "apple": "Apple",
+          "github": "GitHub"
+        },
+        "linkWallet": "Link"
+      },
+      "emailLink": {
+        "title": "Link an email",
+        "lead": "It replaces the one you have, if any.",
+        "codeTitle": "Check your email",
+        "codeLead": "Enter the 6-digit code we sent to {email}.",
+        "code": "Code",
+        "send": "Send code",
+        "verify": "Link",
+        "resend": "Send a new code",
+        "resent": "We sent you a new code.",
+        "changeEmail": "Use another email",
+        "cancel": "Cancel"
+      },
+      "taken": {
+        "title": "It belongs to another profile",
+        "emptyLead": "This profile holds nothing yet. Delete it and continue in the other one; its ways in go with you.",
+        "move": "Delete this profile and continue",
+        "busyLead": "This profile holds work, so it stays. Sign in that way and link this profile's ways in from there.",
+        "back": "Back to your profile",
+        "cancel": "Cancel"
       }
     },
     "sections": {
       "issuers": {
         "title": "Issuers",
-        "lead": "Who issues credentials in this tenant.",
+        "lead": "Who issues credentials in this account.",
         "empty": "No issuers yet.",
         "create": "Create",
         "createTitle": "New issuer",
@@ -149,7 +213,7 @@
       },
       "verifiers": {
         "title": "Verifiers",
-        "lead": "Who checks credentials in this tenant.",
+        "lead": "Who checks credentials in this account.",
         "empty": "No verifiers yet.",
         "create": "Create",
         "createTitle": "New verifier",
@@ -161,11 +225,11 @@
       },
       "mediators": {
         "title": "Mediators",
-        "lead": "Where this tenant's messages arrive.",
+        "lead": "Where this account's messages arrive.",
         "empty": "No mediators yet.",
         "create": "Create",
         "createTitle": "New mediator",
-        "createLead": "The registry gives it a DID of its own.",
+        "createLead": "Its DID is made when an admin signs it.",
         "total": {
           "one": "{count} mediator",
           "other": "{count} mediators"
@@ -173,11 +237,11 @@
       },
       "identities": {
         "title": "Identities",
-        "lead": "The identities this tenant holds.",
+        "lead": "The identities this account holds.",
         "empty": "No identities yet.",
         "create": "Create",
         "createTitle": "New identity",
-        "createLead": "It gets a did:web DID of its own.",
+        "createLead": "Its did:webvh DID is made when an admin signs it.",
         "total": {
           "one": "{count} identity",
           "other": "{count} identities"
@@ -194,7 +258,7 @@
       "loading": "Loading more…",
       "loadError": "The rest of the list could not be loaded.",
       "retry": "Try again",
-      "noTenant": "There is no tenant to work in.",
+      "noTenant": "There is no account to work in.",
       "errors": {
         "nameRequired": "Enter a name.",
         "nameLong": "Use at most 200 characters.",
@@ -203,13 +267,13 @@
         "urlRequired": "Enter an address.",
         "urlInvalid": "Enter an address, like https://mediator.example.org.",
         "urlInsecure": "Use https:// (plain http only for localhost).",
-        "mediatorNotFound": "That mediator is not in this tenant."
+        "mediatorNotFound": "That mediator is not in this account."
       },
       "identity": "Identity",
       "usedBy": {
         "issuer": "Issuer",
         "verifier": "Verifier",
-        "tenant": "Tenant",
+        "tenant": "Account",
         "mediator": "Mediator"
       },
       "unused": "Not used yet",
@@ -225,8 +289,7 @@
       "created": "Created",
       "published": "Published at",
       "document": "DID document",
-      "noKeys": "No keys yet: they arrive once key custody is decided.",
-      "notFound": "This identity is not in this tenant."
+      "notFound": "This identity is not in this account."
     },
     "mediator": {
       "back": "Mediators",
@@ -235,7 +298,7 @@
       "created": "Created",
       "save": "Save",
       "saved": "Saved.",
-      "notFound": "This mediator is not in this tenant."
+      "notFound": "This mediator is not in this account."
     },
     "issuer": {
       "back": "Issuers",
@@ -244,7 +307,7 @@
       "created": "Created",
       "save": "Save",
       "saved": "Saved.",
-      "notFound": "This issuer is not in this tenant."
+      "notFound": "This issuer is not in this account."
     },
     "verifier": {
       "back": "Verifiers",
@@ -253,7 +316,7 @@
       "created": "Created",
       "save": "Save",
       "saved": "Saved.",
-      "notFound": "This verifier is not in this tenant."
+      "notFound": "This verifier is not in this account."
     },
     "publication": {
       "status": "Status",
@@ -267,11 +330,17 @@
       "failed": "Could not do it. Try again.",
       "deleteTitle": "Delete {name}?",
       "deleteLead": "Its DID stops resolving. This cannot be undone.",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "identityPending": "Sign its identity first.",
+      "publishTitle": "Publish {name}",
+      "publishLead": "Your organisation vouches for it, signed from your wallet; then it is published.",
+      "endorsement": "Endorsement",
+      "endorsedUntil": "until {date}",
+      "notEndorsed": "Not endorsed"
     },
     "users": {
       "title": "Users",
-      "lead": "Who works in this tenant.",
+      "lead": "Who works in this account.",
       "add": "Add user",
       "email": "Email",
       "role": "Role",
@@ -293,18 +362,19 @@
       "adminOnly": "Only admins can add users.",
       "errors": {
         "emailInvalid": "Enter a valid email.",
-        "alreadyMember": "That person already belongs to this tenant.",
+        "alreadyMember": "That person already belongs to this account.",
         "notAdmin": "Only admins can add users.",
         "mailUnavailable": "The email could not be sent. Try again in a moment.",
         "unavailable": "The registry cannot be reached. Try again in a moment."
-      }
+      },
+      "noEmail": "No email"
     },
     "tenant": {
-      "title": "Tenant",
-      "lead": "The tenant's name and the mediator its own identity uses.",
+      "title": "Account",
+      "lead": "Your organisation: its details, its domains and its DID.",
       "name": "Name",
       "mediator": "Mediator",
-      "mediatorHint": "One of this tenant's mediators.",
+      "mediatorHint": "One of this account's mediators.",
       "noMediator": "No mediator yet.",
       "save": "Save",
       "saved": "Saved.",
@@ -314,81 +384,11 @@
         "nameLong": "Use at most 200 characters.",
         "notAdmin": "Only admins can change these details.",
         "unavailable": "The registry cannot be reached. Try again in a moment.",
-        "mediatorNotFound": "That mediator is not in this tenant."
+        "mediatorNotFound": "That mediator is not in this account."
       },
       "identity": "Identity",
-      "identityHint": "The organisation's own DID, named like the tenant.",
+      "identityHint": "The organisation's own DID, named like the account.",
       "noMediators": "No mediators yet."
-    },
-    "certification": {
-      "title": "Certification",
-      "lead": "Almena vouches for who this tenant is.",
-      "certified": "Certified",
-      "notCertified": "Not certified yet.",
-      "requestTitle": "Request",
-      "changeTitle": "Change request",
-      "status": {
-        "draft": "Draft",
-        "in_review": "In review",
-        "approved": "Approved",
-        "rejected": "Rejected",
-        "superseded": "Superseded"
-      },
-      "readOnly": "Only admins can ask for certification.",
-      "waiting": "Almena is reviewing it.",
-      "rejected": "Rejected:",
-      "legalName": "Legal name",
-      "domain": "Domain",
-      "domainHint": "A domain you control, e.g. acme.com.",
-      "save": "Save",
-      "dnsTitle": "Domain proof",
-      "dnsType": "Type",
-      "dnsName": "Name",
-      "dnsValue": "Value",
-      "dnsHint": "Add this record to your DNS, then check.",
-      "dnsFirst": "Save a domain to get its record.",
-      "dnsVerified": "Domain proved.",
-      "dnsPending": "Not proved",
-      "check": "Check",
-      "logo": "Logo",
-      "logoHint": "PNG, JPEG or WebP, up to 256 KB. Square works best.",
-      "upload": "Upload",
-      "incompleteHint": "Needs the legal name, the domain proved and the logo.",
-      "submit": "Send for review",
-      "errors": {
-        "legalNameRequired": "Enter the legal name.",
-        "legalNameLong": "Use at most 200 characters.",
-        "domainRequired": "Enter a domain.",
-        "domainInvalid": "Enter a domain, like acme.com.",
-        "dnsNotFound": "The record is not there yet. DNS changes can take a while.",
-        "dnsUnavailable": "DNS did not answer. Try again in a moment.",
-        "logoMissing": "Choose an image.",
-        "logoInvalid": "Use a PNG, JPEG or WebP image.",
-        "logoTooLarge": "Use an image of at most 256 KB.",
-        "incomplete": "Needs the legal name, the domain proved and the logo.",
-        "inReview": "It is being reviewed; it cannot change now.",
-        "notAdmin": "Only admins can ask for certification.",
-        "notReviewer": "Only Almena's reviewers can do this.",
-        "decided": "It has already been decided.",
-        "reasonRequired": "Say why it is rejected.",
-        "reasonLong": "Use at most 1000 characters.",
-        "unavailable": "The registry cannot be reached. Try again in a moment."
-      }
-    },
-    "review": {
-      "title": "Review",
-      "lead": "Certification requests waiting, oldest first.",
-      "empty": "Nothing to review.",
-      "unnamed": "Unnamed tenant",
-      "submitted": "Sent",
-      "notFound": "This request does not exist.",
-      "tenant": "Tenant",
-      "request": "Request",
-      "inForce": "In force today",
-      "reason": "Reason",
-      "reasonHint": "Needed to reject; the tenant reads it.",
-      "approve": "Approve",
-      "reject": "Reject"
     },
     "detail": {
       "tabs": "Sections",
@@ -410,7 +410,67 @@
       "saved": "Saved.",
       "errors": {
         "signerRequired": "Choose who signs.",
-        "signerNotMember": "They are not a member of this tenant.",
+        "signerNotMember": "They are not a member of this account.",
+        "unavailable": "The registry cannot be reached. Try again in a moment."
+      },
+      "noWallet": "They have no Almena wallet linked yet: until they link one, the DID document has no key for what they sign."
+    },
+    "signature": {
+      "title": "Signature",
+      "status": {
+        "pending": "Pending signature",
+        "signed": "Signed",
+        "outdated": "Changes to sign"
+      },
+      "sign": "Sign",
+      "noDid": "None until it is signed",
+      "signTitle": "Sign {name}",
+      "firstLead": "An admin signs it from their Almena wallet; that makes its DID.",
+      "lead": "Its DID document changed: sign the new version from your Almena wallet."
+    },
+    "attention": {
+      "title": "Awaiting you",
+      "nothing": "Nothing is waiting.",
+      "noWallet": "Link your Almena wallet to sign.",
+      "linkWallet": "Link wallet",
+      "more": "and {count} more"
+    },
+    "json": {
+      "published": "Published document",
+      "publishedHint": "Signed, and served by its log.",
+      "toSign": "Document to sign",
+      "pendingHint": "It goes out once an admin signs it.",
+      "outdatedHint": "Differs from the published one in: {fields}."
+    },
+    "billing": {
+      "title": "Billing",
+      "soon": "Billing is on its way."
+    },
+    "domains": {
+      "title": "Domains",
+      "hint": "Proved by DNS, they go into the account's DID document.",
+      "empty": "No domains yet.",
+      "verified": "Verified",
+      "notVerified": "Not verified",
+      "remove": "Remove",
+      "type": "Type",
+      "name": "Name",
+      "value": "Value",
+      "recordHint": "Add this record to your DNS, then check.",
+      "check": "Check",
+      "add": "Link a domain",
+      "addButton": "Add",
+      "addLead": "Its DNS record comes next: publish it, then check.",
+      "cancel": "Cancel",
+      "added": "Added",
+      "record": "DNS record",
+      "errors": {
+        "domainRequired": "Enter a domain.",
+        "domainInvalid": "Enter a domain, like acme.com.",
+        "domainExists": "It is linked already.",
+        "recordNotFound": "The record is not there yet. DNS can take a while.",
+        "dnsUnavailable": "The DNS did not answer. Try again in a moment.",
+        "notAdmin": "Only admins can change domains.",
         "unavailable": "The registry cannot be reached. Try again in a moment."
       }
     }
@@ -418,5 +478,26 @@
   "footer": {
     "rights": "Almena Network",
     "site": "almena.network"
+  },
+  "wallet": {
+    "signInTitle": "Continue with Almena",
+    "linkTitle": "Link your Almena wallet",
+    "lead": "Scan the code with your Almena wallet, or open the wallet on this device.",
+    "qr": "Code for the Almena wallet",
+    "open": "Open in the wallet",
+    "waiting": "Waiting for your wallet…",
+    "expiresIn": "The code expires in {time}.",
+    "expired": "The code has expired.",
+    "retry": "New code",
+    "failed": "The registry cannot be reached. Try again in a moment.",
+    "other": "Use another way in",
+    "errors": {
+      "no_signers": "No admin of this account has an Almena wallet linked yet.",
+      "not_a_signer": "Link your Almena wallet to your profile to sign.",
+      "up_to_date": "Nothing to sign: it is up to date.",
+      "tenant_pending": "The account's DID is not signed yet.",
+      "identity_pending": "Its DID is not signed yet: sign it first.",
+      "identity_outdated": "Its DID does not name your key yet: sign it again first."
+    }
   }
 }

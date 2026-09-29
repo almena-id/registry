@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { SiteFooter } from "./components/SiteFooter";
+import { TooltipProvider } from "./components/ui/tooltip";
 import { I18nProvider } from "./i18n/client";
 import { getI18n } from "./i18n/server";
 import { getTheme } from "./lib/theme-server";
@@ -26,10 +27,12 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     <html lang={locale} data-theme={theme}>
       <body>
         <I18nProvider locale={locale}>
-          <div className="shell">
-            {children}
-            <SiteFooter t={t} theme={theme} />
-          </div>
+          <TooltipProvider>
+            <div className="shell relative isolate flex min-h-dvh flex-col">
+              {children}
+              <SiteFooter t={t} theme={theme} />
+            </div>
+          </TooltipProvider>
         </I18nProvider>
       </body>
     </html>
