@@ -20,8 +20,8 @@ const SHOWN = 5;
 /**
  * What waits for somebody in this tenant: identities whose DID is pending or
  * has changes to sign, and —
- * for an admin without one — the wallet that signing needs. Admins get the
- * way to act on each; members see what waits. Drawn even when nothing does.
+ * for whoever signs as the tenant without one — the wallet that signing
+ * needs. Those who sign get the way to act on each; others see what waits. Drawn even when nothing does.
  */
 export async function Attention() {
   const { t } = await getI18n();
@@ -31,9 +31,9 @@ export async function Attention() {
     fetchWaysIn(),
     currentTenant(),
   ]);
-  const admin = tenant?.role === "admin";
+  const signs = Boolean(tenant?.signs);
   const noWallet =
-    admin &&
+    signs &&
     waysIn !== null &&
     !waysIn.accounts.some((a) => a.provider === "almena");
   const rows = waiting ?? [];
@@ -75,7 +75,7 @@ export async function Attention() {
                     {t.dashboard.signature.status[row.signature]}
                   </Badge>
                 </span>
-                {admin && !noWallet && (
+                {signs && !noWallet && (
                   <Button asChild variant="ghost" size="sm">
                     <Link href={`/dashboard/identities/${row.id}/sign`}>
                       {t.dashboard.signature.sign}

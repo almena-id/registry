@@ -21,8 +21,8 @@ export async function generateMetadata({
 /**
  * Signing an identity's DID — an identity's own, or that of the issuer,
  * verifier or mediator acting as it: the registry prepares the next entry of
- * its did:webvh log and an admin's wallet signs it. A screen of its own, like
- * any decision; admins only.
+ * its did:webvh log and the wallet of whoever signs as the tenant signs it. A screen of its own, like
+ * any decision; only for those the tenant's signing flow names.
  */
 export default async function SignPage({
   params,
@@ -35,7 +35,7 @@ export default async function SignPage({
   const own = t.dashboard[ITEM[loaded.section]];
   const back = `/dashboard/${section}/${id}`;
   const item = loaded.item;
-  if (item && (await currentTenant())?.role !== "admin") redirect(back);
+  if (item && !(await currentTenant())?.signs) redirect(back);
   if (!item)
     return (
       <div className="grid gap-4">

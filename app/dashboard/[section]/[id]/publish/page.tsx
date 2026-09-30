@@ -19,10 +19,10 @@ export async function generateMetadata({
 }
 
 /**
- * Publishing an issuer, verifier or mediator is endorsing it: an admin's
- * wallet signs the tenant's membership credential for it and, in the same
+ * Publishing an issuer, verifier or mediator is endorsing it: the wallet of
+ * whoever signs as the tenant signs the tenant's membership credential for it and, in the same
  * approval, its `whois.vp`; then it is published. A screen of its own, like
- * any decision; admins only.
+ * any decision; only for those the tenant's signing flow names.
  */
 export default async function PublishPage({
   params,
@@ -35,7 +35,7 @@ export default async function PublishPage({
   const own = t.dashboard[ITEM[section]];
   const back = `/dashboard/${section}/${id}`;
   const item = loaded?.item;
-  if (item && (await currentTenant())?.role !== "admin") redirect(back);
+  if (item && !(await currentTenant())?.signs) redirect(back);
   if (!item)
     return (
       <div className="grid gap-4">

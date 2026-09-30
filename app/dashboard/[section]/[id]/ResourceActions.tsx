@@ -21,16 +21,22 @@ import {
  * The operations on an issuer, verifier or mediator, as icons beside its
  * title: publish — which is endorsing it, signed from a wallet on a screen of
  * its own — or take it back, and delete (which asks first, on its own screen
- * too). Admins only; the page does not draw it for anyone else.
+ * too). Publishing is for whoever signs as the tenant under its flow, admin
+ * or not; taking it back and deleting are for admins. The page draws it for
+ * nobody else.
  */
 export function ResourceActions({
   section,
   id,
   published,
+  admin,
+  signs,
 }: {
   section: "issuers" | "verifiers" | "mediators";
   id: string;
   published: boolean;
+  admin: boolean;
+  signs: boolean;
 }) {
   const { t } = useI18n();
   const copy = t.dashboard.publication;
@@ -44,51 +50,55 @@ export function ResourceActions({
   return (
     <div className="flex flex-col items-end gap-2">
       <div className="flex gap-2" role="toolbar" aria-label={copy.actions}>
-        {state.published ? (
-          <form className="contents" action={action}>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  type="submit"
-                  size="icon"
-                  variant="outline"
-                  disabled={pending}
-                  aria-label={toggle}
-                >
-                  <EyeOffIcon />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>{toggle}</TooltipContent>
-            </Tooltip>
-          </form>
-        ) : (
+        {state.published
+          ? admin && (
+              <form className="contents" action={action}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      type="submit"
+                      size="icon"
+                      variant="outline"
+                      disabled={pending}
+                      aria-label={toggle}
+                    >
+                      <EyeOffIcon />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>{toggle}</TooltipContent>
+                </Tooltip>
+              </form>
+            )
+          : signs && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button asChild size="icon" variant="outline">
+                    <Link
+                      href={`/dashboard/${section}/${id}/publish`}
+                      aria-label={toggle}
+                    >
+                      <GlobeIcon />
+                    </Link>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>{toggle}</TooltipContent>
+              </Tooltip>
+            )}
+        {admin && (
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button asChild size="icon" variant="outline">
+              <Button asChild size="icon" variant="danger">
                 <Link
-                  href={`/dashboard/${section}/${id}/publish`}
-                  aria-label={toggle}
+                  href={`/dashboard/${section}/${id}/delete`}
+                  aria-label={copy.delete}
                 >
-                  <GlobeIcon />
+                  <TrashIcon />
                 </Link>
               </Button>
             </TooltipTrigger>
-            <TooltipContent>{toggle}</TooltipContent>
+            <TooltipContent>{copy.delete}</TooltipContent>
           </Tooltip>
         )}
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button asChild size="icon" variant="danger">
-              <Link
-                href={`/dashboard/${section}/${id}/delete`}
-                aria-label={copy.delete}
-              >
-                <TrashIcon />
-              </Link>
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>{copy.delete}</TooltipContent>
-        </Tooltip>
       </div>
       {(state.failed || state.pendingIdentity) && !pending && (
         <Alert variant="destructive" role="alert">

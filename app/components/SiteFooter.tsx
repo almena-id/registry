@@ -16,7 +16,7 @@ export function SiteFooter({ t, theme }: { t: Dictionary; theme: Theme }) {
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
           <span>
             © {new Date().getFullYear()} {t.footer.rights} ·{" "}
-            <a href="https://almena.network" className="hover:text-foreground hover:underline">
+            <a href="https://almena.id" className="hover:text-foreground hover:underline">
               {t.footer.site}
             </a>
           </span>

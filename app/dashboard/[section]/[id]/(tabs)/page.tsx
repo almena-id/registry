@@ -38,7 +38,8 @@ export default async function SummaryTab({
   const items = t.dashboard.items;
   const status = t.dashboard.publication;
   const signature = t.dashboard.signature;
-  const admin = (await currentTenant())?.role === "admin";
+  // Signing is for whoever signs as the tenant under its flow, admin or not.
+  const signs = Boolean((await currentTenant())?.signs);
   // The DID, then where its signature stands, with the way to sign it.
   const signed = (item: Signed) => (
     <>
@@ -56,7 +57,7 @@ export default async function SummaryTab({
           <Badge variant={SIGNATURE_BADGE[item.signature]}>
             {signature.status[item.signature]}
           </Badge>
-          {admin && item.signature !== "signed" && (
+          {signs && item.signature !== "signed" && (
             <Button asChild size="sm">
               <Link href={`/dashboard/${section}/${id}/sign`}>
                 {signature.sign}

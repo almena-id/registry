@@ -13,6 +13,8 @@ export type Member = {
   email: string | null;
   role: Role;
   since: string;
+  /** Members only: an Almena wallet is linked, which everybody needs to work; `null` for invitations. */
+  wallet: boolean | null;
 };
 
 /** Who belongs to the current tenant and who is invited; `null` when unreachable. */

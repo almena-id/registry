@@ -177,7 +177,7 @@ export function AddDomainForm() {
         </div>
         <div className="flex justify-end gap-2">
           <Button asChild variant="ghost">
-            <Link href="/dashboard/tenant/domains">{copy.cancel}</Link>
+            <Link href="/dashboard/domains">{copy.cancel}</Link>
           </Button>
           <Button type="submit" disabled={pending}>
             {copy.addButton}

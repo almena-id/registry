@@ -12,10 +12,13 @@ type Entry =
   | "mediators"
   | "identities"
   | "tenant"
+  | "signing"
+  | "domains"
   | "users";
 
 // Two cards: what the account (the tenant) works with, then the account
-// itself — its details, billing among them, and its people.
+// itself — its details, billing among them, its signing, its domains and
+// its people.
 const groups: { key: Entry; href: string }[][] = [
   [
     { key: "overview", href: "/dashboard" },
@@ -26,6 +29,8 @@ const groups: { key: Entry; href: string }[][] = [
   ],
   [
     { key: "tenant", href: "/dashboard/tenant" },
+    { key: "signing", href: "/dashboard/signing" },
+    { key: "domains", href: "/dashboard/domains" },
     { key: "users", href: "/dashboard/users" },
   ],
 ];

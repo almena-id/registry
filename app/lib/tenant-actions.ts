@@ -12,6 +12,7 @@ import {
   sessionCookie,
   tenantCookie,
 } from "./api";
+import { signingFlows, type SigningFlow } from "./signing-flows";
 import type { TenantDetail } from "./tenant";
 
 type ErrorKey = keyof Dictionary["dashboard"]["tenant"]["errors"];
@@ -41,7 +42,10 @@ export async function saveTenant(
     `/tenants/${tenant.id}`,
     {
       method: "PATCH",
-      body: { name, mediator_id: mediator || null },
+      body: {
+        name,
+        mediator_id: mediator || null,
+      },
       token,
     },
   );
@@ -58,6 +62,63 @@ export async function saveTenant(
   return {
     name: data.name ?? "",
     mediator: data.mediator?.id ?? "",
+    saved: true,
+  };
+}
+
+export type SigningFlowState = {
+  signingFlow: SigningFlow;
+  /** `single_user`: the member who signs; empty for none yet. */
+  signer: string;
+  saved?: boolean;
+  error?: ErrorKey;
+  signerError?: ErrorKey;
+};
+
+/**
+ * The tenant's signing flow, on its own tab: only a flow the portal knows is
+ * sent, and a signer only with the flow that names one.
+ */
+export async function saveSigningFlow(
+  state: SigningFlowState,
+  form: FormData,
+): Promise<SigningFlowState> {
+  const asked = String(form.get("signingFlow") ?? "");
+  const signingFlow = signingFlows.find((flow) => flow === asked);
+  if (!signingFlow)
+    return { signingFlow: state.signingFlow, signer: state.signer };
+  const signer =
+    signingFlow === "single_user" ? String(form.get("signer") ?? "") : "";
+  const keep = { signingFlow, signer };
+  if (signingFlow === "single_user" && !signer)
+    return { ...keep, signerError: "signerRequired" };
+
+  const token = (await cookies()).get(sessionCookie)?.value;
+  const tenant = await currentTenant();
+  if (!token || !tenant) return { ...keep, error: "unavailable" };
+  const { status, data, detail } = await api<TenantDetail>(
+    `/tenants/${tenant.id}`,
+    {
+      method: "PATCH",
+      body: {
+        signing_flow: signingFlow,
+        ...(signer ? { signer_id: signer } : {}),
+      },
+      token,
+    },
+  );
+  if (!data) {
+    if (detail === "signer_required")
+      return { ...keep, signerError: "signerRequired" };
+    if (detail === "signer_not_member")
+      return { ...keep, signerError: "signerNotMember" };
+    return { ...keep, error: status === 403 ? "notAdmin" : "unavailable" };
+  }
+  // Who signs decides what the portal offers (signing, publishing).
+  revalidatePath("/dashboard", "layout");
+  return {
+    signingFlow: data.signing_flow,
+    signer: data.signer?.id ?? "",
     saved: true,
   };
 }

@@ -98,17 +98,19 @@ export type IdentityDetail = Signed & {
  * catalogue so far has one system, `single_user`: one member signs alone.
  */
 export type SigningSystem = "single_user";
+/** A named signer: an issuer's or verifier's, or the tenant's own (`single_user`). */
+export type Signer = {
+  id: string;
+  email: string;
+  alias: string | null;
+  /** A signer who left the tenant signs nothing. */
+  member: boolean;
+  /** Has an Almena wallet linked: without one there is no key to publish. */
+  wallet: boolean;
+};
 export type Signing = {
   system: SigningSystem | null;
-  signer: {
-    id: string;
-    email: string;
-    alias: string | null;
-    /** A signer who left the tenant signs nothing. */
-    member: boolean;
-    /** Has an Almena wallet linked: without one there is no key to publish. */
-    wallet: boolean;
-  } | null;
+  signer: Signer | null;
 };
 
 export type Page = { items: Item[]; next_cursor: string | null; total: number };

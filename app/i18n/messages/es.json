@@ -109,7 +109,9 @@
       "soon": "Pronto",
       "users": "Usuarios",
       "tenantLabel": "Cuenta",
-      "tenant": "Cuenta"
+      "tenant": "Cuenta",
+      "signing": "Firma",
+      "domains": "Dominios"
     },
     "overview": {
       "title": "Resumen",
@@ -367,11 +369,14 @@
         "mailUnavailable": "No se ha podido enviar el correo. Inténtalo de nuevo en un momento.",
         "unavailable": "No se puede contactar con el registro. Inténtalo de nuevo en un momento."
       },
-      "noEmail": "Sin correo"
+      "noEmail": "Sin correo",
+      "walletLinked": "Wallet vinculado",
+      "noWallet": "Sin wallet",
+      "noAccount": "Aún sin cuenta"
     },
     "tenant": {
       "title": "Cuenta",
-      "lead": "Tu organización: sus datos, sus dominios y su DID.",
+      "lead": "Tu organización: sus datos, su facturación y su DID.",
       "name": "Nombre",
       "mediator": "Mediador",
       "mediatorHint": "Uno de los mediadores de esta cuenta.",
@@ -384,11 +389,40 @@
         "nameLong": "Usa como mucho 200 caracteres.",
         "notAdmin": "Solo los administradores pueden cambiar estos datos.",
         "unavailable": "No se puede contactar con el registro. Inténtalo de nuevo en un momento.",
-        "mediatorNotFound": "Ese mediador no está en esta cuenta."
+        "mediatorNotFound": "Ese mediador no está en esta cuenta.",
+        "signerRequired": "Elige quién firma.",
+        "signerNotMember": "No es miembro de esta cuenta."
       },
       "identity": "Identidad",
       "identityHint": "El DID propio de la organización, con el nombre de la cuenta.",
-      "noMediators": "Aún no hay mediadores."
+      "noMediators": "Aún no hay mediadores.",
+      "signingLead": "Quién firma por la cuenta, desde su wallet.",
+      "signingFlow": "Flujo de firma",
+      "signingFlows": {
+        "any_admin": {
+          "label": "Un administrador cualquiera",
+          "hint": "Cualquier administrador con un wallet vinculado firma, solo.",
+          "people": "Administradores",
+          "gains": "Nadie bloquea: firma quien esté disponible.",
+          "costs": "Cualquier administrador publica sin que otro lo vea."
+        },
+        "single_user": {
+          "label": "Un usuario concreto",
+          "hint": "Firma solo el miembro elegido, sea administrador o no.",
+          "people": "Miembros",
+          "gains": "Una sola persona responde de lo que se publica.",
+          "costs": "Si esa persona no está, no se publica nada."
+        }
+      },
+      "signing": {
+        "settings": "Configuración",
+        "nothingToSet": "Este flujo no necesita nada más.",
+        "inForce": "En vigor",
+        "signerWithoutWallet": "Aún no tiene un wallet vinculado: hasta que lo vincule no puede firmar.",
+        "howItWorks": "Cómo funciona",
+        "signs": "Firma",
+        "published": "Se publica"
+      }
     },
     "detail": {
       "tabs": "Secciones",
@@ -477,7 +511,7 @@
   },
   "footer": {
     "rights": "Almena Network",
-    "site": "almena.network"
+    "site": "almena.id"
   },
   "wallet": {
     "signInTitle": "Continuar con Almena",

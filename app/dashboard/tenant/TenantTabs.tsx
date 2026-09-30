@@ -3,7 +3,7 @@
 import { Tabs } from "@/app/components/Tabs";
 import { useI18n } from "@/app/i18n/client";
 
-/** The account's sections: its details, domains, billing and DID document. */
+/** The account's sections: its details, billing and DID document. */
 export function TenantTabs() {
   const { t } = useI18n();
   const copy = t.dashboard.detail;
@@ -12,7 +12,6 @@ export function TenantTabs() {
       label={copy.tabs}
       tabs={[
         { href: "/dashboard/tenant", label: copy.data },
-        { href: "/dashboard/tenant/domains", label: t.dashboard.domains.title },
         { href: "/dashboard/tenant/billing", label: t.dashboard.billing.title },
         { href: "/dashboard/tenant/json", label: copy.json },
       ]}

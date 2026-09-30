@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import { PlusIcon } from "lucide-react";
+import { PlusIcon, WalletIcon } from "lucide-react";
 
 import { Alert, AlertDescription } from "@/app/components/ui/alert";
 import { Badge } from "@/app/components/ui/badge";
@@ -16,7 +16,13 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: (await getI18n()).t.dashboard.users.title };
 }
 
-/** The current tenant's people: members first, then those invited and not yet in. */
+/**
+ * The current tenant's people: members first, then those invited and not yet
+ * in. Each row says whether they have an Almena wallet linked — everybody
+ * needs one to work in the platform — in a cell of its own between the person
+ * and the date; somebody only invited has no account yet, so the cell holds a
+ * dash.
+ */
 export default async function UsersPage() {
   const { locale, t } = await getI18n();
   const copy = t.dashboard.users;
@@ -75,6 +81,23 @@ export default async function UsersPage() {
                     )}
                   </span>
                 </div>
+                <span className="flex-none sm:ml-auto sm:w-40">
+                  {member.wallet === null ? (
+                    <span className="text-faint" aria-label={copy.noAccount}>
+                      —
+                    </span>
+                  ) : member.wallet ? (
+                    <Badge variant="muted">
+                      <WalletIcon aria-hidden />
+                      {copy.walletLinked}
+                    </Badge>
+                  ) : (
+                    <Badge variant="danger">
+                      <WalletIcon aria-hidden />
+                      {copy.noWallet}
+                    </Badge>
+                  )}
+                </span>
                 <time
                   className="flex-none text-[13px] text-faint tabular-nums"
                   dateTime={member.since}

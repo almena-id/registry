@@ -15,7 +15,7 @@ import { DomainRow } from "./Domains";
 export async function generateMetadata(): Promise<Metadata> {
   const { t } = await getI18n();
   return {
-    title: `${t.dashboard.tenant.title} · ${t.dashboard.domains.title}`,
+    title: t.dashboard.domains.title,
   };
 }
 
@@ -26,9 +26,9 @@ export async function generateMetadata(): Promise<Metadata> {
  * when empty — whose rows open to show each domain's record. Admins add,
  * check and remove; members read. `?open=` opens one: the domain just added.
  */
-export default async function TenantDomainsPage({
+export default async function DomainsPage({
   searchParams,
-}: PageProps<"/dashboard/tenant/domains">) {
+}: PageProps<"/dashboard/domains">) {
   const { locale, t } = await getI18n();
   const copy = t.dashboard.domains;
   const [domains, tenant, timeZone, query] = await Promise.all([
@@ -41,18 +41,21 @@ export default async function TenantDomainsPage({
   const open = typeof query.open === "string" ? query.open : null;
 
   return (
-    <div className="grid gap-4">
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <p className="text-muted-foreground">{copy.hint}</p>
+    <div>
+      <header className="mb-6 flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <h1 className="text-[28px] font-bold tracking-tight">{copy.title}</h1>
+          <p className="text-muted-foreground">{copy.hint}</p>
+        </div>
         {admin && (
           <Button asChild>
-            <Link href="/dashboard/tenant/domains/new">
+            <Link href="/dashboard/domains/new">
               <PlusIcon />
               {copy.addButton}
             </Link>
           </Button>
         )}
-      </div>
+      </header>
 
       <Card className="gap-0 py-0">
         {domains === null ? (

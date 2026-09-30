@@ -8,13 +8,22 @@ import { AddDomainForm } from "../Domains";
 export async function generateMetadata(): Promise<Metadata> {
   const { t } = await getI18n();
   return {
-    title: `${t.dashboard.tenant.title} · ${t.dashboard.domains.add}`,
+    title: t.dashboard.domains.add,
   };
 }
 
 /** Only an admin links a domain; anybody else goes back to the list. */
 export default async function AddDomainPage() {
-  if ((await currentTenant())?.role !== "admin")
-    redirect("/dashboard/tenant/domains");
-  return <AddDomainForm />;
+  if ((await currentTenant())?.role !== "admin") redirect("/dashboard/domains");
+  const { t } = await getI18n();
+  const copy = t.dashboard.domains;
+  return (
+    <div>
+      <header className="mb-6">
+        <h1 className="text-[28px] font-bold tracking-tight">{copy.add}</h1>
+        <p className="text-muted-foreground">{copy.hint}</p>
+      </header>
+      <AddDomainForm />
+    </div>
+  );
 }

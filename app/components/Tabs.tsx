@@ -26,7 +26,7 @@ export function Tabs({
     .filter((href) => pathname === href || pathname.startsWith(`${href}/`))
     .sort((a, b) => b.length - a.length)[0];
   return (
-    <Root value={current} activationMode="manual" className="border-b">
+    <Root value={current} activationMode="manual" className="min-w-0 border-b">
       <TabsList
         variant="line"
         aria-label={label}

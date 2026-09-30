@@ -34,7 +34,7 @@ async function call<T = unknown>(
     { ...init, token },
   );
   if (status !== null && status < 300) {
-    revalidatePath("/dashboard/tenant", "layout");
+    revalidatePath("/dashboard", "layout");
     return { error: null, data };
   }
   return {
@@ -59,8 +59,8 @@ export async function addDomain(
   // Back to the list with the new one open: its record is the next step.
   redirect(
     data?.id
-      ? `/dashboard/tenant/domains?open=${encodeURIComponent(data.id)}`
-      : "/dashboard/tenant/domains",
+      ? `/dashboard/domains?open=${encodeURIComponent(data.id)}`
+      : "/dashboard/domains",
   );
 }
 

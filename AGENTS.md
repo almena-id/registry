@@ -25,9 +25,10 @@ everything (`task --list`); `task check` must pass before finishing.
   tenant from your wallet, its issuers, verifiers and mediators hang from it;
   three numbered points below.
 - The overview opens with "Awaiting you": identities whose DID is pending or
-  has changes to sign (`GET /tenants/{id}/signatures`) and — for an admin
-  with no wallet — the
-  way to link one; admins get the buttons. Lists tag each row published or
+  has changes to sign (`GET /tenants/{id}/signatures`) and — for whoever
+  signs as the tenant with no wallet — the way to link one; those who sign
+  get the buttons. Who signs is the tenant's signing flow, not the role: the
+  API says it per tenant (`Tenant.signs`). Lists tag each row published or
   draft (issuers, verifiers, mediators) and with its DID's signature.
 - Pages: `/` (landing) and `/login` live in the `(site)` group, which brings
   the public header; `/login` is in `(auth)`, which sends a signed-in
@@ -108,13 +109,22 @@ everything (`task --list`); `task check` must pass before finishing.
   `task check` builds fine alongside `next dev`.
 - `/dashboard/tenant` has tabs (the shared `Tabs`, as items have): Data (the
   tenant's name and the mediator its own identity uses; admins edit, members
-  read), Domains (`/dashboard/tenant/domains`: the domains linked to the
+  read), Billing (`/dashboard/tenant/billing`: "Soon", nothing to bill yet)
+  and JSON (`/dashboard/tenant/json`: its DID document, shown as items show
+  theirs, `DidDocuments`).
+- Under Account, the side menu has two more entries of the tenant's own:
+  Signing (`/dashboard/signing`: the signing flow — who signs as
+  the account, listed from `app/lib/signing-flows.ts`, a module of its own so
+  the client form can import it — in two halves: on the left its
+  configuration, the choice and what that flow asks for (`single_user`: the
+  member who signs, admin or not); on the right how the flow in the select
+  works, drawn by `FlowExplained` with what it gains and costs, redrawn as
+  the select changes; admins edit, members read) and
+  Domains (`/dashboard/domains`: the domains linked to the
   tenant, each with the DNS TXT record that proves it; admins add, check and
   remove; verified ones go into the tenant's DID document, which then asks to
-  be signed; "Add" opens `/dashboard/tenant/domains/new`, and the list rows
-  open to show each record), Billing (`/dashboard/tenant/billing`: "Soon",
-  nothing to bill yet) and JSON (`/dashboard/tenant/json`: its DID document,
-  shown as items show theirs, `DidDocuments`).
+  be signed; "Add" opens `/dashboard/domains/new`, and the list rows
+  open to show each record).
 - Mediators are registered, not discovered: the API fetches nothing from the
   address, it gives the mediator an identity of its own whose DID document
   publishes that address; the DID documents of the tenant, issuers and
@@ -123,10 +133,10 @@ everything (`task --list`); `task check` must pass before finishing.
   its DID, which never changes.
 - DIDs are `did:webvh`, signed by people: every item's Summary shows its DID
   (none while pending) and its signature — pending, signed, or changes to
-  sign — and admins get "Sign", which opens `/dashboard/{section}/{id}/sign`
+  sign — and whoever signs as the tenant gets "Sign", which opens `/dashboard/{section}/{id}/sign`
   (outside the tabs, like delete): `WalletRequest` with `purpose: "sign"`
   asks the API to prepare the identity's next log entry and shows the QR for
-  the admin's wallet; signed, it comes back to the item. Publishing an item
+  the signer's wallet; signed, it comes back to the item. Publishing an item
   whose identity is pending is refused ("Sign its identity first"). The JSON
   tab shows the published document when signed, the one to sign while
   pending, and both when there are changes to sign — saying in which fields
@@ -146,10 +156,10 @@ everything (`task --list`); `task check` must pass before finishing.
   — so far one specific member signs; admins set it, members read it) and JSON
   (`/{id}/json`, the DID document). `load.ts` asks the API
   for the item once per request; `Detail.tsx` holds the shared shapes. Issuers,
-  verifiers and mediators are edited by any member; admins get the operations
-  as icons (`ResourceActions`): publish — which is endorsing it: its own
-  screen (`/{id}/publish`), where the admin's wallet signs the tenant's
-  membership credential and the item's `whois.vp` in one approval — or
-  unpublish, and delete, which asks on its own screen (`/{id}/delete`). The
+  verifiers and mediators are edited by any member; the operations are icons
+  (`ResourceActions`): publish, for whoever signs as the tenant — which is
+  endorsing it: its own screen (`/{id}/publish`), where the signer's wallet
+  signs the tenant's membership credential and the item's `whois.vp` in one
+  approval — and, for admins, unpublish and delete, which asks on its own screen (`/{id}/delete`). The
   Summary shows the endorsement (its `whois.vp`, until when). A draft's DID does not
   resolve and the API's public catalogue does not list it.

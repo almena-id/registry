@@ -109,7 +109,9 @@
       "soon": "Soon",
       "users": "Users",
       "tenantLabel": "Account",
-      "tenant": "Account"
+      "tenant": "Account",
+      "signing": "Signing",
+      "domains": "Domains"
     },
     "overview": {
       "title": "Overview",
@@ -367,11 +369,14 @@
         "mailUnavailable": "The email could not be sent. Try again in a moment.",
         "unavailable": "The registry cannot be reached. Try again in a moment."
       },
-      "noEmail": "No email"
+      "noEmail": "No email",
+      "walletLinked": "Wallet linked",
+      "noWallet": "No wallet",
+      "noAccount": "No account yet"
     },
     "tenant": {
       "title": "Account",
-      "lead": "Your organisation: its details, its domains and its DID.",
+      "lead": "Your organisation: its details, its billing and its DID.",
       "name": "Name",
       "mediator": "Mediator",
       "mediatorHint": "One of this account's mediators.",
@@ -384,11 +389,40 @@
         "nameLong": "Use at most 200 characters.",
         "notAdmin": "Only admins can change these details.",
         "unavailable": "The registry cannot be reached. Try again in a moment.",
-        "mediatorNotFound": "That mediator is not in this account."
+        "mediatorNotFound": "That mediator is not in this account.",
+        "signerRequired": "Choose who signs.",
+        "signerNotMember": "Not a member of this account."
       },
       "identity": "Identity",
       "identityHint": "The organisation's own DID, named like the account.",
-      "noMediators": "No mediators yet."
+      "noMediators": "No mediators yet.",
+      "signingLead": "Who signs for the account, from their wallet.",
+      "signingFlow": "Signing flow",
+      "signingFlows": {
+        "any_admin": {
+          "label": "Any one admin",
+          "hint": "Any admin with a linked wallet signs, alone.",
+          "people": "Admins",
+          "gains": "Nobody holds it up: whoever is there signs.",
+          "costs": "Any admin publishes without another seeing it."
+        },
+        "single_user": {
+          "label": "One specific user",
+          "hint": "Only the chosen member signs, admin or not.",
+          "people": "Members",
+          "gains": "One person answers for what is published.",
+          "costs": "If they are away, nothing is published."
+        }
+      },
+      "signing": {
+        "settings": "Configuration",
+        "nothingToSet": "This flow needs nothing else.",
+        "inForce": "In force",
+        "signerWithoutWallet": "No wallet linked yet: they cannot sign until they link one.",
+        "howItWorks": "How it works",
+        "signs": "Signs",
+        "published": "Published"
+      }
     },
     "detail": {
       "tabs": "Sections",
@@ -477,7 +511,7 @@
   },
   "footer": {
     "rights": "Almena Network",
-    "site": "almena.network"
+    "site": "almena.id"
   },
   "wallet": {
     "signInTitle": "Continue with Almena",

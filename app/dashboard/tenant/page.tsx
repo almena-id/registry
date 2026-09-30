@@ -11,7 +11,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: (await getI18n()).t.dashboard.tenant.title };
 }
 
-/** Data: the current tenant's own details, its name and its mediator. */
+/** Data: the current tenant's own details: its name and its mediator. (Its signing flow has a tab of its own.) */
 export default async function TenantPage() {
   const { t } = await getI18n();
   const copy = t.dashboard.tenant;

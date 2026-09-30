@@ -23,6 +23,8 @@ export type Tenant = {
   name: string | null;
   created_at: string;
   role: Role;
+  /** Whether the user signs as the tenant under its flow: signing and publishing are theirs. */
+  signs: boolean;
 };
 
 /** A call to the API from the server; `null` status when it cannot be reached. */
