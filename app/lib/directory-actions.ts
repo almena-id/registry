@@ -32,6 +32,8 @@ export type CreateState = {
   description?: string;
   url?: string;
   mediator?: string;
+  /** Mediators: offered to every account once published. */
+  public?: boolean;
   errors?: {
     name?: ErrorKey;
     description?: ErrorKey;
@@ -58,7 +60,8 @@ export async function createItem(
   const description = String(form.get("description") ?? "").trim();
   const url = String(form.get("url") ?? "").trim();
   const mediator = String(form.get("mediator") ?? "");
-  const keep = { name, description, url, mediator };
+  const isPublic = form.get("public") === "on";
+  const keep = { name, description, url, mediator, public: isPublic };
   const errors: CreateState["errors"] = {};
   if (!name) errors.name = "nameRequired";
   else if (name.length > 200) errors.name = "nameLong";
@@ -74,7 +77,7 @@ export async function createItem(
   const body = hasDescription(section)
     ? { name, description: description || null, mediator_id: mediator || null }
     : section === "mediators"
-      ? { name, url }
+      ? { name, url, public: isPublic }
       : { name };
   const { data, detail } = await api(`/tenants/${tenant.id}/${section}`, {
     method: "POST",
@@ -94,11 +97,12 @@ export async function createItem(
 export type MediatorState = {
   name?: string;
   url?: string;
+  public?: boolean;
   saved?: boolean;
   errors?: { name?: ErrorKey; url?: ErrorKey; form?: ErrorKey };
 };
 
-/** A mediator's name and address; its DID stays whatever they become. */
+/** A mediator's name, address and whether it is public; its DID stays. */
 export async function saveMediator(
   id: string,
   _: MediatorState,
@@ -106,7 +110,8 @@ export async function saveMediator(
 ): Promise<MediatorState> {
   const name = String(form.get("name") ?? "").trim();
   const url = String(form.get("url") ?? "").trim();
-  const keep = { name, url };
+  const isPublic = form.get("public") === "on";
+  const keep = { name, url, public: isPublic };
   const errors: MediatorState["errors"] = {};
   if (!name) errors.name = "nameRequired";
   else if (name.length > 200) errors.name = "nameLong";
@@ -118,7 +123,7 @@ export async function saveMediator(
   if (!token || !tenant) return { ...keep, errors: { form: "unavailable" } };
   const { data, detail } = await api<MediatorDetail>(
     `/tenants/${tenant.id}/mediators/${encodeURIComponent(id)}`,
-    { method: "PATCH", body: { name, url }, token },
+    { method: "PATCH", body: { name, url, public: isPublic }, token },
   );
   if (!data) {
     const url = urlError(detail);
@@ -128,7 +133,7 @@ export async function saveMediator(
     return { ...keep, errors: { form: "unavailable" } };
   }
   revalidatePath(`/dashboard/mediators/${id}`);
-  return { name: data.name, url: data.url, saved: true };
+  return { name: data.name, url: data.url, public: data.public, saved: true };
 }
 
 export type DescribedState = {

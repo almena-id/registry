@@ -141,6 +141,9 @@ export function InfiniteList({
                     <KeyIcon />
                     {item.identity.name}
                   </Badge>
+                  {item.public && (
+                    <Badge variant="muted">{copy.public}</Badge>
+                  )}
                   {item.mediator && (
                     <Badge variant="muted" title={copy.mediator}>
                       {copy.mediator} · {item.mediator.name}

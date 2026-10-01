@@ -15,7 +15,10 @@ import {
   saveDescribed,
   type DescribedState,
 } from "@/app/lib/directory-actions";
-import type { Item } from "@/app/lib/directory-types";
+import {
+  mediatorOptions,
+  type MediatorChoice,
+} from "@/app/lib/directory-types";
 
 /**
  * An issuer's or verifier's name, description and mediator; any member of the
@@ -34,7 +37,7 @@ export function DescribedForm({
   name: string;
   description: string;
   mediator: string;
-  mediators: Item[];
+  mediators: MediatorChoice[];
 }) {
   const { t } = useI18n();
   const copy = t.dashboard.items;
@@ -115,10 +118,7 @@ export function DescribedForm({
             aria-describedby={errors.mediator ? "mediator-error" : undefined}
             options={[
               { value: "", label: copy.noMediator },
-              ...mediators.map((choice) => ({
-                value: choice.id,
-                label: choice.name,
-              })),
+              ...mediatorOptions(mediators, copy.publicMediator),
             ]}
           />
           {errors.mediator && (

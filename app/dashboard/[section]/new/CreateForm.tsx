@@ -10,14 +10,19 @@ import { Card } from "@/app/components/ui/card";
 import { Input } from "@/app/components/ui/input";
 import { Label } from "@/app/components/ui/label";
 import { Textarea } from "@/app/components/ui/textarea";
+import { PublicField } from "@/app/dashboard/[section]/[id]/PublicField";
 import { useI18n } from "@/app/i18n/client";
 import { useAnswerRound } from "@/app/lib/use-answer-round";
 import { createItem, type CreateState } from "@/app/lib/directory-actions";
-import type { Item, Section } from "@/app/lib/directory-types";
+import {
+  mediatorOptions,
+  type MediatorChoice,
+  type Section,
+} from "@/app/lib/directory-types";
 
 /**
- * Issuers and verifiers are `described` and pick one of the tenant's
- * `mediators`; mediators have an address. Each gets an identity of its own,
+ * Issuers and verifiers are `described` and pick one of the `mediators`
+ * (the tenant's, or a public one); mediators have an address and may be public. Each gets an identity of its own,
  * named like it, which the API creates.
  */
 export function CreateForm({
@@ -27,7 +32,7 @@ export function CreateForm({
 }: {
   section: Section;
   described: boolean;
-  mediators: Item[] | null;
+  mediators: MediatorChoice[] | null;
 }) {
   const { t } = useI18n();
   const copy = t.dashboard.items;
@@ -122,6 +127,10 @@ export function CreateForm({
           </div>
         )}
 
+        {section === "mediators" && (
+          <PublicField key={round} defaultChecked={state.public ?? false} />
+        )}
+
         {mediators && (
           <div className="grid gap-1.5">
             <Label htmlFor="mediator">
@@ -137,10 +146,7 @@ export function CreateForm({
               aria-describedby={errors.mediator ? "mediator-error" : undefined}
               options={[
                 { value: "", label: copy.noMediator },
-                ...mediators.map((mediator) => ({
-                  value: mediator.id,
-                  label: mediator.name,
-                })),
+                ...mediatorOptions(mediators, copy.publicMediator),
               ]}
             />
             {errors.mediator && (

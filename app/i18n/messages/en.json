@@ -155,7 +155,7 @@
         "providerError": "The provider could not link the account. Try again.",
         "providerCancelled": "Linking was cancelled.",
         "invalidTicket": "That took too long. Try linking again.",
-        "notEmpty": "This profile holds work now, so it stays."
+        "notEmpty": "This profile already has issuers, verifiers, mediators, invitations or other members, so it can't be deleted."
       },
       "waysIn": {
         "title": "Ways in",
@@ -195,7 +195,7 @@
         "title": "It belongs to another profile",
         "emptyLead": "This profile holds nothing yet. Delete it and continue in the other one; its ways in go with you.",
         "move": "Delete this profile and continue",
-        "busyLead": "This profile holds work, so it stays. Sign in that way and link this profile's ways in from there.",
+        "busyLead": "That way in already belongs to another profile, so it wasn't linked to this one. This profile can't be deleted because it already has issuers, verifiers, mediators, invitations or other members. To bring them together, sign in that way and link the way in you're using now from there. This only works if that other profile is empty; if both have content, they can't be brought together.",
         "back": "Back to your profile",
         "cancel": "Cancel"
       }
@@ -269,7 +269,7 @@
         "urlRequired": "Enter an address.",
         "urlInvalid": "Enter an address, like https://mediator.example.org.",
         "urlInsecure": "Use https:// (plain http only for localhost).",
-        "mediatorNotFound": "That mediator is not in this account."
+        "mediatorNotFound": "That mediator is not available to this account."
       },
       "identity": "Identity",
       "usedBy": {
@@ -282,7 +282,12 @@
       "url": "Address",
       "urlHint": "Where it listens, e.g. https://mediator.example.org.",
       "mediator": "Mediator",
-      "noMediator": "None"
+      "noMediator": "None",
+      "public": "Public",
+      "publicHint": "Offered to every account once published.",
+      "publicMediator": "{name} (public)",
+      "yes": "Yes",
+      "no": "No"
     },
     "identity": {
       "back": "Identities",
@@ -379,7 +384,7 @@
       "lead": "Your organisation: its details, its billing and its DID.",
       "name": "Name",
       "mediator": "Mediator",
-      "mediatorHint": "One of this account's mediators.",
+      "mediatorHint": "One of this account's mediators, or a public one.",
       "noMediator": "No mediator yet.",
       "save": "Save",
       "saved": "Saved.",
@@ -389,7 +394,7 @@
         "nameLong": "Use at most 200 characters.",
         "notAdmin": "Only admins can change these details.",
         "unavailable": "The registry cannot be reached. Try again in a moment.",
-        "mediatorNotFound": "That mediator is not in this account.",
+        "mediatorNotFound": "That mediator is not available to this account.",
         "signerRequired": "Choose who signs.",
         "signerNotMember": "Not a member of this account."
       },
@@ -468,6 +473,22 @@
       "noWallet": "Link your Almena wallet to sign.",
       "linkWallet": "Link wallet",
       "more": "and {count} more"
+    },
+    "health": {
+      "title": "Account health",
+      "fix": "Set up",
+      "checks": {
+        "name": "Name",
+        "mediator": "Mediator",
+        "signing_flow": "Signing flow"
+      },
+      "tasks": {
+        "name_missing": "Give the account a name",
+        "mediator_missing": "Choose a mediator",
+        "mediator_unpublished": "Publish its mediator",
+        "signing_flow_no_signer": "Choose who signs",
+        "signing_flow_no_wallet": "Whoever signs needs a linked wallet"
+      }
     },
     "json": {
       "published": "Published document",

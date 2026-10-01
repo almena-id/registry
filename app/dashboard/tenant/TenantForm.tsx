@@ -10,7 +10,10 @@ import { Input } from "@/app/components/ui/input";
 import { Label } from "@/app/components/ui/label";
 import { useI18n } from "@/app/i18n/client";
 import { useAnswerRound } from "@/app/lib/use-answer-round";
-import type { Item } from "@/app/lib/directory-types";
+import {
+  mediatorOptions,
+  type MediatorChoice,
+} from "@/app/lib/directory-types";
 import { saveTenant, type TenantState } from "@/app/lib/tenant-actions";
 
 /** Admins edit; members see the same fields, read-only. */
@@ -24,8 +27,8 @@ export function TenantForm({
   name: string;
   /** The chosen mediator's id; empty for none. */
   mediator: string;
-  /** The tenant's mediators, to pick the one its own identity uses. */
-  mediators: Item[];
+  /** The mediators it may pick (its own, or public ones) for its own identity. */
+  mediators: MediatorChoice[];
   /** The tenant's own identity; renamed with the tenant by the API. */
   identity: string | null;
   editable: boolean;
@@ -101,7 +104,7 @@ export function TenantForm({
                   ? t.dashboard.items.noMediator
                   : copy.noMediators,
               },
-              ...mediators.map((m) => ({ value: m.id, label: m.name })),
+              ...mediatorOptions(mediators, t.dashboard.items.publicMediator),
             ]}
           />
           {errors.mediator ? (

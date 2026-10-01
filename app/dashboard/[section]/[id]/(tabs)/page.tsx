@@ -139,10 +139,16 @@ export default async function SummaryTab({
           </dd>
         </div>
         {loaded.section === "mediators" ? (
-          <div className={FACT}>
-            <dt className="text-muted-foreground">{items.url}</dt>
-            <dd className="font-mono text-[13px] break-all">{item.url}</dd>
-          </div>
+          <>
+            <div className={FACT}>
+              <dt className="text-muted-foreground">{items.url}</dt>
+              <dd className="font-mono text-[13px] break-all">{item.url}</dd>
+            </div>
+            <div className={FACT}>
+              <dt className="text-muted-foreground">{items.public}</dt>
+              <dd>{item.public ? items.yes : items.no}</dd>
+            </div>
+          </>
         ) : (
           <>
             <div className={FACT}>
@@ -155,7 +161,8 @@ export default async function SummaryTab({
             </div>
             <div className={FACT}>
               <dt className="text-muted-foreground">{items.mediator}</dt>
-              {item.mediator ? (
+              {/* Another account's public mediator does not open here. */}
+              {item.mediator?.own ? (
                 <dd>
                   <Link
                     className="text-primary hover:underline"
@@ -163,6 +170,10 @@ export default async function SummaryTab({
                   >
                     {item.mediator.name}
                   </Link>
+                </dd>
+              ) : item.mediator ? (
+                <dd>
+                  {items.publicMediator.replace("{name}", item.mediator.name)}
                 </dd>
               ) : (
                 <dd className="text-faint">{items.noMediator}</dd>

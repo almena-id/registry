@@ -155,7 +155,7 @@
         "providerError": "El proveedor no pudo vincular la cuenta. Inténtalo de nuevo.",
         "providerCancelled": "Se canceló la vinculación.",
         "invalidTicket": "Pasó demasiado tiempo. Vuelve a vincular.",
-        "notEmpty": "Este perfil ya tiene trabajo, así que se queda."
+        "notEmpty": "Este perfil ya tiene emisores, verificadores, mediadores, invitaciones u otros miembros, así que no se puede borrar."
       },
       "waysIn": {
         "title": "Formas de entrar",
@@ -195,7 +195,7 @@
         "title": "Pertenece a otro perfil",
         "emptyLead": "Este perfil aún no tiene nada. Bórralo y continúa en el otro; sus formas de entrar van contigo.",
         "move": "Borrar este perfil y continuar",
-        "busyLead": "Este perfil tiene trabajo, así que se queda. Entra de esa forma y vincula desde allí las formas de entrar de este perfil.",
+        "busyLead": "Esa forma de entrar ya pertenece a otro perfil, así que no se ha vinculado a este. Este perfil no se puede borrar porque ya tiene emisores, verificadores, mediadores, invitaciones u otros miembros. Para unirlos, entra con esa forma de entrar y vincula desde allí la que usas ahora. Solo funciona si ese otro perfil está vacío; si los dos tienen contenido, no se pueden unir.",
         "back": "Volver a tu perfil",
         "cancel": "Cancelar"
       }
@@ -269,7 +269,7 @@
         "urlRequired": "Escribe una dirección.",
         "urlInvalid": "Escribe una dirección, como https://mediator.example.org.",
         "urlInsecure": "Usa https:// (http sin cifrar solo en localhost).",
-        "mediatorNotFound": "Ese mediador no está en esta cuenta."
+        "mediatorNotFound": "Ese mediador no está disponible para esta cuenta."
       },
       "identity": "Identidad",
       "usedBy": {
@@ -282,7 +282,12 @@
       "url": "Dirección",
       "urlHint": "Donde escucha, p. ej. https://mediator.example.org.",
       "mediator": "Mediador",
-      "noMediator": "Ninguno"
+      "noMediator": "Ninguno",
+      "public": "Público",
+      "publicHint": "Se ofrece a todas las cuentas una vez publicado.",
+      "publicMediator": "{name} (público)",
+      "yes": "Sí",
+      "no": "No"
     },
     "identity": {
       "back": "Identidades",
@@ -379,7 +384,7 @@
       "lead": "Tu organización: sus datos, su facturación y su DID.",
       "name": "Nombre",
       "mediator": "Mediador",
-      "mediatorHint": "Uno de los mediadores de esta cuenta.",
+      "mediatorHint": "Uno de los mediadores de esta cuenta, o uno público.",
       "noMediator": "Aún sin mediador.",
       "save": "Guardar",
       "saved": "Guardado.",
@@ -389,7 +394,7 @@
         "nameLong": "Usa como mucho 200 caracteres.",
         "notAdmin": "Solo los administradores pueden cambiar estos datos.",
         "unavailable": "No se puede contactar con el registro. Inténtalo de nuevo en un momento.",
-        "mediatorNotFound": "Ese mediador no está en esta cuenta.",
+        "mediatorNotFound": "Ese mediador no está disponible para esta cuenta.",
         "signerRequired": "Elige quién firma.",
         "signerNotMember": "No es miembro de esta cuenta."
       },
@@ -468,6 +473,22 @@
       "noWallet": "Vincula tu wallet de Almena para firmar.",
       "linkWallet": "Vincular wallet",
       "more": "y {count} más"
+    },
+    "health": {
+      "title": "Salud de la cuenta",
+      "fix": "Configurar",
+      "checks": {
+        "name": "Nombre",
+        "mediator": "Mediador",
+        "signing_flow": "Flujo de firma"
+      },
+      "tasks": {
+        "name_missing": "Pon nombre a la cuenta",
+        "mediator_missing": "Elige un mediador",
+        "mediator_unpublished": "Publica su mediador",
+        "signing_flow_no_signer": "Elige quién firma",
+        "signing_flow_no_wallet": "Quien firma necesita una wallet vinculada"
+      }
     },
     "json": {
       "published": "Documento publicado",

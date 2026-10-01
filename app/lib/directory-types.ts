@@ -12,7 +12,8 @@ export function isSection(value: string): value is Section {
 }
 
 /**
- * Issuers and verifiers are described and pick one of the tenant's mediators;
+ * Issuers and verifiers are described and pick a mediator (the tenant's, or a
+ * public one);
  * mediators have an address; identities only a name, for now.
  */
 export function hasDescription(section: Section): boolean {
@@ -25,7 +26,33 @@ export function opens(section: Section): boolean {
 }
 
 export type IdentityRef = { id: string; name: string };
-export type MediatorRef = { id: string; name: string };
+/** `own`: the tenant's; otherwise another tenant's public one. */
+export type MediatorRef = { id: string; name: string; own: boolean };
+
+/**
+ * A mediator the tenant may pick: its own (drafts too), or another tenant's
+ * public and published one.
+ */
+export type MediatorChoice = {
+  id: string;
+  name: string;
+  url: string;
+  own: boolean;
+  published: boolean;
+};
+
+/** The choices as a `Select`'s options, the public ones marked so. */
+export function mediatorOptions(
+  choices: MediatorChoice[],
+  publicLabel: string,
+): { value: string; label: string }[] {
+  return choices.map((choice) => ({
+    value: choice.id,
+    label: choice.own
+      ? choice.name
+      : publicLabel.replace("{name}", choice.name),
+  }));
+}
 export type Use = {
   kind: "tenant" | "issuer" | "verifier" | "mediator";
   id: string;
@@ -41,8 +68,9 @@ export type Item = {
   identity?: IdentityRef | null;
   /** Issuers and verifiers: the mediator they receive messages through. */
   mediator?: MediatorRef | null;
-  /** Mediators: where they listen. */
+  /** Mediators: where they listen, and whether every tenant is offered them. */
   url?: string | null;
+  public?: boolean | null;
   /** Identities: the tenant, issuer, verifier or mediator that acts as them. */
   used_by?: Use[] | null;
   /** Issuers, verifiers and mediators: when published; `null` while a draft. */
@@ -81,7 +109,7 @@ export type DescribedDetail = Item &
   };
 
 /** One mediator, opened from the list: its address and its DID. */
-export type MediatorDetail = DescribedDetail & { url: string };
+export type MediatorDetail = DescribedDetail & { url: string; public: boolean };
 
 /** One identity, opened from the list: its DID and the document it publishes. */
 export type IdentityDetail = Signed & {

@@ -28,7 +28,12 @@ everything (`task --list`); `task check` must pass before finishing.
   has changes to sign (`GET /tenants/{id}/signatures`) and — for whoever
   signs as the tenant with no wallet — the way to link one; those who sign
   get the buttons. Who signs is the tenant's signing flow, not the role: the
-  API says it per tenant (`Tenant.signs`). Lists tag each row published or
+  API says it per tenant (`Tenant.signs`). Below it, "Account health"
+  (`Health.tsx`): the API's score (`GET /tenants/{id}/health`, a percentage
+  and a bar) and its checks in order — name, mediator, signing flow, more to
+  come — each done, or pending with the task and a "Set up" link to where it
+  is done. The checks and their order are the API's; the portal only words
+  them (`dashboard.health.tasks.{check}_{issue}`). Lists tag each row published or
   draft (issuers, verifiers, mediators) and with its DID's signature.
 - Pages: `/` (landing) and `/login` live in the `(site)` group, which brings
   the public header; `/login` is in `(auth)`, which sends a signed-in
@@ -77,8 +82,8 @@ everything (`task --list`); `task check` must pass before finishing.
   page is rendered on the server, the rest come from the `loadMore` server
   action as the marker under the list nears the viewport (`InfiniteList`).
   "Create" opens `/dashboard/{section}/new`. Issuers and verifiers have a name,
-  a description and, optionally, one of the tenant's mediators; mediators a
-  name and the address they listen on (https); identities only a name
+  a description and, optionally, a mediator; mediators a name, the address
+  they listen on (https) and whether they are public; identities only a name
   until the DID method is decided.
   The tenant has no menu entry: it is chosen in the header, kept by id in the
   HTTP-only `almena.tenant` cookie (the oldest while none is chosen, or the
@@ -129,8 +134,13 @@ everything (`task --list`); `task check` must pass before finishing.
   address, it gives the mediator an identity of its own whose DID document
   publishes that address; the DID documents of the tenant, issuers and
   verifiers name the chosen mediator's DID. A mediator opens at
-  `/dashboard/mediators/{id}`: its name and address (any member edits them) and
-  its DID, which never changes.
+  `/dashboard/mediators/{id}`: its name, address and "Public" (any member
+  edits them) and its DID, which never changes. A public mediator, once
+  published, is offered to every tenant: the mediator selects (the tenant's,
+  an issuer's, a verifier's) list `GET /tenants/{id}/mediator-choices` — the
+  tenant's own, then other tenants' public ones, marked "(public)"; another
+  tenant's mediator is shown by name and never linked. The root's (Almena's,
+  `https://mediator.almena.id`) is public and every new tenant starts with it.
 - DIDs are `did:webvh`, signed by people: every item's Summary shows its DID
   (none while pending) and its signature — pending, signed, or changes to
   sign — and whoever signs as the tenant gets "Sign", which opens `/dashboard/{section}/{id}/sign`

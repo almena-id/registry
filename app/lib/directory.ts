@@ -7,7 +7,7 @@ import {
   pageSize,
   type DescribedDetail,
   type IdentityDetail,
-  type Item,
+  type MediatorChoice,
   type MediatorDetail,
   type Page,
   type Section,
@@ -79,11 +79,18 @@ export async function fetchDescribed(
 }
 
 /**
- * The current tenant's mediators, to pick one from: the first hundred, which
- * is more than a tenant is expected to run; `null` when unreachable.
+ * The mediators the current tenant may pick: its own, then other tenants'
+ * public ones; `null` when unreachable.
  */
-export async function fetchMediatorChoices(): Promise<Item[] | null> {
-  return (await fetchPage("mediators", null, 100))?.items ?? null;
+export async function fetchMediatorChoices(): Promise<MediatorChoice[] | null> {
+  const token = (await cookies()).get(sessionCookie)?.value;
+  const tenant = await currentTenant();
+  if (!token || !tenant) return null;
+  const { data } = await api<MediatorChoice[]>(
+    `/tenants/${tenant.id}/mediator-choices`,
+    { token },
+  );
+  return data;
 }
 
 /** How one of the current tenant's issuers or verifiers signs; `null` when unreachable. */

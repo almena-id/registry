@@ -9,23 +9,31 @@ import { Input } from "@/app/components/ui/input";
 import { Label } from "@/app/components/ui/label";
 import { useI18n } from "@/app/i18n/client";
 import { saveMediator, type MediatorState } from "@/app/lib/directory-actions";
+import { useAnswerRound } from "@/app/lib/use-answer-round";
+import { PublicField } from "./PublicField";
 
-/** A mediator's name and address; any member of the tenant may change them. */
+/**
+ * A mediator's name, address and whether it is public; any member of the
+ * tenant may change them.
+ */
 export function MediatorForm({
   id,
   name,
   url,
+  isPublic,
 }: {
   id: string;
   name: string;
   url: string;
+  isPublic: boolean;
 }) {
   const { t } = useI18n();
   const copy = t.dashboard.items;
   const [state, action, pending] = useActionState<MediatorState, FormData>(
     saveMediator.bind(null, id),
-    { name, url },
+    { name, url, public: isPublic },
   );
+  const round = useAnswerRound(state);
   const errors = state.errors ?? {};
 
   return (
@@ -82,6 +90,8 @@ export function MediatorForm({
             </p>
           )}
         </div>
+
+        <PublicField key={round} defaultChecked={state.public ?? false} />
 
         <div className="flex justify-end gap-2">
           <Button type="submit" disabled={pending}>

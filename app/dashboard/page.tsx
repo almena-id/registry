@@ -6,6 +6,7 @@ import { fetchPage } from "@/app/lib/directory";
 import { sections } from "@/app/lib/directory-types";
 import { formatCount } from "@/app/lib/plural";
 import { Attention } from "./Attention";
+import { Health } from "./Health";
 
 export async function generateMetadata(): Promise<Metadata> {
   return { title: (await getI18n()).t.dashboard.overview.title };
@@ -26,6 +27,7 @@ export default async function DashboardPage() {
       </header>
 
       <Attention />
+      <Health />
 
       {/* A frame the API could not answer for says nothing rather than a zero it cannot vouch for. */}
       <div className="mb-4 grid grid-cols-1 gap-4 min-[700px]:grid-cols-2 min-[1200px]:grid-cols-4">
