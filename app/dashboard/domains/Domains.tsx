@@ -152,7 +152,7 @@ export function AddDomainForm() {
   );
 
   return (
-    <Card className="max-w-[560px] gap-0 p-6">
+    <Card className="gap-0 p-6">
       <form className="flex flex-col gap-[18px]" action={action} noValidate>
         <div className="grid gap-1.5">
           <Label htmlFor="domain">{copy.add}</Label>

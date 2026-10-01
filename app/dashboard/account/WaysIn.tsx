@@ -57,7 +57,7 @@ export async function WaysIn({
 
   return (
     // The card's look on a <section>: a region of its own, with its heading.
-    <section className="mt-4 max-w-[560px] rounded-2xl border bg-card px-6 py-5 text-card-foreground shadow-card">
+    <section className="mt-4 rounded-2xl border bg-card px-6 py-5 text-card-foreground shadow-card">
       <h2 className="mb-1 text-[15px] font-semibold">{copy.title}</h2>
       <p className="mb-3 text-sm text-muted-foreground">{copy.hint}</p>
       {notice && (

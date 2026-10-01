@@ -46,7 +46,7 @@ export function CreateForm({
     key ? copy.errors[key] : null;
 
   return (
-    <Card className="max-w-[560px] gap-0 p-6">
+    <Card className="gap-0 p-6">
       <form className="flex flex-col gap-[18px]" action={action} noValidate>
         {errors.form && (
           <Alert variant="destructive" role="alert">

@@ -36,16 +36,30 @@ export async function api<T>(
     token?: string;
     /** A body sent as it is, with its media type, instead of JSON. */
     raw?: { data: ArrayBuffer; type: string };
+    /** A multipart body (file uploads); its boundary sets the media type. */
+    form?: FormData;
+    /** More headers (an application's secret). */
+    headers?: Record<string, string>;
   } = {},
-): Promise<{ status: number | null; data: T | null; detail: string | null }> {
+): Promise<{
+  status: number | null;
+  data: T | null;
+  detail: string | null;
+  /** A failure's `detail` when it is more than a code (an object). */
+  failure?: unknown;
+}> {
   try {
     const response = await fetch(`${apiUrl()}/api/v1${path}`, {
       method: init.method ?? "GET",
       headers: {
-        "Content-Type": init.raw?.type ?? "application/json",
+        ...(init.form
+          ? {}
+          : { "Content-Type": init.raw?.type ?? "application/json" }),
         ...(init.token ? { Authorization: `Bearer ${init.token}` } : {}),
+        ...init.headers,
       },
       body:
+        init.form ??
         init.raw?.data ??
         (init.body === undefined ? undefined : JSON.stringify(init.body)),
       cache: "no-store",
@@ -57,10 +71,19 @@ export async function api<T>(
       status: response.status,
       data: ok ? (json as T) : null,
       detail: !ok && typeof json?.detail === "string" ? json.detail : null,
+      failure: ok ? undefined : json?.detail,
     };
   } catch {
     return { status: null, data: null, detail: null };
   }
+}
+
+/** A call to the API whose body is handed on as it is (a file). */
+export async function apiRaw(path: string, token: string): Promise<Response> {
+  return fetch(`${apiUrl()}/api/v1${path}`, {
+    headers: { Authorization: `Bearer ${token}` },
+    cache: "no-store",
+  });
 }
 
 /**

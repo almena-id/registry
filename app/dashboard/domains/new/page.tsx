@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
 import { getI18n } from "@/app/i18n/server";
+import { CreateHeader } from "@/app/dashboard/CreateHeader";
 import { currentTenant } from "@/app/lib/api";
 import { AddDomainForm } from "../Domains";
 
@@ -19,10 +20,7 @@ export default async function AddDomainPage() {
   const copy = t.dashboard.domains;
   return (
     <div>
-      <header className="mb-6">
-        <h1 className="text-[28px] font-bold tracking-tight">{copy.add}</h1>
-        <p className="text-muted-foreground">{copy.hint}</p>
-      </header>
+      <CreateHeader section="domains" title={copy.add} lead={copy.hint} />
       <AddDomainForm />
     </div>
   );

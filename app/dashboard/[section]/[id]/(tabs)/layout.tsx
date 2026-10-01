@@ -71,6 +71,7 @@ export default async function DetailLayout({
         base={`${back}/${item.id}`}
         editable={isKind(section)}
         signs={section === "issuers" || section === "verifiers"}
+        issues={section === "issuers"}
       />
       {children}
     </div>

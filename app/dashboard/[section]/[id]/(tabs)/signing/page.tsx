@@ -55,7 +55,7 @@ export default async function SigningTab({
   // Without a wallet there is no key for the DID document: what they sign cannot be checked.
   const noWallet =
     signing.system === "single_user" && signer?.member && !signer.wallet ? (
-      <Alert variant="notice" role="status" className="mb-3 max-w-[560px]">
+      <Alert variant="notice" role="status" className="mb-3">
         <AlertDescription>{copy.noWallet}</AlertDescription>
       </Alert>
     ) : null;

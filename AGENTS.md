@@ -98,8 +98,9 @@ everything (`task --list`); `task check` must pass before finishing.
   person's own account a **Profile** ("Perfil"). Only the words changed: routes
   (`/dashboard/tenant`, `/dashboard/account`), code and the API keep "tenant"
   and "account".
-- The side menu is two cards: what the tenant works with (overview, issuers,
-  verifiers, identities) and the tenant itself (Account and Users). The
+- The side menu is three cards: what the tenant works with (overview,
+  issuers, verifiers, mediators, identities), what it asks people for (Forms
+  and Catalogue) and the tenant itself (Account and Users). The
   avatar menu's top entry opens `/dashboard/account` (the Profile): the
   alias (editable, `PATCH /auth/me`) and the account's ways in — the email
   (optional: an account may have none, so names fall back to the alias) and
@@ -110,6 +111,10 @@ everything (`task --list`); `task check` must pass before finishing.
   on `/dashboard/account/taken` (the API's move ticket, or `none`, in the
   `almena.move` cookie): an empty account may be deleted there to continue in
   the other one.
+- Every create screen (`/dashboard/{issuers|verifiers|mediators|identities|forms|domains|users}/new`)
+  opens with `CreateHeader`: the breadcrumb (shadcn's `Breadcrumb`) — the
+  overview, the section's list named as the side menu names it, the screen —
+  then its title and lead.
 - Never delete `.next` while a dev server may be running: it breaks it (500s).
   `task check` builds fine alongside `next dev`.
 - `/dashboard/tenant` has tabs (the shared `Tabs`, as items have): Data (the
@@ -130,6 +135,75 @@ everything (`task --list`); `task check` must pass before finishing.
   remove; verified ones go into the tenant's DID document, which then asks to
   be signed; "Add" opens `/dashboard/domains/new`, and the list rows
   open to show each record).
+- Forms (`/dashboard/forms`, in the middle card): what
+  people fill in for the tenant's flows. A form does not depend on who puts
+  it: the same form serves an issuer's offer (holders applying for a
+  credential, checked by hand or with the issuer's back office) or, later, a
+  verifier's. Every field comes from the
+  catalogue: Almena's (`GET /catalog/fields`, public) and the tenant's own
+  (`GET /tenants/{id}/fields`, `custom:{key}` in forms), merged by
+  `fetchTenantCatalogue` (`app/lib/field-catalog.ts`) with the tenant's as one
+  more category, "Your fields"; names, formats, value lists and labels are the
+  API's — the portal only shows them in the visitor's language.
+  "Create" opens `/dashboard/forms/new` (`FormBuilder`): name, description
+  and the fields in order, added from a searchable picker by category; each
+  says whether it is required, a line of help, a name of its own for a
+  repeatable field (a file asked for twice) and, where the field allows it,
+  restricts it (values or file formats ticked, a date range, a shorter text).
+  `app/lib/form-fields.ts` is shared by the builder, the list and the action,
+  which checks each field before the API does. Below the fields,
+  `CredentialsSection`: the credentials the form asks to be presented — each
+  a type of the credential catalogue (`app/lib/credential-catalog.ts`), with
+  its name in the form, required or not, a purpose the wallet shows, the
+  claims ticked and whom it is trusted from (any published issuer granting
+  it, chosen ones from the public catalogue of issuers, or — the EU PID — its
+  own framework); each says, live, which of the form's fields it fills.
+  Any member creates; the list rows open to show each field, a group's parts,
+  what is restricted, and the credentials asked for.
+- Catalogue (`/dashboard/catalogue`, below Forms): the tenant's own fields
+  first, then Almena's, read only, by category — each row opens to its
+  standard, a group's parts, its values (long lists summed up by their
+  domain), its bounds and, for Almena's, its published JSON Schema. "Create
+  field" opens `/dashboard/catalogue/new` (`CustomFieldForm`): labels in
+  English and Spanish (one at least), a key (never one of Almena's), the type
+  (no groups) and what it needs — length and pattern, the options with their
+  labels, the file formats. Any member creates and deletes them; a field a
+  form asks for is not deleted (`field_in_use`).
+- The Catalogue has two tabs (`CatalogueTabs`): Fields (above) and
+  Credential types (`/dashboard/catalogue/credentials`): Almena's types, read
+  only, by category — each opens to its claims (fields of the catalogue, the
+  always-present ones marked), how each format names it (vct, W3C type, mdoc
+  doctype) and its published schema and type metadata; types issued elsewhere
+  (the EU PID) are tagged so. Issuers have a Credentials tab
+  (`/dashboard/issuers/{id}/credentials`): the types they grant, ticked by any
+  member (`PUT …/credential-types`); the public catalogue lists them.
+- Applying for a credential, public (no account): `/credentials` lists every
+  published issuer's offers (a type it grants with a request form, set in the
+  issuer's Credentials tab); `/credentials/{issuer}/{type}` shows one and
+  "Start" opens an application, whose secret this browser keeps in the
+  HTTP-only `almena.application.{id}` cookie; `/apply/{id}` (`Apply`) follows
+  its status — QR 1 pairs the wallet, then the form (credentials presented
+  from the wallet fill their fields verified; `FieldInput` renders each field
+  by type, files upload at once), then QR 2, where the wallet shows and signs
+  what is sent. Each wallet request is `ApplicationWallet` (QR, deep link,
+  polling), on the sign-in channel. Issuers' members read what arrives at
+  `/dashboard/applications` (a card of its own, Activity, after the overview): the answers, the
+  files (downloaded through a route handler with the session), the
+  credentials presented, whether the holder's signature holds, and accept or
+  reject. Accepted, the credential is issued from the same page: its claims,
+  proposed from the application, are settled in `IssuanceForm` (each a
+  catalogue field, `FieldInput`, shared with the holder's form), then
+  `/dashboard/applications/{id}/issue` has the issuer's signer's wallet sign it
+  (`WalletRequest`, target `credential`); the holder takes it from `/apply/{id}`
+  with a third QR (`receive`).
+- Texts a tenant writes for people to read in its forms and catalogue — a
+  form's name and description, a field's help, a credential's purpose, its
+  own fields' and options' labels — are by language (`{en, es}`, the portal's
+  locales; `app/lib/texts.ts`) and written with `MultilingualInput`: the box
+  in the visitor's language, and after it, outside it, a globe that opens a
+  line per other language (marked while another one has text). Shown, they
+  read in the visitor's language, else English, else whichever there is
+  (`label`).
 - Mediators are registered, not discovered: the API fetches nothing from the
   address, it gives the mediator an identity of its own whose DID document
   publishes that address; the DID documents of the tenant, issuers and
@@ -162,7 +236,7 @@ everything (`task --list`); `task check` must pass before finishing.
   layout in `[section]/[id]/(tabs)/` draws the way back, the name with the
   operations beside it in one row, and the tabs below — Summary (`/{id}`, the
   facts), Data (`/{id}/data`, the form; not for identities, which have no
-  fields), Signing (`/{id}/signing`, issuers and verifiers: the signing system
+  fields), Credentials (`/{id}/credentials`, issuers: the types they grant), Signing (`/{id}/signing`, issuers and verifiers: the signing system
   — so far one specific member signs; admins set it, members read it) and JSON
   (`/{id}/json`, the DID document). `load.ts` asks the API
   for the item once per request; `Detail.tsx` holds the shared shapes. Issuers,

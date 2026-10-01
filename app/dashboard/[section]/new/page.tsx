@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { getI18n } from "@/app/i18n/server";
+import { CreateHeader } from "@/app/dashboard/CreateHeader";
 import { fetchMediatorChoices } from "@/app/lib/directory";
 import { hasDescription, isSection } from "@/app/lib/directory-types";
 import { CreateForm } from "./CreateForm";
@@ -28,12 +29,11 @@ export default async function NewItemPage({
 
   return (
     <div>
-      <header className="mb-6">
-        <h1 className="text-[28px] font-bold tracking-tight">
-          {copy.createTitle}
-        </h1>
-        <p className="text-muted-foreground">{copy.createLead}</p>
-      </header>
+      <CreateHeader
+        section={section}
+        title={copy.createTitle}
+        lead={copy.createLead}
+      />
       <CreateForm
         section={section}
         described={described}

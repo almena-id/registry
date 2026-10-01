@@ -23,7 +23,9 @@ export type SignTarget =
       section: "issuers" | "verifiers" | "mediators";
       id: string;
       back: string;
-    };
+    }
+  /** An accepted application's credential, signed by its issuer's signer. */
+  | { kind: "credential"; id: string; back: string };
 
 type Kept = { purpose: WalletPurpose; id: string; poll: string; back?: string };
 
@@ -70,7 +72,9 @@ export async function startWallet(
     const path =
       target.kind === "identity"
         ? `/tenants/${tenant.id}/identities/${encodeURIComponent(target.id)}/sign`
-        : `/tenants/${tenant.id}/${target.section}/${encodeURIComponent(target.id)}/publish`;
+        : target.kind === "credential"
+          ? `/tenants/${tenant.id}/applications/${encodeURIComponent(target.id)}/issuance/sign`
+          : `/tenants/${tenant.id}/${target.section}/${encodeURIComponent(target.id)}/publish`;
     created = await api<Created>(path, {
       method: "POST",
       body: { locale },
