@@ -14,7 +14,12 @@ import {
   CollapsibleTrigger,
 } from "@/app/components/ui/collapsible";
 import { Input } from "@/app/components/ui/input";
-import { Label } from "@/app/components/ui/label";
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldLabel,
+} from "@/app/components/ui/field";
 import { useI18n } from "@/app/i18n/client";
 import {
   addDomain,
@@ -154,8 +159,11 @@ export function AddDomainForm() {
   return (
     <Card className="gap-0 p-6">
       <form className="flex flex-col gap-[18px]" action={action} noValidate>
-        <div className="grid gap-1.5">
-          <Label htmlFor="domain">{copy.add}</Label>
+        <Field
+          data-invalid={state.error ? true : undefined}
+          className="gap-1.5"
+        >
+          <FieldLabel htmlFor="domain">{copy.add}</FieldLabel>
           <Input
             id="domain"
             name="domain"
@@ -166,15 +174,18 @@ export function AddDomainForm() {
             aria-describedby={state.error ? "domain-error" : "domain-hint"}
           />
           {state.error ? (
-            <p className="text-[13px] text-destructive" id="domain-error">
+            <FieldError className="text-[13px]" id="domain-error">
               {copy.errors[state.error]}
-            </p>
+            </FieldError>
           ) : (
-            <p className="text-[13px] text-faint" id="domain-hint">
+            <FieldDescription
+              className="text-[13px] text-faint"
+              id="domain-hint"
+            >
               {copy.addLead}
-            </p>
+            </FieldDescription>
           )}
-        </div>
+        </Field>
         <div className="flex justify-end gap-2">
           <Button asChild variant="ghost">
             <Link href="/dashboard/domains">{copy.cancel}</Link>

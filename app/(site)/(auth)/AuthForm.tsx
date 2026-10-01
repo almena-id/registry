@@ -6,7 +6,7 @@ import { Alert, AlertDescription } from "@/app/components/ui/alert";
 import { Button } from "@/app/components/ui/button";
 import { Card } from "@/app/components/ui/card";
 import { Input } from "@/app/components/ui/input";
-import { Label } from "@/app/components/ui/label";
+import { Field, FieldError, FieldLabel } from "@/app/components/ui/field";
 import { useI18n } from "@/app/i18n/client";
 import type { Provider } from "@/app/lib/api";
 import { authenticate, type AuthState } from "@/app/lib/auth-actions";
@@ -21,12 +21,16 @@ export function AuthForm({
   initialError?: NonNullable<AuthState["errors"]>["form"];
 }) {
   const { t } = useI18n();
-  const [state, action, pending] = useActionState<AuthState, FormData>(authenticate, {
-    step: "email",
-    errors: initialError ? { form: initialError } : undefined,
-  });
+  const [state, action, pending] = useActionState<AuthState, FormData>(
+    authenticate,
+    {
+      step: "email",
+      errors: initialError ? { form: initialError } : undefined,
+    },
+  );
   const errors = state.errors ?? {};
-  const error = (key?: keyof typeof t.auth.errors) => (key ? t.auth.errors[key] : null);
+  const error = (key?: keyof typeof t.auth.errors) =>
+    key ? t.auth.errors[key] : null;
   const onCode = state.step === "code";
 
   return (
@@ -38,7 +42,9 @@ export function AuthForm({
               {onCode ? t.auth.codeTitle : t.auth.title}
             </h1>
             <p className="text-[15px] wrap-anywhere text-muted-foreground">
-              {onCode ? t.auth.codeLead.replace("{email}", state.email ?? "") : t.auth.lead}
+              {onCode
+                ? t.auth.codeLead.replace("{email}", state.email ?? "")
+                : t.auth.lead}
             </p>
           </div>
 
@@ -56,7 +62,7 @@ export function AuthForm({
           {onCode ? (
             <>
               <input type="hidden" name="email" value={state.email} />
-              <Field
+              <AuthField
                 key="code"
                 label={t.auth.code}
                 name="code"
@@ -104,7 +110,7 @@ export function AuthForm({
           ) : (
             <>
               <SocialButtons providers={providers} />
-              <Field
+              <AuthField
                 key="email"
                 label={t.auth.email}
                 name="email"
@@ -132,7 +138,7 @@ export function AuthForm({
   );
 }
 
-function Field({
+function AuthField({
   label,
   name,
   error,
@@ -144,8 +150,8 @@ function Field({
   error: string | null;
 } & React.InputHTMLAttributes<HTMLInputElement>) {
   return (
-    <div className="grid gap-1.5">
-      <Label htmlFor={name}>{label}</Label>
+    <Field data-invalid={error ? true : undefined} className="gap-1.5">
+      <FieldLabel htmlFor={name}>{label}</FieldLabel>
       <Input
         className={className}
         id={name}
@@ -156,10 +162,10 @@ function Field({
         {...input}
       />
       {error && (
-        <p className="text-[13px] text-destructive" id={`${name}-error`}>
+        <FieldError className="text-[13px]" id={`${name}-error`}>
           {error}
-        </p>
+        </FieldError>
       )}
-    </div>
+    </Field>
   );
 }

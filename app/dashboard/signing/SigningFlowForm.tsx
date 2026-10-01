@@ -5,7 +5,7 @@ import { useActionState, useState } from "react";
 import { Select } from "@/app/components/Select";
 import { Alert, AlertDescription } from "@/app/components/ui/alert";
 import { Button } from "@/app/components/ui/button";
-import { Label } from "@/app/components/ui/label";
+import { Field, FieldError, FieldLabel } from "@/app/components/ui/field";
 import { useI18n } from "@/app/i18n/client";
 import { useAnswerRound } from "@/app/lib/use-answer-round";
 import type { SigningFlow } from "@/app/lib/signing-flows";
@@ -79,8 +79,8 @@ export function SigningFlowForm({
             </Alert>
           )}
 
-          <div className="grid gap-1.5">
-            <Label htmlFor="signingFlow">{copy.signingFlow}</Label>
+          <Field className="gap-1.5">
+            <FieldLabel htmlFor="signingFlow">{copy.signingFlow}</FieldLabel>
             <Select
               key={round}
               id="signingFlow"
@@ -93,13 +93,18 @@ export function SigningFlowForm({
                 label: copy.signingFlows[value].label,
               }))}
             />
-          </div>
+          </Field>
 
           {/* What the chosen flow asks for. */}
           <div className="border-t pt-4">
             {chosen === "single_user" ? (
-              <div className="grid gap-1.5">
-                <Label htmlFor="signer">{t.dashboard.signing.signer}</Label>
+              <Field
+                data-invalid={state.signerError ? true : undefined}
+                className="gap-1.5"
+              >
+                <FieldLabel htmlFor="signer">
+                  {t.dashboard.signing.signer}
+                </FieldLabel>
                 <Select
                   key={round}
                   id="signer"
@@ -119,16 +124,16 @@ export function SigningFlowForm({
                   ]}
                 />
                 {state.signerError && (
-                  <p className="text-[13px] text-destructive" id="signer-error">
+                  <FieldError className="text-[13px]" id="signer-error">
                     {copy.errors[state.signerError]}
-                  </p>
+                  </FieldError>
                 )}
                 {signerWithoutWallet && state.signer === signer && (
                   <p className="text-[13px] text-faint">
                     {copy.signing.signerWithoutWallet}
                   </p>
                 )}
-              </div>
+              </Field>
             ) : (
               <p className="text-sm text-muted-foreground">
                 {copy.signing.nothingToSet}

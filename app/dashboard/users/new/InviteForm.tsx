@@ -7,8 +7,14 @@ import { Alert, AlertDescription } from "@/app/components/ui/alert";
 import { Button } from "@/app/components/ui/button";
 import { Card } from "@/app/components/ui/card";
 import { Input } from "@/app/components/ui/input";
-import { Label } from "@/app/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/app/components/ui/radio-group";
+import {
+  Field,
+  FieldError,
+  FieldLabel,
+  FieldLegend,
+  FieldSet,
+} from "@/app/components/ui/field";
 import { useI18n } from "@/app/i18n/client";
 import { invite, type InviteState } from "@/app/lib/member-actions";
 
@@ -33,8 +39,11 @@ export function InviteForm() {
           </Alert>
         )}
 
-        <div className="grid gap-1.5">
-          <Label htmlFor="email">{copy.email}</Label>
+        <Field
+          data-invalid={errors.email ? true : undefined}
+          className="gap-1.5"
+        >
+          <FieldLabel htmlFor="email">{copy.email}</FieldLabel>
           <Input
             id="email"
             name="email"
@@ -47,23 +56,25 @@ export function InviteForm() {
             aria-describedby={errors.email ? "email-error" : undefined}
           />
           {errors.email && (
-            <p className="text-[13px] text-destructive" id="email-error">
+            <FieldError className="text-[13px]" id="email-error">
               {copy.errors[errors.email]}
-            </p>
+            </FieldError>
           )}
-        </div>
+        </Field>
 
-        <fieldset className="grid gap-1.5">
-          <legend className="mb-1.5 text-sm font-medium">{copy.role}</legend>
+        <FieldSet className="grid gap-1.5">
+          <FieldLegend variant="label" className="mb-1.5 text-sm font-medium">
+            {copy.role}
+          </FieldLegend>
           <RadioGroup
             name="role"
             defaultValue={chosen}
             className="grid gap-2 sm:grid-cols-2"
           >
             {roles.map((role) => (
-              <Label
+              <FieldLabel
                 key={role}
-                className="flex cursor-pointer items-start gap-2.5 rounded-lg border border-input px-3.5 py-3 font-normal has-[[data-state=checked]]:border-primary has-[[data-state=checked]]:bg-brand-soft"
+                className="flex w-full cursor-pointer items-start gap-2.5 rounded-lg border border-input px-3.5 py-3 font-normal has-data-[state=checked]:border-primary has-data-[state=checked]:bg-brand-soft dark:has-data-[state=checked]:bg-brand-soft"
               >
                 <RadioGroupItem value={role} className="mt-0.5" />
                 <span className="grid gap-0.5">
@@ -72,10 +83,10 @@ export function InviteForm() {
                     {copy.roleHints[role]}
                   </span>
                 </span>
-              </Label>
+              </FieldLabel>
             ))}
           </RadioGroup>
-        </fieldset>
+        </FieldSet>
 
         <div className="flex justify-end gap-2">
           <Button asChild variant="ghost">

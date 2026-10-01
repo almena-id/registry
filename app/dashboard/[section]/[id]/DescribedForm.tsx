@@ -7,8 +7,8 @@ import { Alert, AlertDescription } from "@/app/components/ui/alert";
 import { Button } from "@/app/components/ui/button";
 import { Card } from "@/app/components/ui/card";
 import { Input } from "@/app/components/ui/input";
-import { Label } from "@/app/components/ui/label";
 import { Textarea } from "@/app/components/ui/textarea";
+import { Field, FieldError, FieldLabel } from "@/app/components/ui/field";
 import { useI18n } from "@/app/i18n/client";
 import { useAnswerRound } from "@/app/lib/use-answer-round";
 import {
@@ -63,8 +63,11 @@ export function DescribedForm({
           </Alert>
         )}
 
-        <div className="grid gap-1.5">
-          <Label htmlFor="name">{copy.name}</Label>
+        <Field
+          data-invalid={errors.name ? true : undefined}
+          className="gap-1.5"
+        >
+          <FieldLabel htmlFor="name">{copy.name}</FieldLabel>
           <Input
             id="name"
             name="name"
@@ -75,17 +78,20 @@ export function DescribedForm({
             aria-describedby={errors.name ? "name-error" : undefined}
           />
           {errors.name && (
-            <p className="text-[13px] text-destructive" id="name-error">
+            <FieldError className="text-[13px]" id="name-error">
               {copy.errors[errors.name]}
-            </p>
+            </FieldError>
           )}
-        </div>
+        </Field>
 
-        <div className="grid gap-1.5">
-          <Label htmlFor="description">
+        <Field
+          data-invalid={errors.description ? true : undefined}
+          className="gap-1.5"
+        >
+          <FieldLabel htmlFor="description">
             {copy.description}{" "}
             <span className="font-normal text-faint">{copy.optional}</span>
-          </Label>
+          </FieldLabel>
           <Textarea
             id="description"
             name="description"
@@ -98,17 +104,20 @@ export function DescribedForm({
             }
           />
           {errors.description && (
-            <p className="text-[13px] text-destructive" id="description-error">
+            <FieldError className="text-[13px]" id="description-error">
               {copy.errors[errors.description]}
-            </p>
+            </FieldError>
           )}
-        </div>
+        </Field>
 
-        <div className="grid gap-1.5">
-          <Label htmlFor="mediator">
+        <Field
+          data-invalid={errors.mediator ? true : undefined}
+          className="gap-1.5"
+        >
+          <FieldLabel htmlFor="mediator">
             {copy.mediator}{" "}
             <span className="font-normal text-faint">{copy.optional}</span>
-          </Label>
+          </FieldLabel>
           <Select
             key={round}
             id="mediator"
@@ -122,11 +131,11 @@ export function DescribedForm({
             ]}
           />
           {errors.mediator && (
-            <p className="text-[13px] text-destructive" id="mediator-error">
+            <FieldError className="text-[13px]" id="mediator-error">
               {copy.errors[errors.mediator]}
-            </p>
+            </FieldError>
           )}
-        </div>
+        </Field>
 
         <div className="flex justify-end gap-2">
           <Button type="submit" disabled={pending}>

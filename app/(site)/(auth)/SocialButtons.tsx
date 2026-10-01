@@ -8,7 +8,7 @@ import { Button } from "@/app/components/ui/button";
 import { Separator } from "@/app/components/ui/separator";
 import { useI18n } from "@/app/i18n/client";
 import type { Provider, ProviderId } from "@/app/lib/api";
-import { cn } from "@/app/lib/utils";
+import { cn } from "cn";
 
 const marks: Record<ProviderId, React.ReactNode> = {
   google: <GoogleMark />,

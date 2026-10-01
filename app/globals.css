@@ -1,9 +1,10 @@
 /*
  * Almena Registry — the theme. Components are shadcn/ui (app/components/ui)
  * styled with Tailwind; this file gives them the Almena palette through
- * shadcn's variables. The palette is the wallet's
- * (../wallet/src/styles/global.css): the same orange, the same greys. This
- * file is the only place a colour is written.
+ * shadcn's variables. The greys are the wallet's
+ * (../wallet/src/styles/global.css); the brand is green, the registry's own
+ * identity — the wallet's green accent. This file is the only place a colour
+ * is written.
  */
 
 @import "tailwindcss";
@@ -35,7 +36,7 @@
   --card-foreground: #17181c;
   --popover: #ffffff;
   --popover-foreground: #17181c;
-  --primary: #eb7229;
+  --primary: #1f9d55;
   --primary-foreground: #ffffff;
   --secondary: #e8eaef;
   --secondary-foreground: #17181c;
@@ -46,12 +47,12 @@
   --destructive: #c9372c;
   --border: rgba(23, 24, 28, 0.1);
   --input: rgba(23, 24, 28, 0.18);
-  --ring: #eb7229;
+  --ring: #1f9d55;
 
   /* Almena's own, beyond shadcn's set. */
-  --brand-strong: #d9621c;
-  --brand-soft: rgba(235, 114, 41, 0.14);
-  --brand-glow: rgba(235, 114, 41, 0.16);
+  --brand-strong: #18804a;
+  --brand-soft: rgba(31, 157, 85, 0.14);
+  --brand-glow: rgba(31, 157, 85, 0.16);
   --destructive-soft: rgba(201, 55, 44, 0.12);
   --faint: rgba(23, 24, 28, 0.42);
   --sunk: #e8eaef;
@@ -82,8 +83,8 @@
     --destructive: #ff6b5e;
     --border: rgba(255, 255, 255, 0.09);
     --input: rgba(255, 255, 255, 0.16);
-    --brand-strong: #f0843f;
-    --brand-glow: rgba(235, 114, 41, 0.2);
+    --brand-strong: #34b56c;
+    --brand-glow: rgba(31, 157, 85, 0.2);
     --destructive-soft: rgba(255, 107, 94, 0.16);
     --faint: rgba(244, 244, 246, 0.4);
     --sunk: #0b0c0e;
@@ -108,8 +109,8 @@
   --destructive: #ff6b5e;
   --border: rgba(255, 255, 255, 0.09);
   --input: rgba(255, 255, 255, 0.16);
-  --brand-strong: #f0843f;
-  --brand-glow: rgba(235, 114, 41, 0.2);
+  --brand-strong: #34b56c;
+  --brand-glow: rgba(31, 157, 85, 0.2);
   --destructive-soft: rgba(255, 107, 94, 0.16);
   --faint: rgba(244, 244, 246, 0.4);
   --sunk: #0b0c0e;

@@ -7,7 +7,12 @@ import { Alert, AlertDescription } from "@/app/components/ui/alert";
 import { Button } from "@/app/components/ui/button";
 import { Card } from "@/app/components/ui/card";
 import { Input } from "@/app/components/ui/input";
-import { Label } from "@/app/components/ui/label";
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldLabel,
+} from "@/app/components/ui/field";
 import { useI18n } from "@/app/i18n/client";
 import { useAnswerRound } from "@/app/lib/use-answer-round";
 import {
@@ -61,8 +66,11 @@ export function TenantForm({
           </Alert>
         )}
 
-        <div className="grid gap-1.5">
-          <Label htmlFor="name">{copy.name}</Label>
+        <Field
+          data-invalid={errors.name ? true : undefined}
+          className="gap-1.5"
+        >
+          <FieldLabel htmlFor="name">{copy.name}</FieldLabel>
           <Input
             className={
               editable
@@ -79,14 +87,17 @@ export function TenantForm({
             aria-describedby={errors.name ? "name-error" : undefined}
           />
           {errors.name && (
-            <p className="text-[13px] text-destructive" id="name-error">
+            <FieldError className="text-[13px]" id="name-error">
               {copy.errors[errors.name]}
-            </p>
+            </FieldError>
           )}
-        </div>
+        </Field>
 
-        <div className="grid gap-1.5">
-          <Label htmlFor="mediator">{copy.mediator}</Label>
+        <Field
+          data-invalid={errors.mediator ? true : undefined}
+          className="gap-1.5"
+        >
+          <FieldLabel htmlFor="mediator">{copy.mediator}</FieldLabel>
           <Select
             key={round}
             id="mediator"
@@ -108,15 +119,18 @@ export function TenantForm({
             ]}
           />
           {errors.mediator ? (
-            <p className="text-[13px] text-destructive" id="mediator-error">
+            <FieldError className="text-[13px]" id="mediator-error">
               {copy.errors[errors.mediator]}
-            </p>
+            </FieldError>
           ) : (
-            <p className="text-[13px] text-faint" id="mediator-hint">
+            <FieldDescription
+              className="text-[13px] text-faint"
+              id="mediator-hint"
+            >
               {copy.mediatorHint}
-            </p>
+            </FieldDescription>
           )}
-        </div>
+        </Field>
 
         <dl className="grid gap-3">
           <div className="flex flex-wrap justify-between gap-2 border-t pt-3 text-sm">

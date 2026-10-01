@@ -22,7 +22,7 @@ import {
   timeZoneCity,
   timeZoneLabel,
 } from "@/app/lib/timezone";
-import { cn } from "@/app/lib/utils";
+import { cn } from "cn";
 
 /**
  * Picks the zone every date and time in the portal is rendered in. The full

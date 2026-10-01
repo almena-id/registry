@@ -15,7 +15,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/app/components/ui/pop
 import { useI18n } from "@/app/i18n/client";
 import type { Tenant } from "@/app/lib/api";
 import { chooseTenant } from "@/app/lib/tenant-actions";
-import { cn } from "@/app/lib/utils";
+import { cn } from "cn";
 
 /**
  * The tenant everything in the dashboard is scoped to. An account belongs to

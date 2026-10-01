@@ -8,8 +8,13 @@ import { Alert, AlertDescription } from "@/app/components/ui/alert";
 import { Button } from "@/app/components/ui/button";
 import { Card } from "@/app/components/ui/card";
 import { Input } from "@/app/components/ui/input";
-import { Label } from "@/app/components/ui/label";
 import { Textarea } from "@/app/components/ui/textarea";
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldLabel,
+} from "@/app/components/ui/field";
 import { PublicField } from "@/app/dashboard/[section]/[id]/PublicField";
 import { useI18n } from "@/app/i18n/client";
 import { useAnswerRound } from "@/app/lib/use-answer-round";
@@ -54,8 +59,11 @@ export function CreateForm({
           </Alert>
         )}
 
-        <div className="grid gap-1.5">
-          <Label htmlFor="name">{copy.name}</Label>
+        <Field
+          data-invalid={errors.name ? true : undefined}
+          className="gap-1.5"
+        >
+          <FieldLabel htmlFor="name">{copy.name}</FieldLabel>
           <Input
             id="name"
             name="name"
@@ -67,18 +75,21 @@ export function CreateForm({
             aria-describedby={errors.name ? "name-error" : undefined}
           />
           {errors.name && (
-            <p className="text-[13px] text-destructive" id="name-error">
+            <FieldError className="text-[13px]" id="name-error">
               {error(errors.name)}
-            </p>
+            </FieldError>
           )}
-        </div>
+        </Field>
 
         {described && (
-          <div className="grid gap-1.5">
-            <Label htmlFor="description">
+          <Field
+            data-invalid={errors.description ? true : undefined}
+            className="gap-1.5"
+          >
+            <FieldLabel htmlFor="description">
               {copy.description}{" "}
               <span className="font-normal text-faint">{copy.optional}</span>
-            </Label>
+            </FieldLabel>
             <Textarea
               id="description"
               name="description"
@@ -91,19 +102,19 @@ export function CreateForm({
               }
             />
             {errors.description && (
-              <p
-                className="text-[13px] text-destructive"
-                id="description-error"
-              >
+              <FieldError className="text-[13px]" id="description-error">
                 {error(errors.description)}
-              </p>
+              </FieldError>
             )}
-          </div>
+          </Field>
         )}
 
         {section === "mediators" && (
-          <div className="grid gap-1.5">
-            <Label htmlFor="url">{copy.url}</Label>
+          <Field
+            data-invalid={errors.url ? true : undefined}
+            className="gap-1.5"
+          >
+            <FieldLabel htmlFor="url">{copy.url}</FieldLabel>
             <Input
               id="url"
               name="url"
@@ -116,15 +127,18 @@ export function CreateForm({
               aria-describedby={errors.url ? "url-error" : "url-hint"}
             />
             {errors.url ? (
-              <p className="text-[13px] text-destructive" id="url-error">
+              <FieldError className="text-[13px]" id="url-error">
                 {error(errors.url)}
-              </p>
+              </FieldError>
             ) : (
-              <p className="text-[13px] text-faint" id="url-hint">
+              <FieldDescription
+                className="text-[13px] text-faint"
+                id="url-hint"
+              >
                 {copy.urlHint}
-              </p>
+              </FieldDescription>
             )}
-          </div>
+          </Field>
         )}
 
         {section === "mediators" && (
@@ -132,11 +146,14 @@ export function CreateForm({
         )}
 
         {mediators && (
-          <div className="grid gap-1.5">
-            <Label htmlFor="mediator">
+          <Field
+            data-invalid={errors.mediator ? true : undefined}
+            className="gap-1.5"
+          >
+            <FieldLabel htmlFor="mediator">
               {copy.mediator}{" "}
               <span className="font-normal text-faint">{copy.optional}</span>
-            </Label>
+            </FieldLabel>
             <Select
               key={round}
               id="mediator"
@@ -150,11 +167,11 @@ export function CreateForm({
               ]}
             />
             {errors.mediator && (
-              <p className="text-[13px] text-destructive" id="mediator-error">
+              <FieldError className="text-[13px]" id="mediator-error">
                 {error(errors.mediator)}
-              </p>
+              </FieldError>
             )}
-          </div>
+          </Field>
         )}
 
         <div className="flex justify-end gap-2">

@@ -1,4 +1,4 @@
-import { cn } from "@/app/lib/utils";
+import { cn } from "cn";
 
 /** The Almena mark: three nodes and the links between them, in the brand colour. */
 export function Logo({

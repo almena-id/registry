@@ -11,7 +11,13 @@ import { Button } from "@/app/components/ui/button";
 import { Card } from "@/app/components/ui/card";
 import { Checkbox } from "@/app/components/ui/checkbox";
 import { Input } from "@/app/components/ui/input";
-import { Label } from "@/app/components/ui/label";
+import {
+  Field,
+  FieldDescription,
+  FieldLabel,
+  FieldLegend,
+  FieldSet,
+} from "@/app/components/ui/field";
 import { useI18n } from "@/app/i18n/client";
 import {
   createCustomField,
@@ -75,8 +81,8 @@ export function CustomFieldForm({
           </Alert>
         )}
 
-        <div className="grid gap-1.5">
-          <Label htmlFor="labels">{copy.label}</Label>
+        <Field className="gap-1.5">
+          <FieldLabel htmlFor="labels">{copy.label}</FieldLabel>
           <MultilingualInput
             id="labels"
             name="labels"
@@ -87,16 +93,26 @@ export function CustomFieldForm({
             invalid={error === "labelsRequired"}
             describedBy="labels-hint"
           />
-          <p className="text-[13px] text-faint" id="labels-hint">
+          <FieldDescription className="text-[13px] text-faint" id="labels-hint">
             {copy.labelsHint}
-          </p>
-        </div>
+          </FieldDescription>
+        </Field>
 
         <div className="grid gap-3 sm:grid-cols-2">
-          <div className="grid gap-1.5">
-            <Label htmlFor="key">
+          <Field
+            data-invalid={
+              error === "keyInvalid" ||
+              error === "keyReserved" ||
+              error === "keyExists" ||
+              error === "keyRequired"
+                ? true
+                : undefined
+            }
+            className="gap-1.5"
+          >
+            <FieldLabel htmlFor="key">
               {copy.key} <span className={small}>{copy.keyHint}</span>
-            </Label>
+            </FieldLabel>
             <Input
               id="key"
               name="key"
@@ -114,9 +130,9 @@ export function CustomFieldForm({
                   : undefined
               }
             />
-          </div>
-          <div className="grid gap-1.5">
-            <Label htmlFor="type">{copy.type}</Label>
+          </Field>
+          <Field className="gap-1.5">
+            <FieldLabel htmlFor="type">{copy.type}</FieldLabel>
             <Select
               key={round}
               id="type"
@@ -128,15 +144,18 @@ export function CustomFieldForm({
                 label: t.dashboard.forms.types[value],
               }))}
             />
-          </div>
+          </Field>
         </div>
 
         {type === "text" && (
           <div className="grid gap-3 rounded-lg bg-sunk p-3.5 sm:grid-cols-[160px_1fr]">
-            <div className="grid gap-1.5">
-              <Label htmlFor="max_length">
+            <Field
+              data-invalid={error === "lengthInvalid" ? true : undefined}
+              className="gap-1.5"
+            >
+              <FieldLabel htmlFor="max_length">
                 {copy.maxLength} <span className={small}>{copy.optional}</span>
-              </Label>
+              </FieldLabel>
               <Input
                 id="max_length"
                 name="max_length"
@@ -146,11 +165,14 @@ export function CustomFieldForm({
                 defaultValue={state.max_length}
                 aria-invalid={error === "lengthInvalid" ? true : undefined}
               />
-            </div>
-            <div className="grid gap-1.5">
-              <Label htmlFor="pattern">
+            </Field>
+            <Field
+              data-invalid={error === "patternInvalid" ? true : undefined}
+              className="gap-1.5"
+            >
+              <FieldLabel htmlFor="pattern">
                 {copy.pattern} <span className={small}>{copy.optional}</span>
-              </Label>
+              </FieldLabel>
               <Input
                 id="pattern"
                 name="pattern"
@@ -161,15 +183,15 @@ export function CustomFieldForm({
                 defaultValue={state.pattern}
                 aria-invalid={error === "patternInvalid" ? true : undefined}
               />
-            </div>
+            </Field>
           </div>
         )}
 
         {listed && (
-          <fieldset className="grid gap-2 rounded-lg bg-sunk p-3.5">
-            <legend className="mb-1.5 text-sm font-medium">
+          <FieldSet className="grid gap-2 rounded-lg bg-sunk p-3.5">
+            <FieldLegend variant="label" className="mb-1.5 text-sm font-medium">
               {copy.options} <span className={small}>{copy.optionsHint}</span>
-            </legend>
+            </FieldLegend>
             <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,2fr)_auto] gap-2 text-[13px] text-muted-foreground">
               <span>{copy.optionValue}</span>
               <span>{copy.label}</span>
@@ -221,17 +243,17 @@ export function CustomFieldForm({
               <PlusIcon />
               {copy.addOption}
             </Button>
-          </fieldset>
+          </FieldSet>
         )}
 
         {type === "file" && (
-          <fieldset className="grid gap-2 rounded-lg bg-sunk p-3.5">
-            <legend className="mb-1.5 text-sm font-medium">
+          <FieldSet className="grid gap-2 rounded-lg bg-sunk p-3.5">
+            <FieldLegend variant="label" className="mb-1.5 text-sm font-medium">
               {copy.formats} <span className={small}>{copy.formatsHint}</span>
-            </legend>
+            </FieldLegend>
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
               {formats.map((format) => (
-                <Label
+                <FieldLabel
                   key={format.value}
                   className="flex cursor-pointer items-center gap-2 font-normal"
                 >
@@ -243,10 +265,10 @@ export function CustomFieldForm({
                     aria-invalid={error === "formatsInvalid" ? true : undefined}
                   />
                   {format.label}
-                </Label>
+                </FieldLabel>
               ))}
             </div>
-          </fieldset>
+          </FieldSet>
         )}
 
         <div className="flex justify-end gap-2">

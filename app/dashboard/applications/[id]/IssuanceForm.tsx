@@ -6,7 +6,7 @@ import { FieldInput, type Domains } from "@/app/components/FieldInput";
 import { Alert, AlertDescription } from "@/app/components/ui/alert";
 import { Button } from "@/app/components/ui/button";
 import { Input } from "@/app/components/ui/input";
-import { Label } from "@/app/components/ui/label";
+import { FieldLabel } from "@/app/components/ui/field";
 import { useI18n } from "@/app/i18n/client";
 import { saveIssuance } from "@/app/lib/application-actions";
 import type { IssuanceProposal } from "@/app/lib/applications";
@@ -81,7 +81,7 @@ export function IssuanceForm({
         />
       ))}
       <div className="grid max-w-[240px] gap-1.5">
-        <Label htmlFor="valid-until">{copy.validUntil}</Label>
+        <FieldLabel htmlFor="valid-until">{copy.validUntil}</FieldLabel>
         <Input
           id="valid-until"
           type="date"

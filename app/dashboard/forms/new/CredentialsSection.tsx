@@ -17,13 +17,19 @@ import {
   CommandList,
 } from "@/app/components/ui/command";
 import { Input } from "@/app/components/ui/input";
-import { Label } from "@/app/components/ui/label";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/app/components/ui/popover";
 import { RadioGroup, RadioGroupItem } from "@/app/components/ui/radio-group";
+import {
+  Field,
+  FieldError,
+  FieldLabel,
+  FieldLegend,
+  FieldSet,
+} from "@/app/components/ui/field";
 import { useI18n } from "@/app/i18n/client";
 import type {
   CredentialCatalogue,
@@ -266,11 +272,19 @@ function CredentialEditor({
       </div>
 
       <div className="grid gap-3 sm:grid-cols-[1fr_auto] sm:items-end">
-        <div className="grid gap-1.5">
-          <Label htmlFor={id("key")}>
+        <Field
+          data-invalid={
+            problem === "credentialKeyInvalid" ||
+            problem === "credentialKeyDuplicate"
+              ? true
+              : undefined
+          }
+          className="gap-1.5"
+        >
+          <FieldLabel htmlFor={id("key")}>
             {copy.credentialKey}{" "}
             <span className={small}>{copy.credentialKeyHint}</span>
-          </Label>
+          </FieldLabel>
           <Input
             id={id("key")}
             className="font-mono text-[13px]"
@@ -286,8 +300,8 @@ function CredentialEditor({
                 : undefined
             }
           />
-        </div>
-        <Label className="flex h-9 cursor-pointer items-center gap-2 font-normal">
+        </Field>
+        <FieldLabel className="flex h-9 cursor-pointer items-center gap-2 font-normal">
           <Checkbox
             checked={draft.required}
             onCheckedChange={(checked) =>
@@ -295,13 +309,13 @@ function CredentialEditor({
             }
           />
           {copy.required}
-        </Label>
+        </FieldLabel>
       </div>
 
-      <div className="grid gap-1.5">
-        <Label htmlFor={id("purpose")}>
+      <Field className="gap-1.5">
+        <FieldLabel htmlFor={id("purpose")}>
           {copy.purpose} <span className={small}>{copy.optional}</span>
-        </Label>
+        </FieldLabel>
         <MultilingualInput
           id={id("purpose")}
           value={draft.purpose}
@@ -309,18 +323,18 @@ function CredentialEditor({
           maxLength={300}
           placeholder={copy.purposeHint}
         />
-      </div>
+      </Field>
 
-      <fieldset
+      <FieldSet
         className="grid gap-2 rounded-lg bg-sunk p-3.5"
         aria-invalid={problem === "claimsInvalid" ? true : undefined}
       >
-        <legend className="mb-1.5 text-sm font-medium">
+        <FieldLegend variant="label" className="mb-1.5 text-sm font-medium">
           {copy.claims} <span className={small}>{copy.claimsHint}</span>
-        </legend>
+        </FieldLegend>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
           {type.claims.map((claim) => (
-            <Label
+            <FieldLabel
               key={claim.field}
               className="flex cursor-pointer items-center gap-2 font-normal"
             >
@@ -341,16 +355,18 @@ function CredentialEditor({
                 }}
               />
               <span className="truncate">{claimLabel(claim.field)}</span>
-            </Label>
+            </FieldLabel>
           ))}
         </div>
-      </fieldset>
+      </FieldSet>
 
-      <fieldset
+      <FieldSet
         className="grid gap-2"
         aria-invalid={problem === "trustInvalid" ? true : undefined}
       >
-        <legend className="mb-1.5 text-sm font-medium">{copy.trust}</legend>
+        <FieldLegend variant="label" className="mb-1.5 text-sm font-medium">
+          {copy.trust}
+        </FieldLegend>
         {external ? (
           <p className="text-[13px] text-muted-foreground">
             {copy.trustFramework}
@@ -365,9 +381,9 @@ function CredentialEditor({
               className="grid gap-2 sm:grid-cols-2"
             >
               {(["registry", "issuers"] as const).map((mode) => (
-                <Label
+                <FieldLabel
                   key={mode}
-                  className="flex cursor-pointer items-start gap-2.5 rounded-lg border border-input px-3.5 py-3 font-normal has-[[data-state=checked]]:border-primary has-[[data-state=checked]]:bg-brand-soft"
+                  className="flex w-full cursor-pointer items-start gap-2.5 rounded-lg border border-input px-3.5 py-3 font-normal has-data-[state=checked]:border-primary has-data-[state=checked]:bg-brand-soft dark:has-data-[state=checked]:bg-brand-soft"
                 >
                   <RadioGroupItem value={mode} className="mt-0.5" />
                   <span className="text-[13px]">
@@ -375,14 +391,14 @@ function CredentialEditor({
                       ? copy.trustRegistry
                       : copy.trustIssuers}
                   </span>
-                </Label>
+                </FieldLabel>
               ))}
             </RadioGroup>
             {draft.trust === "issuers" &&
               (issuers.length ? (
                 <div className="grid gap-2 rounded-lg bg-sunk p-3.5">
                   {issuers.map((issuer) => (
-                    <Label
+                    <FieldLabel
                       key={issuer.did}
                       className="flex cursor-pointer items-center gap-2 font-normal"
                     >
@@ -404,7 +420,7 @@ function CredentialEditor({
                           {issuer.did}
                         </span>
                       </span>
-                    </Label>
+                    </FieldLabel>
                   ))}
                 </div>
               ) : (
@@ -414,7 +430,7 @@ function CredentialEditor({
               ))}
           </>
         )}
-      </fieldset>
+      </FieldSet>
 
       <p className="text-[13px] text-muted-foreground">
         {filled.length
@@ -423,9 +439,7 @@ function CredentialEditor({
       </p>
 
       {problem && (
-        <p className="text-[13px] text-destructive" role="alert">
-          {copy.errors[problem]}
-        </p>
+        <FieldError className="text-[13px]">{copy.errors[problem]}</FieldError>
       )}
     </Card>
   );

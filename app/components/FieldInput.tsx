@@ -6,7 +6,13 @@ import { Select } from "@/app/components/Select";
 import { Button } from "@/app/components/ui/button";
 import { Checkbox } from "@/app/components/ui/checkbox";
 import { Input } from "@/app/components/ui/input";
-import { Label } from "@/app/components/ui/label";
+import {
+  Field,
+  FieldError,
+  FieldLabel,
+  FieldLegend,
+  FieldSet,
+} from "@/app/components/ui/field";
 import { useI18n } from "@/app/i18n/client";
 import {
   removeApplicationFile,
@@ -81,27 +87,23 @@ export function FieldInput({
       : null;
 
   const head = (
-    <Label htmlFor={id}>
+    <FieldLabel htmlFor={id}>
       {title} {!required && <span className={small}>{copy.optional}</span>}
-    </Label>
+    </FieldLabel>
   );
   const foot = (
     <>
       {help && <p className="text-[13px] text-faint">{help}</p>}
-      {own && (
-        <p className="text-[13px] text-destructive" role="alert">
-          {problem(own)}
-        </p>
-      )}
+      {own && <FieldError className="text-[13px]">{problem(own)}</FieldError>}
     </>
   );
 
   if (field.type === "group")
     return (
-      <fieldset className="grid gap-3 rounded-lg border p-3.5">
-        <legend className="px-1 text-sm font-medium">
+      <FieldSet className="grid gap-3 rounded-lg border p-3.5">
+        <FieldLegend variant="label" className="px-1 text-sm font-medium">
           {title} {!required && <span className={small}>{copy.optional}</span>}
-        </legend>
+        </FieldLegend>
         <div className="grid gap-3 sm:grid-cols-2">
           {(field.parts ?? []).map((part) => {
             const group = (value ?? {}) as Record<string, unknown>;
@@ -122,7 +124,7 @@ export function FieldInput({
           })}
         </div>
         {foot}
-      </fieldset>
+      </FieldSet>
     );
 
   if (field.type === "codes") {
@@ -141,7 +143,7 @@ export function FieldInput({
 
   if (field.type === "code")
     return (
-      <div className="grid gap-1.5">
+      <Field data-invalid={own ? true : undefined} className="gap-1.5">
         {head}
         <Select
           id={id}
@@ -160,7 +162,7 @@ export function FieldInput({
           ]}
         />
         {foot}
-      </div>
+      </Field>
     );
 
   if (field.type === "file")
@@ -189,7 +191,7 @@ export function FieldInput({
           ? "date"
           : "text";
   return (
-    <div className="grid gap-1.5">
+    <Field data-invalid={own ? true : undefined} className="gap-1.5">
       {head}
       <Input
         id={id}
@@ -203,7 +205,7 @@ export function FieldInput({
         aria-invalid={own ? true : undefined}
       />
       {foot}
-    </div>
+    </Field>
   );
 }
 
@@ -232,7 +234,7 @@ function CodesInput({
       )
     : codes;
   return (
-    <div className="grid gap-1.5" id={id}>
+    <Field className="gap-1.5" id={id}>
       {head}
       {long && (
         <Input
@@ -252,7 +254,7 @@ function CodesInput({
         {shown.map((code) => {
           const value = String(code.value);
           return (
-            <Label
+            <FieldLabel
               key={value}
               className="flex cursor-pointer items-center gap-2 font-normal"
             >
@@ -267,12 +269,12 @@ function CodesInput({
                 }
               />
               <span className="truncate">{label(code.labels, locale)}</span>
-            </Label>
+            </FieldLabel>
           );
         })}
       </div>
       {foot}
-    </div>
+    </Field>
   );
 }
 
@@ -302,7 +304,7 @@ function FileInput({
   const [error, setError] = useState<string | null>(null);
 
   return (
-    <div className="grid gap-1.5">
+    <Field className="gap-1.5">
       {head}
       {file ? (
         <div className="flex flex-wrap items-center justify-between gap-2 rounded-md border px-3 py-2 text-sm">
@@ -350,12 +352,12 @@ function FileInput({
       )}
       {busy && <p className="text-[13px] text-faint">{copy.uploading}</p>}
       {error && (
-        <p className="text-[13px] text-destructive" role="alert">
+        <FieldError className="text-[13px]">
           {copy.errors[error as keyof typeof copy.errors] ??
             copy.errors.unavailable}
-        </p>
+        </FieldError>
       )}
       {foot}
-    </div>
+    </Field>
   );
 }

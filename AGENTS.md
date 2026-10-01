@@ -62,9 +62,12 @@ everything (`task --list`); `task check` must pass before finishing.
   hard-coded user-facing strings. The language is the selector's choice
   (`almena.locale` cookie), else the browser's Accept-Language.
 - The interface is shadcn/ui (`components.json`, Radix base): its components
-  live in `app/components/ui` (add more with `npx shadcn@latest add <name>`),
-  everything is styled with Tailwind utilities, and `cn` is in
-  `app/lib/utils.ts`. Almena variants were added to them (Button `danger`,
+  live in `app/components/ui` (add more with `npx shadcn add <name>`, the CLI
+  pinned in devDependencies), everything is styled with Tailwind utilities,
+  and `cn` comes from the `cn` package. Every form field is shadcn's `Field`
+  (`FieldLabel`, `FieldDescription`, `FieldError`; groups `FieldSet` and
+  `FieldLegend`; a checkbox with its text `orientation="horizontal"`), its
+  `data-invalid` following the control's `aria-invalid`. Almena variants were added to them (Button `danger`,
   Badge `brand`/`pending`/`muted`/`danger`, Alert `notice`). Icons are
   `lucide-react`.
 - Light/dark/system is the `almena.theme` cookie, rendered as `data-theme` on

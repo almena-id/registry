@@ -4,7 +4,7 @@ import { Logo } from "@/app/components/Logo";
 import { Button } from "@/app/components/ui/button";
 import { getI18n } from "@/app/i18n/server";
 import { currentUser } from "@/app/lib/api";
-import { cn } from "@/app/lib/utils";
+import { cn } from "cn";
 
 /** A box in the model: the person, the tenant, one of its components. */
 const node =

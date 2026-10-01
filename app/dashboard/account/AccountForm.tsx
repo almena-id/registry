@@ -6,7 +6,12 @@ import { Alert, AlertDescription } from "@/app/components/ui/alert";
 import { Button } from "@/app/components/ui/button";
 import { Card } from "@/app/components/ui/card";
 import { Input } from "@/app/components/ui/input";
-import { Label } from "@/app/components/ui/label";
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldLabel,
+} from "@/app/components/ui/field";
 import { useI18n } from "@/app/i18n/client";
 import { saveAccount, type AccountState } from "@/app/lib/account-actions";
 
@@ -35,8 +40,11 @@ export function AccountForm({ alias }: { alias: string }) {
           </Alert>
         )}
 
-        <div className="grid gap-1.5">
-          <Label htmlFor="alias">{copy.alias}</Label>
+        <Field
+          data-invalid={errors.alias ? true : undefined}
+          className="gap-1.5"
+        >
+          <FieldLabel htmlFor="alias">{copy.alias}</FieldLabel>
           <Input
             id="alias"
             name="alias"
@@ -47,15 +55,18 @@ export function AccountForm({ alias }: { alias: string }) {
             aria-describedby={errors.alias ? "alias-error" : "alias-hint"}
           />
           {errors.alias ? (
-            <p className="text-[13px] text-destructive" id="alias-error">
+            <FieldError className="text-[13px]" id="alias-error">
               {copy.errors[errors.alias]}
-            </p>
+            </FieldError>
           ) : (
-            <p className="text-[13px] text-faint" id="alias-hint">
+            <FieldDescription
+              className="text-[13px] text-faint"
+              id="alias-hint"
+            >
               {copy.aliasHint}
-            </p>
+            </FieldDescription>
           )}
-        </div>
+        </Field>
 
         <div className="flex justify-end gap-2">
           <Button type="submit" disabled={pending}>

@@ -7,7 +7,7 @@ import { Alert, AlertDescription } from "@/app/components/ui/alert";
 import { Button } from "@/app/components/ui/button";
 import { Card } from "@/app/components/ui/card";
 import { Input } from "@/app/components/ui/input";
-import { Label } from "@/app/components/ui/label";
+import { Field, FieldError, FieldLabel } from "@/app/components/ui/field";
 import { useI18n } from "@/app/i18n/client";
 import { linkEmail, type EmailLinkState } from "@/app/lib/ways-in-actions";
 
@@ -31,7 +31,9 @@ export function EmailLinkForm() {
           {onCode ? copy.codeTitle : copy.title}
         </h1>
         <p className="text-muted-foreground">
-          {onCode ? copy.codeLead.replace("{email}", state.email ?? "") : copy.lead}
+          {onCode
+            ? copy.codeLead.replace("{email}", state.email ?? "")
+            : copy.lead}
         </p>
       </header>
       <Card className="gap-0 p-6">
@@ -48,8 +50,13 @@ export function EmailLinkForm() {
           )}
           {onCode && <input type="hidden" name="email" value={state.email} />}
 
-          <div className="grid gap-1.5">
-            <Label htmlFor={name}>{onCode ? copy.code : t.dashboard.account.waysIn.email}</Label>
+          <Field
+            data-invalid={fieldError ? true : undefined}
+            className="gap-1.5"
+          >
+            <FieldLabel htmlFor={name}>
+              {onCode ? copy.code : t.dashboard.account.waysIn.email}
+            </FieldLabel>
             <Input
               key={name}
               className={
@@ -68,16 +75,20 @@ export function EmailLinkForm() {
                     pattern: "\\d{6}",
                     maxLength: 6,
                   }
-                : { type: "email", autoComplete: "email", defaultValue: state.email })}
+                : {
+                    type: "email",
+                    autoComplete: "email",
+                    defaultValue: state.email,
+                  })}
               aria-invalid={fieldError ? true : undefined}
               aria-describedby={fieldError ? `${name}-error` : undefined}
             />
             {fieldError && (
-              <p className="text-[13px] text-destructive" id={`${name}-error`}>
+              <FieldError className="text-[13px]" id={`${name}-error`}>
                 {errorText[fieldError]}
-              </p>
+              </FieldError>
             )}
-          </div>
+          </Field>
 
           {/* The main button comes first: Enter submits the first one. */}
           <div className="flex justify-end gap-2">

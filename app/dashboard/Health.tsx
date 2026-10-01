@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Alert, AlertDescription } from "@/app/components/ui/alert";
 import { Button } from "@/app/components/ui/button";
 import { Card } from "@/app/components/ui/card";
+import { Progress } from "@/app/components/ui/progress";
 import { getI18n } from "@/app/i18n/server";
 import { fetchHealth, fetchTenant, type HealthCheck } from "@/app/lib/tenant";
 
@@ -51,19 +52,11 @@ export async function Health() {
           </Alert>
         ) : (
           <>
-            <div
-              className="mb-3 h-2 overflow-hidden rounded-full bg-sunk"
-              role="progressbar"
+            <Progress
+              className="mb-3 bg-sunk"
               aria-label={copy.title}
-              aria-valuemin={0}
-              aria-valuemax={100}
-              aria-valuenow={health.score}
-            >
-              <div
-                className="h-full rounded-full bg-primary transition-[width]"
-                style={{ width: `${health.score}%` }}
-              />
-            </div>
+              value={health.score}
+            />
             <ul>
               {health.checks.map((check) => (
                 <li key={check.check} className={rowClass}>

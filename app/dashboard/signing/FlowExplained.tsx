@@ -11,11 +11,11 @@ import {
 import { Badge } from "@/app/components/ui/badge";
 import { useI18n } from "@/app/i18n/client";
 import type { SigningFlow } from "@/app/lib/signing-flows";
-import { cn } from "@/app/lib/utils";
+import { cn } from "cn";
 
 /**
  * Each flow's drawing: the account's people, then the signature, then what is
- * published. Orange has one job here — who can sign. `any_admin` lights every
+ * published. Green has one job here — who can sign. `any_admin` lights every
  * admin (any one of them will do); `single_user` lights one person among the
  * members and leaves the rest dim.
  */

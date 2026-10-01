@@ -5,12 +5,12 @@ import { useId, useState } from "react";
 
 import { Button } from "@/app/components/ui/button";
 import { Input } from "@/app/components/ui/input";
-import { Label } from "@/app/components/ui/label";
 import { Textarea } from "@/app/components/ui/textarea";
+import { FieldLabel } from "@/app/components/ui/field";
 import { useI18n } from "@/app/i18n/client";
 import { localeNames, locales, type Locale } from "@/app/i18n/config";
 import type { Texts } from "@/app/lib/texts";
-import { cn } from "@/app/lib/utils";
+import { cn } from "cn";
 
 /**
  * A text written in each of the portal's languages: the box shows the
@@ -105,12 +105,12 @@ export function MultilingualInput({
                 multiline ? "sm:items-start" : "sm:items-center",
               )}
             >
-              <Label
+              <FieldLabel
                 htmlFor={`${id}-${lang}`}
                 className="text-[13px] font-normal text-muted-foreground"
               >
                 {localeNames[lang]}
-              </Label>
+              </FieldLabel>
               {box(lang, `${id}-${lang}`, false)}
             </div>
           ))}

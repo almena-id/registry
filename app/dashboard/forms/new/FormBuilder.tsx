@@ -24,12 +24,18 @@ import {
   CommandList,
 } from "@/app/components/ui/command";
 import { Input } from "@/app/components/ui/input";
-import { Label } from "@/app/components/ui/label";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/app/components/ui/popover";
+import {
+  Field,
+  FieldError,
+  FieldLabel,
+  FieldLegend,
+  FieldSet,
+} from "@/app/components/ui/field";
 import { useI18n } from "@/app/i18n/client";
 import type {
   CredentialCatalogue,
@@ -115,8 +121,8 @@ export function FormBuilder({
       )}
 
       <Card className="gap-[18px] p-6">
-        <div className="grid gap-1.5">
-          <Label htmlFor="name">{copy.name}</Label>
+        <Field className="gap-1.5">
+          <FieldLabel htmlFor="name">{copy.name}</FieldLabel>
           <MultilingualInput
             id="name"
             name="name"
@@ -128,17 +134,17 @@ export function FormBuilder({
             describedBy={errors.name ? "name-error" : undefined}
           />
           {errors.name && (
-            <p className="text-[13px] text-destructive" id="name-error">
+            <FieldError className="text-[13px]" id="name-error">
               {copy.errors[errors.name]}
-            </p>
+            </FieldError>
           )}
-        </div>
+        </Field>
 
-        <div className="grid gap-1.5">
-          <Label htmlFor="description">
+        <Field className="gap-1.5">
+          <FieldLabel htmlFor="description">
             {copy.description}{" "}
             <span className="font-normal text-faint">{copy.optional}</span>
-          </Label>
+          </FieldLabel>
           <MultilingualInput
             id="description"
             name="description"
@@ -150,11 +156,11 @@ export function FormBuilder({
             invalid={Boolean(errors.description)}
           />
           {errors.description && (
-            <p className="text-[13px] text-destructive">
+            <FieldError className="text-[13px]">
               {copy.errors[errors.description]}
-            </p>
+            </FieldError>
           )}
-        </div>
+        </Field>
       </Card>
 
       <section className="grid gap-3" aria-labelledby="fields-title">
@@ -382,10 +388,17 @@ function FieldEditor({
 
       <div className="grid gap-3 sm:grid-cols-[1fr_auto] sm:items-end">
         {item.repeatable ? (
-          <div className="grid gap-1.5">
-            <Label htmlFor={id("as")}>
+          <Field
+            data-invalid={
+              problem === "keyInvalid" || problem === "keyDuplicate"
+                ? true
+                : undefined
+            }
+            className="gap-1.5"
+          >
+            <FieldLabel htmlFor={id("as")}>
               {copy.as} <span className={small}>{copy.asHint}</span>
-            </Label>
+            </FieldLabel>
             <Input
               id={id("as")}
               className="font-mono text-[13px]"
@@ -401,11 +414,11 @@ function FieldEditor({
                   : undefined
               }
             />
-          </div>
+          </Field>
         ) : (
           <span />
         )}
-        <Label className="flex h-9 cursor-pointer items-center gap-2 font-normal">
+        <FieldLabel className="flex h-9 cursor-pointer items-center gap-2 font-normal">
           <Checkbox
             checked={field.required}
             onCheckedChange={(checked) =>
@@ -413,13 +426,13 @@ function FieldEditor({
             }
           />
           {copy.required}
-        </Label>
+        </FieldLabel>
       </div>
 
-      <div className="grid gap-1.5">
-        <Label htmlFor={id("help")}>
+      <Field className="gap-1.5">
+        <FieldLabel htmlFor={id("help")}>
           {copy.help} <span className={small}>{copy.optional}</span>
-        </Label>
+        </FieldLabel>
         <MultilingualInput
           id={id("help")}
           value={field.help}
@@ -427,7 +440,7 @@ function FieldEditor({
           maxLength={500}
           placeholder={copy.helpHint}
         />
-      </div>
+      </Field>
 
       {narrowing.size > 0 && (
         <div className="grid gap-3 rounded-lg bg-sunk p-3.5 sm:grid-cols-2">
@@ -446,11 +459,15 @@ function FieldEditor({
           {(["min_date", "max_date"] as const)
             .filter((bound) => narrowing.has(bound))
             .map((bound) => (
-              <div key={bound} className="grid gap-1.5">
-                <Label htmlFor={id(bound)}>
+              <Field
+                data-invalid={problem === "narrowInvalid" ? true : undefined}
+                key={bound}
+                className="gap-1.5"
+              >
+                <FieldLabel htmlFor={id(bound)}>
                   {copy.bounds[bound]}{" "}
                   <span className={small}>{copy.optional}</span>
-                </Label>
+                </FieldLabel>
                 <Input
                   id={id(bound)}
                   type="date"
@@ -460,14 +477,17 @@ function FieldEditor({
                   }
                   aria-invalid={problem === "narrowInvalid" ? true : undefined}
                 />
-              </div>
+              </Field>
             ))}
           {narrowing.has("max_length") && (
-            <div className="grid gap-1.5">
-              <Label htmlFor={id("max_length")}>
+            <Field
+              data-invalid={problem === "narrowInvalid" ? true : undefined}
+              className="gap-1.5"
+            >
+              <FieldLabel htmlFor={id("max_length")}>
                 {copy.bounds.max_length}{" "}
                 <span className={small}>{copy.optional}</span>
-              </Label>
+              </FieldLabel>
               <Input
                 id={id("max_length")}
                 type="number"
@@ -482,15 +502,13 @@ function FieldEditor({
                 }
                 aria-invalid={problem === "narrowInvalid" ? true : undefined}
               />
-            </div>
+            </Field>
           )}
         </div>
       )}
 
       {problem && (
-        <p className="text-[13px] text-destructive" role="alert">
-          {copy.errors[problem]}
-        </p>
+        <FieldError className="text-[13px]">{copy.errors[problem]}</FieldError>
       )}
     </Card>
   );
@@ -529,18 +547,18 @@ function ValuesPicker({
     : codes;
 
   return (
-    <fieldset
+    <FieldSet
       className="grid gap-2 sm:col-span-2"
       aria-invalid={invalid ? true : undefined}
     >
-      <legend className="mb-1.5 text-sm font-medium">
+      <FieldLegend variant="label" className="mb-1.5 text-sm font-medium">
         {item.type === "file" ? copy.formats : copy.values}{" "}
         <span className={small}>
           {chosen.length
             ? copy.chosen.replace("{count}", String(chosen.length))
             : copy.valuesHint}
         </span>
-      </legend>
+      </FieldLegend>
       {long && (
         <Input
           value={filter}
@@ -559,7 +577,7 @@ function ValuesPicker({
         {shown.map((code) => {
           const value = String(code.value);
           return (
-            <Label
+            <FieldLabel
               key={value}
               className="flex cursor-pointer items-center gap-2 font-normal"
             >
@@ -574,10 +592,10 @@ function ValuesPicker({
                 }
               />
               <span className="truncate">{label(code.labels, locale)}</span>
-            </Label>
+            </FieldLabel>
           );
         })}
       </div>
-    </fieldset>
+    </FieldSet>
   );
 }

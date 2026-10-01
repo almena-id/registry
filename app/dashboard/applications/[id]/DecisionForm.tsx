@@ -4,8 +4,8 @@ import { useActionState } from "react";
 
 import { Alert, AlertDescription } from "@/app/components/ui/alert";
 import { Button } from "@/app/components/ui/button";
-import { Label } from "@/app/components/ui/label";
 import { Textarea } from "@/app/components/ui/textarea";
+import { Field, FieldLabel } from "@/app/components/ui/field";
 import { useI18n } from "@/app/i18n/client";
 import {
   decideApplication,
@@ -22,13 +22,13 @@ export function DecisionForm({ id }: { id: string }) {
   );
   return (
     <form action={action} className="grid gap-3">
-      <div className="grid gap-1.5">
-        <Label htmlFor="note">
+      <Field className="gap-1.5">
+        <FieldLabel htmlFor="note">
           {copy.note}{" "}
           <span className="font-normal text-faint">{copy.optional}</span>
-        </Label>
+        </FieldLabel>
         <Textarea id="note" name="note" rows={3} maxLength={2000} />
-      </div>
+      </Field>
       {state.error && (
         <Alert variant="destructive" role="alert">
           <AlertDescription>{copy.errors[state.error]}</AlertDescription>

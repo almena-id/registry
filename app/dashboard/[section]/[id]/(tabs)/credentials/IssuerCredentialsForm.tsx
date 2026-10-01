@@ -9,7 +9,7 @@ import { Alert, AlertDescription } from "@/app/components/ui/alert";
 import { Button } from "@/app/components/ui/button";
 import { Card } from "@/app/components/ui/card";
 import { Checkbox } from "@/app/components/ui/checkbox";
-import { Label } from "@/app/components/ui/label";
+import { FieldLabel, FieldLegend, FieldSet } from "@/app/components/ui/field";
 import { useI18n } from "@/app/i18n/client";
 import {
   saveIssuerCredentialTypes,
@@ -59,16 +59,19 @@ export function IssuerCredentialsForm({
           </Link>
         </p>
         {groups.map((group) => (
-          <fieldset key={group.label} className="grid gap-2">
-            <legend className="mb-1.5 text-[13px] font-semibold text-muted-foreground">
+          <FieldSet key={group.label} className="grid gap-2">
+            <FieldLegend
+              variant="label"
+              className="mb-1.5 text-[13px] font-semibold text-muted-foreground"
+            >
               {group.label}
-            </legend>
+            </FieldLegend>
             {group.types.map((type) => (
               <div
                 key={type.id}
                 className="grid gap-2.5 rounded-lg border border-input px-3.5 py-3 has-[[data-state=checked]]:border-primary has-[[data-state=checked]]:bg-brand-soft"
               >
-                <Label className="flex cursor-pointer items-start gap-2.5 font-normal">
+                <FieldLabel className="flex cursor-pointer items-start gap-2.5 font-normal">
                   <Checkbox
                     name="types"
                     value={type.id}
@@ -88,12 +91,15 @@ export function IssuerCredentialsForm({
                       {type.description}
                     </span>
                   </span>
-                </Label>
+                </FieldLabel>
                 {ticked.includes(type.id) && (
                   <div className="grid gap-1.5 pl-6.5">
-                    <Label htmlFor={`form-${type.id}`} className="text-[13px]">
+                    <FieldLabel
+                      htmlFor={`form-${type.id}`}
+                      className="text-[13px]"
+                    >
                       {copy.requestForm}
-                    </Label>
+                    </FieldLabel>
                     <Select
                       id={`form-${type.id}`}
                       name={`form.${type.id}`}
@@ -110,7 +116,7 @@ export function IssuerCredentialsForm({
                 )}
               </div>
             ))}
-          </fieldset>
+          </FieldSet>
         ))}
         {state.error && !pending && (
           <Alert variant="destructive" role="alert">

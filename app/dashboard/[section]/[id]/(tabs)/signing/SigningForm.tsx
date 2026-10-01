@@ -6,7 +6,7 @@ import { Select } from "@/app/components/Select";
 import { Alert, AlertDescription } from "@/app/components/ui/alert";
 import { Button } from "@/app/components/ui/button";
 import { Card } from "@/app/components/ui/card";
-import { Label } from "@/app/components/ui/label";
+import { Field, FieldError, FieldLabel } from "@/app/components/ui/field";
 import { useI18n } from "@/app/i18n/client";
 import { useAnswerRound } from "@/app/lib/use-answer-round";
 import { saveSigning, type SigningState } from "@/app/lib/directory-actions";
@@ -62,8 +62,8 @@ export function SigningForm({
           </Alert>
         )}
 
-        <div className="grid gap-1.5">
-          <Label htmlFor="system">{copy.system}</Label>
+        <Field className="gap-1.5">
+          <FieldLabel htmlFor="system">{copy.system}</FieldLabel>
           <Select
             key={round}
             id="system"
@@ -75,11 +75,14 @@ export function SigningForm({
               { value: "single_user", label: copy.single_user },
             ]}
           />
-        </div>
+        </Field>
 
         {chosen === "single_user" && (
-          <div className="grid gap-1.5">
-            <Label htmlFor="signer">{copy.signer}</Label>
+          <Field
+            data-invalid={errors.signer ? true : undefined}
+            className="gap-1.5"
+          >
+            <FieldLabel htmlFor="signer">{copy.signer}</FieldLabel>
             <Select
               key={round}
               id="signer"
@@ -96,11 +99,11 @@ export function SigningForm({
               ]}
             />
             {errors.signer && (
-              <p className="text-[13px] text-destructive" id="signer-error">
+              <FieldError className="text-[13px]" id="signer-error">
                 {copy.errors[errors.signer]}
-              </p>
+              </FieldError>
             )}
-          </div>
+          </Field>
         )}
 
         <div className="flex justify-end gap-2">
