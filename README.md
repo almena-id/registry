@@ -15,8 +15,10 @@ The portal is published at `https://registry.almena.id` and uses the API at `htt
 
 ```bash
 task up      # builds the image and starts it
-task health  # {"status":"ok"}
+task health  # {"status":"ok","version":"dev"}
 ```
+
+Every merge into `main` publishes the image `ghcr.io/almena-id/registry` (amd64 and arm64) with a `year.month.sequence` version (e.g. `2026.10.1`, the sequence restarting each month), also tagged `latest` and `sha-<commit>`; the commit gets the git tag `v<version>`. See [.github/workflows/docker.yml](.github/workflows/docker.yml).
 
 ## Configuration
 
@@ -35,7 +37,7 @@ Read from the environment or `.env`; [.env.example](.env.example) explains every
 | | |
 |---|---|
 | `GET /` | The portal |
-| `GET /health` | Liveness, used by the Docker health check |
+| `GET /health` | Liveness and the running version, used by the Docker health check |
 | `GET /.well-known/did-configuration.json` | The origin's [DID configuration](https://identity.foundation/.well-known/resources/did-configuration/): a Domain Linkage Credential tying it to `did:web:almena.id`, signed elsewhere and served as it is from `REGISTRY_WEB_WELL_KNOWN_DIR`; `404` without it |
 | `GET /.well-known/security.txt` | Where to report a vulnerability ([RFC 9116](https://www.rfc-editor.org/rfc/rfc9116)): this repository's private advisories; `Expires` stays 180 days ahead |
 
