@@ -45,6 +45,7 @@ const CODES: Record<string, ErrorKey> = {
   credential_unknown: "unavailable",
   credential_key_invalid: "credentialKeyInvalid",
   credential_key_duplicate: "credentialKeyDuplicate",
+  credential_type_duplicate: "credentialTypeDuplicate",
   credential_claims_invalid: "claimsInvalid",
   credential_trust_invalid: "trustInvalid",
 };

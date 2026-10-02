@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { CopyButton } from "@/app/components/CopyButton";
 import { Alert, AlertDescription } from "@/app/components/ui/alert";
 import { Button } from "@/app/components/ui/button";
 import { Card } from "@/app/components/ui/card";
@@ -54,19 +55,27 @@ export function DocumentCard({
   title,
   hint,
   document,
+  copy,
 }: {
   title: string;
   hint: string;
   document: Record<string, unknown>;
+  copy: { copy: string; copied: string };
 }) {
+  const json = JSON.stringify(document, null, 2);
   return (
     // A grid item: without min-w-0 a long line of JSON widens it past the page.
     <Card className="min-w-0 gap-0 p-5">
       <section className="min-w-0">
-        <h2 className="mb-1 text-[15px] font-semibold">{title}</h2>
-        <p className="mb-3 text-sm text-muted-foreground">{hint}</p>
+        <header className="mb-3 flex items-start justify-between gap-4">
+          <div className="min-w-0">
+            <h2 className="mb-1 text-[15px] font-semibold">{title}</h2>
+            <p className="text-sm text-muted-foreground">{hint}</p>
+          </div>
+          <CopyButton text={json} label={copy.copy} done={copy.copied} />
+        </header>
         <pre className="overflow-x-auto rounded-lg bg-sunk px-4 py-3.5 font-mono text-[13px] leading-normal">
-          <code>{JSON.stringify(document, null, 2)}</code>
+          <code>{json}</code>
         </pre>
       </section>
     </Card>
@@ -100,6 +109,8 @@ export function DidDocuments({
     toSign: string;
     pendingHint: string;
     outdatedHint: string;
+    copy: string;
+    copied: string;
   };
 }) {
   if (item.signature === "signed" && item.signed_document)
@@ -108,6 +119,7 @@ export function DidDocuments({
         title={copy.published}
         hint={copy.publishedHint}
         document={item.signed_document}
+        copy={copy}
       />
     );
   if (item.signature === "pending" || !item.signed_document)
@@ -116,6 +128,7 @@ export function DidDocuments({
         title={copy.toSign}
         hint={copy.pendingHint}
         document={item.document}
+        copy={copy}
       />
     );
   const fields = differences(item.document, item.signed_document);
@@ -125,11 +138,13 @@ export function DidDocuments({
         title={copy.toSign}
         hint={copy.outdatedHint.replace("{fields}", fields.join(", "))}
         document={item.document}
+        copy={copy}
       />
       <DocumentCard
         title={copy.published}
         hint={copy.publishedHint}
         document={item.signed_document}
+        copy={copy}
       />
     </>
   );

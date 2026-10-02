@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useActionState } from "react";
+import { cn } from "cn";
 
 import { Select } from "@/app/components/Select";
 import { Alert, AlertDescription } from "@/app/components/ui/alert";
@@ -27,17 +28,20 @@ import {
 
 /**
  * Issuers and verifiers are `described` and pick one of the `mediators`
- * (the tenant's, or a public one); mediators have an address and may be public. Each gets an identity of its own,
- * named like it, which the API creates.
+ * (the tenant's, or a public one); mediators listen on a subdomain of one of
+ * the tenant's verified `domains` and may be public. Each gets an identity of
+ * its own, named like it, which the API creates.
  */
 export function CreateForm({
   section,
   described,
   mediators,
+  domains,
 }: {
   section: Section;
   described: boolean;
   mediators: MediatorChoice[] | null;
+  domains: { id: string; domain: string }[] | null;
 }) {
   const { t } = useI18n();
   const copy = t.dashboard.items;
@@ -49,6 +53,17 @@ export function CreateForm({
   const errors = state.errors ?? {};
   const error = (key?: keyof typeof copy.errors) =>
     key ? copy.errors[key] : null;
+  // With no verified domain yet, the way to verify one.
+  const addDomain = (
+    <Link
+      href="/dashboard/domains"
+      className="font-medium underline underline-offset-4"
+    >
+      {copy.addDomain}
+    </Link>
+  );
+  const addressDescribedBy =
+    errors.subdomain || errors.domain ? "address-error" : "address-hint";
 
   return (
     <Card className="gap-0 p-6">
@@ -59,27 +74,93 @@ export function CreateForm({
           </Alert>
         )}
 
-        <Field
-          data-invalid={errors.name ? true : undefined}
-          className="gap-1.5"
-        >
-          <FieldLabel htmlFor="name">{copy.name}</FieldLabel>
-          <Input
-            id="name"
-            name="name"
-            maxLength={200}
-            autoFocus
-            required
-            defaultValue={state.name}
-            aria-invalid={errors.name ? true : undefined}
-            aria-describedby={errors.name ? "name-error" : undefined}
-          />
-          {errors.name && (
-            <FieldError className="text-[13px]" id="name-error">
-              {error(errors.name)}
-            </FieldError>
+        {/* Mediators: the name and the address on one line. */}
+        <div
+          className={cn(
+            "flex flex-col gap-[18px]",
+            domains &&
+              "md:grid md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] md:items-start",
           )}
-        </Field>
+        >
+          <Field
+            data-invalid={errors.name ? true : undefined}
+            className="gap-1.5"
+          >
+            <FieldLabel htmlFor="name">{copy.name}</FieldLabel>
+            <Input
+              id="name"
+              name="name"
+              maxLength={200}
+              autoFocus
+              required
+              defaultValue={state.name}
+              aria-invalid={errors.name ? true : undefined}
+              aria-describedby={errors.name ? "name-error" : undefined}
+            />
+            {errors.name && (
+              <FieldError className="text-[13px]" id="name-error">
+                {error(errors.name)}
+              </FieldError>
+            )}
+          </Field>
+
+          {domains && (
+            <Field
+              data-invalid={
+                errors.subdomain || errors.domain ? true : undefined
+              }
+              className="gap-1.5"
+            >
+              <FieldLabel htmlFor="subdomain">{copy.url}</FieldLabel>
+              <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5 font-mono text-sm">
+                <span className="text-faint">https://</span>
+                <Input
+                  id="subdomain"
+                  name="subdomain"
+                  maxLength={200}
+                  required
+                  autoCapitalize="none"
+                  spellCheck={false}
+                  placeholder="mediator"
+                  className="min-w-0 flex-1 basis-32 font-mono"
+                  defaultValue={state.subdomain}
+                  aria-label={copy.subdomain}
+                  aria-invalid={errors.subdomain ? true : undefined}
+                  aria-describedby={addressDescribedBy}
+                />
+                <span className="text-faint">.</span>
+                <div className="min-w-0 flex-1 basis-40">
+                  <Select
+                    key={round}
+                    id="domain"
+                    name="domain"
+                    defaultValue={state.domain ?? domains[0]?.id ?? ""}
+                    aria-invalid={errors.domain ? true : undefined}
+                    aria-describedby={addressDescribedBy}
+                    options={domains.map((d) => ({
+                      value: d.id,
+                      label: d.domain,
+                    }))}
+                  />
+                </div>
+              </div>
+              {errors.subdomain || errors.domain ? (
+                <FieldError className="text-[13px]" id="address-error">
+                  {error(errors.subdomain ?? errors.domain)}{" "}
+                  {domains.length === 0 && addDomain}
+                </FieldError>
+              ) : (
+                <FieldDescription
+                  className="text-[13px] text-faint"
+                  id="address-hint"
+                >
+                  {domains.length > 0 ? copy.addressHint : copy.noDomains}{" "}
+                  {domains.length === 0 && addDomain}
+                </FieldDescription>
+              )}
+            </Field>
+          )}
+        </div>
 
         {described && (
           <Field
@@ -105,38 +186,6 @@ export function CreateForm({
               <FieldError className="text-[13px]" id="description-error">
                 {error(errors.description)}
               </FieldError>
-            )}
-          </Field>
-        )}
-
-        {section === "mediators" && (
-          <Field
-            data-invalid={errors.url ? true : undefined}
-            className="gap-1.5"
-          >
-            <FieldLabel htmlFor="url">{copy.url}</FieldLabel>
-            <Input
-              id="url"
-              name="url"
-              inputMode="url"
-              maxLength={2048}
-              required
-              placeholder="https://mediator.example.org"
-              defaultValue={state.url}
-              aria-invalid={errors.url ? true : undefined}
-              aria-describedby={errors.url ? "url-error" : "url-hint"}
-            />
-            {errors.url ? (
-              <FieldError className="text-[13px]" id="url-error">
-                {error(errors.url)}
-              </FieldError>
-            ) : (
-              <FieldDescription
-                className="text-[13px] text-faint"
-                id="url-hint"
-              >
-                {copy.urlHint}
-              </FieldDescription>
             )}
           </Field>
         )}

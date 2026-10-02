@@ -276,7 +276,12 @@
         "urlRequired": "Enter an address.",
         "urlInvalid": "Enter an address, like https://mediator.example.org.",
         "urlInsecure": "Use https:// (plain http only for localhost).",
-        "mediatorNotFound": "That mediator is not available to this account."
+        "mediatorNotFound": "That mediator is not available to this account.",
+        "subdomainRequired": "Enter a subdomain.",
+        "subdomainInvalid": "Use letters, digits and hyphens, like relay or eu.relay.",
+        "domainRequired": "Choose a domain.",
+        "domainNotFound": "That domain is not linked to this account.",
+        "domainUnverified": "That domain is not verified yet."
       },
       "identity": "Identity",
       "usedBy": {
@@ -288,6 +293,11 @@
       "unused": "Not used yet",
       "url": "Address",
       "urlHint": "Where it listens, e.g. https://mediator.example.org.",
+      "subdomain": "Subdomain",
+      "domain": "Domain",
+      "addressHint": "A subdomain of one of the account's verified domains.",
+      "noDomains": "Mediators listen on a subdomain of one of the account's domains, and it has none verified yet.",
+      "addDomain": "Verify a domain",
       "mediator": "Mediator",
       "noMediator": "None",
       "public": "Public",
@@ -503,7 +513,9 @@
       "publishedHint": "Signed, and served by its log.",
       "toSign": "Document to sign",
       "pendingHint": "It goes out once an admin signs it.",
-      "outdatedHint": "Differs from the published one in: {fields}."
+      "outdatedHint": "Differs from the published one in: {fields}.",
+      "copy": "Copy JSON",
+      "copied": "Copied"
     },
     "billing": {
       "title": "Billing",
@@ -591,6 +603,7 @@
         "unavailable": "The registry cannot be reached. Try again in a moment.",
         "credentialKeyInvalid": "The name starts with a letter and has only lowercase letters, digits and _.",
         "credentialKeyDuplicate": "Another credential already goes by this name.",
+        "credentialTypeDuplicate": "This credential is already asked for in the form.",
         "claimsInvalid": "Tick at least one claim.",
         "trustInvalid": "Choose at least one issuer, or trust any issuer in the registry."
       },

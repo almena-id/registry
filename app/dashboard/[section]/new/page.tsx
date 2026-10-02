@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { getI18n } from "@/app/i18n/server";
 import { CreateHeader } from "@/app/dashboard/CreateHeader";
 import { fetchMediatorChoices } from "@/app/lib/directory";
+import { fetchDomains } from "@/app/lib/domains";
 import { hasDescription, isSection } from "@/app/lib/directory-types";
 import { CreateForm } from "./CreateForm";
 
@@ -26,6 +27,13 @@ export default async function NewItemPage({
   const described = hasDescription(section);
   // Issuers and verifiers pick one of the tenant's mediators.
   const mediators = described ? ((await fetchMediatorChoices()) ?? []) : null;
+  // Mediators listen on a subdomain of one of its verified domains.
+  const domains =
+    section === "mediators"
+      ? ((await fetchDomains()) ?? [])
+          .filter((d) => d.verified)
+          .map(({ id, domain }) => ({ id, domain }))
+      : null;
 
   return (
     <div>
@@ -38,6 +46,7 @@ export default async function NewItemPage({
         section={section}
         described={described}
         mediators={mediators}
+        domains={domains}
       />
     </div>
   );

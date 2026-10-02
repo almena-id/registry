@@ -276,7 +276,12 @@
         "urlRequired": "Escribe una dirección.",
         "urlInvalid": "Escribe una dirección, como https://mediator.example.org.",
         "urlInsecure": "Usa https:// (http sin cifrar solo en localhost).",
-        "mediatorNotFound": "Ese mediador no está disponible para esta cuenta."
+        "mediatorNotFound": "Ese mediador no está disponible para esta cuenta.",
+        "subdomainRequired": "Escribe un subdominio.",
+        "subdomainInvalid": "Usa letras, dígitos y guiones, como relay o eu.relay.",
+        "domainRequired": "Elige un dominio.",
+        "domainNotFound": "Ese dominio no está vinculado a esta cuenta.",
+        "domainUnverified": "Ese dominio aún no está verificado."
       },
       "identity": "Identidad",
       "usedBy": {
@@ -288,6 +293,11 @@
       "unused": "Aún sin uso",
       "url": "Dirección",
       "urlHint": "Donde escucha, p. ej. https://mediator.example.org.",
+      "subdomain": "Subdominio",
+      "domain": "Dominio",
+      "addressHint": "Un subdominio de uno de los dominios verificados de la cuenta.",
+      "noDomains": "Los mediadores escuchan en un subdominio de uno de los dominios de la cuenta, y aún no tiene ninguno verificado.",
+      "addDomain": "Verificar un dominio",
       "mediator": "Mediador",
       "noMediator": "Ninguno",
       "public": "Público",
@@ -503,7 +513,9 @@
       "publishedHint": "Firmado y servido por su log.",
       "toSign": "Documento por firmar",
       "pendingHint": "Sale cuando un admin lo firma.",
-      "outdatedHint": "Difiere del publicado en: {fields}."
+      "outdatedHint": "Difiere del publicado en: {fields}.",
+      "copy": "Copiar JSON",
+      "copied": "Copiado"
     },
     "billing": {
       "title": "Facturación",
@@ -591,6 +603,7 @@
         "unavailable": "No se puede contactar con el registro. Inténtalo de nuevo en un momento.",
         "credentialKeyInvalid": "El nombre empieza por una letra y solo lleva minúsculas, dígitos y _.",
         "credentialKeyDuplicate": "Otra credencial ya se llama así.",
+        "credentialTypeDuplicate": "Esta credencial ya se pide en el formulario.",
         "claimsInvalid": "Marca al menos un claim.",
         "trustInvalid": "Elige al menos un emisor, o confía en cualquier emisor del registro."
       },

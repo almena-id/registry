@@ -61,6 +61,10 @@ everything (`task --list`); `task check` must pass before finishing.
 - Sign-in goes through server actions (`app/lib/auth-actions.ts`): the API's
   bearer token is kept in the HTTP-only `almena.session` cookie on this origin
   and sent by the server (`app/lib/api.ts`); the browser never holds it.
+- Rules checked here (required, lengths, formats, allowed values, what an
+  item's state lets you do) are for the person's sake, never the guard: the
+  API checks every one of them again and is the one that decides. A rule
+  added here goes into the API in the same change; one only here is a bug.
 - User-facing text is translatable: English (`en`) is the source and fallback,
   Spanish (`es`) the first translation (`app/i18n/messages/*.json`). No
   hard-coded user-facing strings. The language is the selector's choice
@@ -96,7 +100,9 @@ everything (`task --list`); `task check` must pass before finishing.
   action as the marker under the list nears the viewport (`InfiniteList`).
   "Create" opens `/dashboard/{section}/new`. Issuers and verifiers have a name,
   a description and, optionally, a mediator; mediators a name, the address
-  they listen on (https) and whether they are public; identities only a name
+  they listen on — a subdomain typed before one of the tenant's verified
+  domains, picked from a list (`https://{subdomain}.{domain}`; with none
+  verified, the list is empty and a link leads to Domains) — and whether they are public; identities only a name
   until the DID method is decided.
   The tenant has no menu entry: it is chosen in the header, kept by id in the
   HTTP-only `almena.tenant` cookie (the oldest while none is chosen, or the

@@ -28,11 +28,11 @@ type Label =
 
 // The overview on its own, then five titled cards: the activity that arrives
 // for the account (the tenant) — the applications its issuers receive; the
-// services it publishes and others use; the templates it asks and issues
-// with — its forms and the catalogue they are made of; the trust behind its
-// DIDs — its identities, the domains they live on and who signs them; then
-// the account itself — its settings, billing among them, and its people.
-// Most used first.
+// services it publishes and others use, and the identities they act as; the
+// templates it asks and issues with — its forms and the catalogue they are
+// made of; the trust behind its DIDs — the domains they live on and who signs
+// them; then the account itself — its settings, billing among them, and its
+// people. Most used first.
 const groups: {
   label: Label | null;
   entries: { key: Entry; href: string }[];
@@ -48,6 +48,7 @@ const groups: {
       { key: "issuers", href: "/dashboard/issuers" },
       { key: "verifiers", href: "/dashboard/verifiers" },
       { key: "mediators", href: "/dashboard/mediators" },
+      { key: "identities", href: "/dashboard/identities" },
     ],
   },
   {
@@ -60,7 +61,6 @@ const groups: {
   {
     label: "trustLabel",
     entries: [
-      { key: "identities", href: "/dashboard/identities" },
       { key: "domains", href: "/dashboard/domains" },
       { key: "signing", href: "/dashboard/signing" },
     ],

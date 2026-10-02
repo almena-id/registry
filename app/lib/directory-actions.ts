@@ -30,14 +30,18 @@ type ErrorKey = keyof Dictionary["dashboard"]["items"]["errors"];
 export type CreateState = {
   name?: string;
   description?: string;
-  url?: string;
+  /** Mediators: where they listen, `https://{subdomain}.{domain}`, the
+   * domain one of the tenant's verified ones (its id). */
+  subdomain?: string;
+  domain?: string;
   mediator?: string;
   /** Mediators: offered to every account once published. */
   public?: boolean;
   errors?: {
     name?: ErrorKey;
     description?: ErrorKey;
-    url?: ErrorKey;
+    subdomain?: ErrorKey;
+    domain?: ErrorKey;
     mediator?: ErrorKey;
     form?: ErrorKey;
   };
@@ -58,15 +62,26 @@ export async function createItem(
   if (!isSection(section)) return { errors: { form: "unavailable" } };
   const name = String(form.get("name") ?? "").trim();
   const description = String(form.get("description") ?? "").trim();
-  const url = String(form.get("url") ?? "").trim();
+  const subdomain = String(form.get("subdomain") ?? "").trim();
+  const domain = String(form.get("domain") ?? "");
   const mediator = String(form.get("mediator") ?? "");
   const isPublic = form.get("public") === "on";
-  const keep = { name, description, url, mediator, public: isPublic };
+  const keep = {
+    name,
+    description,
+    subdomain,
+    domain,
+    mediator,
+    public: isPublic,
+  };
   const errors: CreateState["errors"] = {};
   if (!name) errors.name = "nameRequired";
   else if (name.length > 200) errors.name = "nameLong";
   if (description.length > 2000) errors.description = "descriptionLong";
-  if (section === "mediators" && !url) errors.url = "urlRequired";
+  if (section === "mediators") {
+    if (!subdomain) errors.subdomain = "subdomainRequired";
+    if (!domain) errors.domain = "domainRequired";
+  }
   if (Object.keys(errors).length) return { ...keep, errors };
 
   const token = (await cookies()).get(sessionCookie)?.value;
@@ -77,7 +92,7 @@ export async function createItem(
   const body = hasDescription(section)
     ? { name, description: description || null, mediator_id: mediator || null }
     : section === "mediators"
-      ? { name, url, public: isPublic }
+      ? { name, subdomain, domain_id: domain, public: isPublic }
       : { name };
   const { data, detail } = await api(`/tenants/${tenant.id}/${section}`, {
     method: "POST",
@@ -85,8 +100,12 @@ export async function createItem(
     token,
   });
   if (!data) {
-    const url = urlError(detail);
-    if (url) return { ...keep, errors: { url } };
+    if (detail === "subdomain_invalid")
+      return { ...keep, errors: { subdomain: "subdomainInvalid" } };
+    if (detail === "domain_not_found")
+      return { ...keep, errors: { domain: "domainNotFound" } };
+    if (detail === "domain_unverified")
+      return { ...keep, errors: { domain: "domainUnverified" } };
     if (detail === "mediator_not_found")
       return { ...keep, errors: { mediator: "mediatorNotFound" } };
     return { ...keep, errors: { form: "unavailable" } };
