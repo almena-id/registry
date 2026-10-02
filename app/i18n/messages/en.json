@@ -1,7 +1,7 @@
 {
   "app": {
     "name": "Almena Registry",
-    "network": "Almena Network"
+    "network": "Almena ID"
   },
   "header": {
     "language": "Language",
@@ -752,7 +752,7 @@
     }
   },
   "footer": {
-    "rights": "Almena Network",
+    "rights": "Almena ID",
     "site": "almena.id"
   },
   "wallet": {

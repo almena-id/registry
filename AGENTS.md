@@ -10,7 +10,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 # registry
 
-The web portal of the Almena Network registry; its data comes from
+The web portal of the Almena ID registry; its data comes from
 `../api` (FastAPI). Everything is written in English. Use `task` for
 everything (`task --list`); `task check` must pass before finishing.
 

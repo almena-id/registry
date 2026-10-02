@@ -1,6 +1,6 @@
 // Where to report a vulnerability (RFC 9116): privately, through the
 // repository's GitHub.
-const repository = "https://github.com/almena-network/registry";
+const repository = "https://github.com/almena-id/registry";
 
 // security.txt must expire, in less than a year; written on each request, it
 // stays this far ahead while the portal runs.

@@ -1,6 +1,6 @@
 # almena-registry
 
-The web portal of the Almena Network registry, built with [Next.js](https://nextjs.org) 16 (App Router), React 19, TypeScript and Tailwind CSS 4. Its data comes from [api](../api).
+The web portal of the Almena ID registry, built with [Next.js](https://nextjs.org) 16 (App Router), React 19, TypeScript and Tailwind CSS 4. Its data comes from [api](../api).
 
 ## Quick start
 
