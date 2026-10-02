@@ -19,6 +19,10 @@ everything (`task --list`); `task check` must pass before finishing.
   on the server, `process.env.NEXT_PUBLIC_REGISTRY_API_URL` in the browser
   (inlined at build).
 - `app/health/route.ts` is the Docker health check: keep it dependency-free.
+- `app/.well-known/`: `security.txt` (RFC 9116, this repository's advisories)
+  and `did-configuration.json`, read as it is from `REGISTRY_WEB_WELL_KNOWN_DIR`:
+  the Domain Linkage Credential tying this origin to `did:web:almena.id` is
+  signed elsewhere, the portal holds no key.
 - `output: "standalone"` in `next.config.ts` is what the Dockerfile ships.
 - The landing (`/`) leads with "Continue with Almena" (the wallet; "Other
   ways in" is `/login`) and draws the model as it works: you sign for your
