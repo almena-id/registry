@@ -10,7 +10,8 @@ import { UserMenu } from "./UserMenu";
 /**
  * The bar across the top. Signed in (`account`: how the person reads), it also carries the tenant
  * the dashboard works in, the time zone every date is shown in and, in the
- * corner, the account menu; public pages have none of them.
+ * corner, the account menu; public pages have none of them. It is 56px tall
+ * with or without them, as in every portal, so the brand never moves.
  */
 export function SiteHeader({
   t,
@@ -27,7 +28,7 @@ export function SiteHeader({
 }) {
   return (
     <header className="sticky top-0 z-10 border-b bg-background/80 backdrop-blur-md">
-      <div className="page-frame flex flex-wrap items-center justify-between gap-x-4 gap-y-2 py-3">
+      <div className="page-frame flex flex-wrap items-center justify-between gap-x-4 gap-y-2 min-h-14 py-3">
         <Link
           href="/"
           className="inline-flex items-center gap-2.5 font-brand text-[17px] tracking-tight whitespace-nowrap"

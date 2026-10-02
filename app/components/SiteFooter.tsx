@@ -18,6 +18,13 @@ export function SiteFooter({ t, theme }: { t: Dictionary; theme: Theme }) {
             © {new Date().getFullYear()} {t.footer.rights} ·{" "}
             <a href="https://almena.id" className="hover:text-foreground hover:underline">
               {t.footer.site}
+            </a>{" "}
+            ·{" "}
+            <a
+              href="https://github.com/almena-id/registry"
+              className="hover:text-foreground hover:underline"
+            >
+              GitHub
             </a>
           </span>
           <div className="flex gap-1">
