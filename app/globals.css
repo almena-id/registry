@@ -122,8 +122,10 @@
 }
 
 @theme inline {
-  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, system-ui, sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+  /* Set by next/font in app/layout.tsx. */
+  --font-brand: var(--font-chakra-petch), system-ui, sans-serif;
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -176,6 +178,13 @@
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Headings in the brand's typeface. */
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-brand);
   }
 }
 

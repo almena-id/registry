@@ -30,7 +30,7 @@ export function SiteHeader({
       <div className="page-frame flex flex-wrap items-center justify-between gap-x-4 gap-y-2 py-3">
         <Link
           href="/"
-          className="inline-flex items-center gap-2.5 text-[17px] tracking-tight whitespace-nowrap"
+          className="inline-flex items-center gap-2.5 font-brand text-[17px] tracking-tight whitespace-nowrap"
           aria-label={t.app.name}
         >
           <Logo size={28} />

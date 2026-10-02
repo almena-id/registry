@@ -61,6 +61,9 @@ everything (`task --list`); `task check` must pass before finishing.
   Spanish (`es`) the first translation (`app/i18n/messages/*.json`). No
   hard-coded user-facing strings. The language is the selector's choice
   (`almena.locale` cookie), else the browser's Accept-Language.
+- Typefaces, self-hosted with `next/font` in `app/layout.tsx`: Chakra Petch
+  (`font-brand`: headings, the wordmark), Inter (`font-sans`: the
+  interface), JetBrains Mono (`font-mono`: DIDs, URLs, digests, JSON).
 - The interface is shadcn/ui (`components.json`, Radix base): its components
   live in `app/components/ui` (add more with `npx shadcn add <name>`, the CLI
   pinned in devDependencies), everything is styled with Tailwind utilities,
