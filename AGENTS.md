@@ -73,6 +73,11 @@ everything (`task --list`); `task check` must pass before finishing.
   `data-invalid` following the control's `aria-invalid`. Almena variants were added to them (Button `danger`,
   Badge `brand`/`pending`/`muted`/`danger`, Alert `notice`). Icons are
   `lucide-react`.
+- Green `#1f9d55` is the registry's identity: `--primary` and `--ring` in
+  both themes (`--brand-strong` `#18804a` light, `#34b56c` dark), and the
+  Almena mark (`Logo`, `app/icon.svg`). The identity colours across Almena: status cyan `#3fe0ff`, catalog blue
+  `#2563eb`, registry green `#1f9d55`, mediator blue `#2f6fed`, landing
+  orange `#eb7229`, docu yellow `#f2b705`, the wallet the person's choice (orange by default).
 - Light/dark/system is the `almena.theme` cookie, rendered as `data-theme` on
   `<html>` by the server; Tailwind's `dark:` follows it. `app/globals.css`
   holds only the theme — shadcn's variables carrying the wallet's palette — and
