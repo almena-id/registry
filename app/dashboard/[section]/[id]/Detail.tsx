@@ -82,17 +82,6 @@ export function DocumentCard({
   );
 }
 
-/** The top-level fields in which two documents differ. */
-function differences(
-  a: Record<string, unknown>,
-  b: Record<string, unknown>,
-): string[] {
-  const keys = new Set([...Object.keys(a), ...Object.keys(b)]);
-  return [...keys].filter(
-    (key) => JSON.stringify(a[key]) !== JSON.stringify(b[key]),
-  );
-}
-
 /**
  * An identity's DID document as JSON. Signed, the one its log publishes;
  * pending, the one an admin's signature will publish; with changes to sign,
@@ -131,12 +120,11 @@ export function DidDocuments({
         copy={copy}
       />
     );
-  const fields = differences(item.document, item.signed_document);
   return (
     <>
       <DocumentCard
         title={copy.toSign}
-        hint={copy.outdatedHint.replace("{fields}", fields.join(", "))}
+        hint={copy.outdatedHint.replace("{fields}", item.changes.join(", "))}
         document={item.document}
         copy={copy}
       />

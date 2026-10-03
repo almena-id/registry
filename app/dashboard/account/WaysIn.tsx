@@ -48,8 +48,7 @@ export async function WaysIn({
 }) {
   const { t } = await getI18n();
   const copy = t.dashboard.account.waysIn;
-  const count = waysIn ? (waysIn.email ? 1 : 0) + waysIn.accounts.length : 0;
-  const last = count <= 1;
+  const last = !waysIn?.removable;
 
   const remove = (id: string) => (
     <Remove id={id} last={last} label={copy.remove} lastLabel={copy.lastOne} />

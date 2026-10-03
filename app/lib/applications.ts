@@ -10,6 +10,7 @@ import type {
   FormField,
   Labels,
 } from "./form-fields";
+import type { CredentialStatus } from "./status-lists";
 import type { Texts } from "./texts";
 
 /** Where whoever started an application keeps its secret (one per application). */
@@ -83,6 +84,8 @@ export type HolderApplication = {
   issued_at: string | null;
   valid_until: string | null;
   delivered_at: string | null;
+  /** Issued: its status, as the issuer's status list says. */
+  credential_status: CredentialStatus | null;
 };
 
 /** An issuer's offer, public; `null` when there is none (or no API). */
@@ -132,6 +135,7 @@ export type ReceivedSummary = {
   form: Texts;
   holder_did: string | null;
   submitted_at: string | null;
+  credential_status: CredentialStatus | null;
 };
 
 export type Received = {
@@ -165,6 +169,13 @@ export type Received = {
   issued_at: string | null;
   valid_until: string | null;
   delivered_at: string | null;
+  /** Issued: its status, as the issuer's status list says, and since when. */
+  credential_status: CredentialStatus | null;
+  credential_status_at: string | null;
+  /** Its entry in the issuer's status list; `null` if issued before them. */
+  status_list: { uri: string; index: number } | null;
+  /** The statuses its issuer's signer may give it next (revoking is final). */
+  credential_statuses: CredentialStatus[];
 };
 
 async function tenantCall<T>(path: string): Promise<T | null> {
@@ -193,6 +204,8 @@ export type IssuanceProposal = {
   can_sign: boolean;
   /** The issuer has no signer set: its Signing tab names one. */
   signer_needed: boolean;
+  /** The status list it goes in is signed: it may be issued. */
+  status_list_ready: boolean;
 };
 
 export const fetchIssuance = (id: string) =>

@@ -117,33 +117,27 @@ export function codesOf(catalogue: Catalogue, field: CatalogueField): Code[] {
     : codes;
 }
 
-export type FieldProblem = "keyInvalid" | "narrowInvalid" | "fieldUnknown";
-
-const KEY = /^[a-z][a-z0-9_]{0,63}$/;
+export type FieldProblem =
+  "keyInvalid" | "keyDuplicate" | "narrowInvalid" | "fieldUnknown";
 
 /**
- * The draft as the API takes it, or what is wrong with it — checked here
- * first, so the builder can point at the field; the API checks it again.
+ * The draft as the API takes it. The API checks it — and says which field
+ * does not hold — so the builder can point at it.
  */
-export function toField(
-  draft: FieldDraft,
-  catalogue: Catalogue,
-): { field: FormField } | { problem: FieldProblem } {
+export function toField(draft: FieldDraft, catalogue: Catalogue): FormField {
   const item = byId(catalogue).get(draft.ref);
-  if (!item) return { problem: "fieldUnknown" };
-  const field: FormField = { ref: item.id, required: draft.required };
+  const field: FormField = { ref: draft.ref, required: draft.required };
   const as = draft.as.trim();
-  if (as) {
-    if (!item.repeatable || !KEY.test(as)) return { problem: "keyInvalid" };
-    field.as = as;
-  }
+  if (as) field.as = as;
   const help = cleanTexts(draft.help);
   if (hasText(help)) field.help = help;
 
+  // Only what the field's type can be narrowed by: a draft keeps what was
+  // typed for another field it named before.
   const narrow: Narrow = {};
-  const allows = new Set(item.narrowing ?? []);
-  if (allows.has("values") && draft.values.length) {
-    // In the domain's order, typed as the domain types them.
+  const allows = new Set(item?.narrowing ?? []);
+  if (item && allows.has("values") && draft.values.length) {
+    // Typed as the domain types them.
     narrow.values = codesOf(catalogue, item)
       .filter((code) => draft.values.includes(String(code.value)))
       .map((code) => code.value);
@@ -152,20 +146,10 @@ export function toField(
     narrow.min_date = draft.min_date;
   if (allows.has("max_date") && draft.max_date)
     narrow.max_date = draft.max_date;
-  if (narrow.min_date && narrow.max_date && narrow.min_date > narrow.max_date)
-    return { problem: "narrowInvalid" };
-  if (allows.has("max_length") && draft.max_length.trim()) {
-    const length = Number(draft.max_length);
-    if (
-      !Number.isInteger(length) ||
-      length < 1 ||
-      (item.max_length !== undefined && length > item.max_length)
-    )
-      return { problem: "narrowInvalid" };
-    narrow.max_length = length;
-  }
+  if (allows.has("max_length") && draft.max_length.trim())
+    narrow.max_length = Number(draft.max_length);
   if (Object.keys(narrow).length) field.narrow = narrow;
-  return { field };
+  return field;
 }
 
 /** A form's field as a list shows it: every part already worded. */
@@ -255,20 +239,14 @@ export type CredentialDraft = {
 export type CredentialProblem =
   | "credentialKeyInvalid"
   | "credentialKeyDuplicate"
+  | "credentialTypeDuplicate"
   | "claimsInvalid"
   | "trustInvalid";
 
-/** The draft as the API takes it, or what is wrong with it. */
-export function toCredential(
-  draft: CredentialDraft,
-): { request: Record<string, unknown> } | { problem: CredentialProblem } {
-  const key = draft.key.trim();
-  if (!KEY.test(key)) return { problem: "credentialKeyInvalid" };
-  if (!draft.claims.length) return { problem: "claimsInvalid" };
-  if (draft.trust === "issuers" && !draft.issuers.length)
-    return { problem: "trustInvalid" };
+/** The draft as the API takes it; the API checks it and says which does not hold. */
+export function toCredential(draft: CredentialDraft): Record<string, unknown> {
   const request: Record<string, unknown> = {
-    key,
+    key: draft.key.trim(),
     type: draft.type,
     required: draft.required,
     claims: draft.claims,
@@ -277,7 +255,7 @@ export function toCredential(
   const purpose = cleanTexts(draft.purpose);
   if (hasText(purpose)) request.purpose = purpose;
   if (draft.trust === "issuers") request.issuers = draft.issuers;
-  return { request };
+  return request;
 }
 
 /** The fields a credential fills: Almena's, under their own name, it asks for. */

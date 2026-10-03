@@ -205,6 +205,31 @@
         "busyLead": "Esa forma de entrar ya pertenece a otro perfil, así que no se ha vinculado a este. Este perfil no se puede borrar porque ya tiene emisores, verificadores, mediadores, invitaciones u otros miembros. Para unirlos, entra con esa forma de entrar y vincula desde allí la que usas ahora. Solo funciona si ese otro perfil está vacío; si los dos tienen contenido, no se pueden unir.",
         "back": "Volver a tu perfil",
         "cancel": "Cancelar"
+      },
+      "tokens": {
+        "title": "Tokens de API",
+        "hint": "Para scripts, CI y la línea de comandos almena: cada uno actúa como tú, en todas las cuentas a las que perteneces, hasta que caduca o se revoca.",
+        "none": "Todavía no hay tokens.",
+        "name": "Nombre",
+        "namePlaceholder": "CI, mi portátil…",
+        "days": "Días de validez",
+        "daysHint": "De 1 a 365.",
+        "create": "Crear token",
+        "secretOnce": "El token {name}, que se muestra solo esta vez: guárdalo donde se use. El registro no lo guarda.",
+        "copy": "Copiar",
+        "copied": "Copiado",
+        "expires": "Caduca el {date}",
+        "lastUsed": "último uso {date}",
+        "revoke": "Revocar",
+        "revokeAsk": "Lo que lo use dejará de funcionar al momento.",
+        "cancel": "Cancelar",
+        "errors": {
+          "unavailable": "No se puede acceder al registro. Inténtalo de nuevo en un momento.",
+          "tooMany": "Tienes tantos tokens como admite una cuenta. Revoca uno antes.",
+          "nameRequired": "Ponle un nombre.",
+          "nameLong": "Usa como mucho 100 caracteres.",
+          "daysInvalid": "Elige entre 1 y 365 días."
+        }
       }
     },
     "sections": {
@@ -273,9 +298,6 @@
         "nameLong": "Usa como mucho 200 caracteres.",
         "descriptionLong": "Usa como mucho 2000 caracteres.",
         "unavailable": "No se puede contactar con el registro. Inténtalo de nuevo en un momento.",
-        "urlRequired": "Escribe una dirección.",
-        "urlInvalid": "Escribe una dirección, como https://mediator.example.org.",
-        "urlInsecure": "Usa https:// (http sin cifrar solo en localhost).",
         "mediatorNotFound": "Ese mediador no está disponible para esta cuenta.",
         "subdomainRequired": "Escribe un subdominio.",
         "subdomainInvalid": "Usa letras, dígitos y guiones, como relay o eu.relay.",
@@ -292,11 +314,11 @@
       },
       "unused": "Aún sin uso",
       "url": "Dirección",
-      "urlHint": "Donde escucha, p. ej. https://mediator.example.org.",
       "subdomain": "Subdominio",
       "domain": "Dominio",
       "addressHint": "Un subdominio de uno de los dominios verificados de la cuenta.",
       "noDomains": "Los mediadores escuchan en un subdominio de uno de los dominios de la cuenta, y aún no tiene ninguno verificado.",
+      "keepAddress": "Ahora en {url}. Deja el subdominio vacío para mantenerlo ahí.",
       "addDomain": "Verificar un dominio",
       "mediator": "Mediador",
       "noMediator": "Ninguno",
@@ -453,7 +475,10 @@
       "credentials": "Credenciales",
       "json": "JSON",
       "loading": "Cargando…",
-      "signing": "Firma"
+      "signing": "Firma",
+      "status": "Listas de estado",
+      "queue": "Cola",
+      "verify": "Verificar"
     },
     "signing": {
       "lead": "Quién firma por él, desde su wallet.",
@@ -471,6 +496,30 @@
         "unavailable": "No se puede contactar con el registro. Inténtalo de nuevo en un momento."
       },
       "noWallet": "Aún no tiene un wallet de Almena vinculado: hasta que lo vincule, el documento DID no tiene clave para lo que firme."
+    },
+    "queue": {
+      "leadIssuer": "Donde el back office de este emisor lee, por AMQP, lo que pasa con sus solicitudes: enviadas, decididas, emitidas y los cambios de estado de las credenciales.",
+      "leadVerifier": "Donde el back office de este verificador leerá, por AMQP, lo que le pase. Todavía no se publica nada en ella.",
+      "queue": "Cola",
+      "none": "Ninguna todavía",
+      "user": "Usuario",
+      "address": "Dirección",
+      "vhost": "Host virtual",
+      "created": "Creada",
+      "create": "Crear la cola",
+      "passwordOnce": "La contraseña del usuario, que se muestra solo esta vez: guárdala en la configuración del back office. El registro no la guarda.",
+      "copy": "Copiar",
+      "copied": "Copiada",
+      "delete": "Borrar la cola",
+      "deleteAsk": "¿Borrar la cola, con los mensajes que aún tenga, y su usuario? El back office dejará de leerla.",
+      "deleteConfirm": "Borrar",
+      "cancel": "Cancelar",
+      "errors": {
+        "unavailable": "No se puede acceder al registro. Inténtalo de nuevo en un momento.",
+        "brokerUnavailable": "No se puede acceder al broker. Inténtalo de nuevo en un momento.",
+        "exists": "Ya tiene una cola.",
+        "missing": "No tiene cola."
+      }
     },
     "signature": {
       "title": "Firma",
@@ -649,7 +698,67 @@
       "credentialCount": {
         "one": "{count} credencial",
         "other": "{count} credenciales"
-      }
+      },
+      "open": "Abrir: verificar, DCQL, esquema",
+      "detail": {
+        "tabs": "Secciones",
+        "verify": "Verificar",
+        "dcql": "DCQL",
+        "schema": "JSON Schema",
+        "nothingToVerify": "Este formulario no pide credenciales: no hay nada que un wallet presente para él.",
+        "verifyLead": "Pega lo que un wallet respondió a un verificador para este formulario: el vp_token de OpenID4VP, y el nonce y la audiencia de la petición a la que respondió. El registro lo comprueba como lo haría para cualquier verificador.",
+        "vpToken": "vp_token",
+        "vpTokenHint": "Un objeto JSON: para cada consulta de la pestaña DCQL, las presentaciones dadas.",
+        "nonce": "Nonce",
+        "audience": "Audiencia (el verificador)",
+        "check": "Verificar",
+        "verified": "Verificado: todas las credenciales que necesita el formulario son válidas.",
+        "notVerified": "No verificado.",
+        "credentialVerified": "Verificada",
+        "credentialFailed": "No es válida",
+        "credentialMissing": "No presentada",
+        "issuer": "Emisor",
+        "fills": "Rellena: {fields}",
+        "dcqlTitle": "Consulta DCQL",
+        "dcqlHint": "Lo que se pide a un wallet que presente para este formulario (OpenID4VP).",
+        "schemaTitle": "JSON Schema",
+        "schemaHint": "Lo que deben cumplir las respuestas de este formulario (JSON Schema 2020-12).",
+        "copy": "Copiar",
+        "copied": "Copiado",
+        "problems": {
+          "issuer_untrusted": "Su emisor no es uno en los que confía este formulario.",
+          "issuer_unresolvable": "El DID de su emisor no se resuelve en el registro.",
+          "trust_framework_unsupported": "Las credenciales de este marco aún no se pueden verificar.",
+          "signature_invalid": "La firma de su emisor no es válida.",
+          "holder_binding_invalid": "No está vinculada a la clave que la presentó.",
+          "audience_mismatch": "Se presentó a otro verificador (audiencia).",
+          "nonce_mismatch": "Se presentó para otra petición (nonce).",
+          "disclosure_invalid": "Una de sus revelaciones no es válida.",
+          "format_invalid": "No está escrita como exige su formato.",
+          "type_mismatch": "No es el tipo de credencial que pide el formulario.",
+          "claims_missing": "Le faltan datos que pide el formulario.",
+          "expired": "Ha caducado.",
+          "not_yet_valid": "Todavía no es válida.",
+          "revoked": "Su emisor la revocó.",
+          "suspended": "Su emisor la suspendió.",
+          "status_unverifiable": "No se pudo leer o comprobar su lista de estados.",
+          "not_presented": "No se presentó."
+        },
+        "errors": {
+          "unavailable": "No se puede acceder al registro. Inténtalo de nuevo en un momento.",
+          "refused": "El registro no lo aceptó.",
+          "vpTokenRequired": "Pega el vp_token.",
+          "vpTokenInvalid": "Esto no es un vp_token: un objeto JSON con una lista de presentaciones por consulta.",
+          "nonceRequired": "Escribe el nonce de la petición.",
+          "audienceRequired": "Escribe a quién iba la petición."
+        }
+      },
+      "trustSearch": "Busca emisores por nombre o DID",
+      "trustChosen": "Emisores de confianza",
+      "trustRemove": "Dejar de confiar en {name}",
+      "trustNoMatch": "Ningún emisor publicado que la emita coincide.",
+      "trustMore": "Más emisores",
+      "trustUnavailable": "Ahora no se pueden buscar emisores. Inténtalo de nuevo en un momento."
     },
     "catalogue": {
       "title": "Catálogo",
@@ -761,7 +870,72 @@
       "signLead": "Tu wallet te enseña lo que dice la credencial; al firmarla se emite al titular.",
       "issued": "Emitida el {when}, válida hasta el {until}.",
       "delivered": "En el wallet del titular desde el {when}.",
-      "notDelivered": "El wallet del titular aún no la ha recogido."
+      "notDelivered": "El wallet del titular aún no la ha recogido.",
+      "credentialStatuses": {
+        "valid": "Válida",
+        "suspended": "Suspendida",
+        "revoked": "Revocada"
+      },
+      "statusCard": "Estado de la credencial",
+      "statusSince": "{status} desde el {when}.",
+      "statusLead": "Los verificadores lo leen en la lista de estado del emisor. Suspenderla, rehabilitarla o revocarla es una lista nueva que firma el firmante del emisor.",
+      "noStatusList": "Emitida antes de las listas de estado: no se puede suspender ni revocar.",
+      "entry": "Entrada {index} de {uri}",
+      "change": {
+        "suspended": "Suspender",
+        "valid": "Rehabilitar",
+        "revoked": "Revocar"
+      },
+      "changeTitle": {
+        "suspended": "Suspender la credencial",
+        "valid": "Rehabilitar la credencial",
+        "revoked": "Revocar la credencial"
+      },
+      "changeLead": {
+        "suspended": "Los verificadores la rechazarán hasta que se rehabilite. Tu wallet muestra el cambio; firmar la lista de estado del emisor lo hace efectivo.",
+        "valid": "Los verificadores volverán a aceptarla. Tu wallet muestra el cambio; firmar la lista de estado del emisor lo hace efectivo.",
+        "revoked": "Revocar es definitivo: ningún verificador volverá a aceptarla y no se puede deshacer. Tu wallet muestra el cambio; firmar la lista de estado del emisor lo hace efectivo."
+      },
+      "listUnsigned": "Antes de su primera credencial, el firmante del emisor firma su lista de estado: donde los verificadores comprueban si sus credenciales siguen valiendo.",
+      "signList": "Firmar la lista de estado"
+    },
+    "statusLists": {
+      "lead": "Donde los verificadores comprueban si las credenciales de este emisor siguen valiendo. Cada credencial que emite tiene una entrada en una; suspenderla, rehabilitarla o revocarla es una lista nueva que su firmante firma desde su wallet.",
+      "empty": "Aún no hay lista de estado. Antes de su primera credencial, el firmante del emisor firma una.",
+      "address": "Dirección",
+      "entries": "Entradas",
+      "taken": "{used} de {size} ocupadas",
+      "revoked": "Revocadas",
+      "suspended": "Suspendidas",
+      "signed": "Firmada",
+      "notSigned": "Sin firmar",
+      "toSign": "Por firmar",
+      "resign": "Firmada con una clave que su DID ya no lista: fírmala de nuevo, o los verificadores no podrán comprobar sus credenciales.",
+      "sign": "Firmar",
+      "signFirst": "Firmar su lista de estado",
+      "signerNeeded": "Este emisor no tiene firmante: nombra uno en su pestaña Firma, con un wallet de Almena vinculado.",
+      "notTheSigner": "Solo el firmante del emisor firma su lista de estado.",
+      "signTitle": "Firmar la lista de estado de {name}",
+      "signLead": "Tu wallet muestra la lista que firma; una vez firmada, los verificadores la leen en su dirección.",
+      "unavailable": "No se puede contactar con el registro. Inténtalo de nuevo en un momento."
+    },
+    "verification": {
+      "lead": "Pide a un wallet, como este verificador, lo que pide uno de tus formularios: enseña el código a la persona, que lo escanea con su wallet de Almena y elige presentar. El veredicto aparece aquí.",
+      "form": "Formulario",
+      "show": "Mostrar el código",
+      "again": "Mostrar un código nuevo",
+      "qr": "Código para escanear con el wallet de Almena",
+      "open": "Abrir en el wallet de Almena",
+      "waiting": "Esperando a que responda el wallet…",
+      "expired": "Este código caducó sin respuesta: muestra uno nuevo.",
+      "unpublished": "Publica antes este verificador: al wallet se le muestra su DID, que no se resuelve mientras es un borrador.",
+      "noForms": "Ninguno de tus formularios pide credenciales, así que no hay nada que un wallet pueda presentar.",
+      "createForm": "Crear un formulario",
+      "errors": {
+        "unavailable": "No se puede acceder al registro. Inténtalo de nuevo en un momento.",
+        "unpublished": "Publica antes este verificador.",
+        "nothingToPresent": "Este formulario no pide credenciales."
+      }
     }
   },
   "footer": {
@@ -786,43 +960,27 @@
       "up_to_date": "Nada que firmar: está al día.",
       "tenant_pending": "El DID de la cuenta aún no está firmado.",
       "identity_pending": "Su DID aún no está firmado: fírmalo primero.",
-      "identity_outdated": "Su DID aún no incluye tu clave: vuelve a firmarlo primero."
+      "identity_outdated": "Su DID aún no incluye tu clave: vuelve a firmarlo primero.",
+      "status_list_unsigned": "La lista de estado del emisor aún no está firmada: fírmala primero.",
+      "not_the_issuers_signer": "Solo la firma el firmante del emisor.",
+      "credential_revoked": "La credencial está revocada: es definitivo.",
+      "status_unchanged": "La credencial ya tiene ese estado.",
+      "not_issued": "La credencial no está emitida.",
+      "no_status_list": "Emitida antes de las listas de estado: su estado no puede cambiar.",
+      "no_draft": "Guarda primero las afirmaciones de la credencial.",
+      "not_paired": "El wallet del titular no está emparejado."
     }
   },
   "apply": {
     "title": "Solicitud",
-    "catalogueTitle": "Credenciales",
-    "catalogueLead": "Credenciales que puedes pedir a los emisores publicados en el registro de Almena. Se solicitan con tu wallet de Almena.",
-    "catalogueEmpty": "Todavía ningún emisor ofrece credenciales.",
-    "by": "La expide {issuer}",
-    "start": "Empezar",
-    "asksTitle": "Qué se te pedirá",
-    "howTitle": "Cómo funciona",
-    "howPair": "Escanea un código con tu wallet de Almena: se empareja con este emisor con una clave propia.",
-    "howFill": "Rellena el formulario: presenta desde tu wallet las credenciales que se piden, escribe el resto y adjunta los ficheros.",
-    "howSubmit": "Escanea un segundo código: tu wallet te enseña lo que envías, lo firmas y llega a {issuer}.",
+    "loading": "Cargando más…",
+    "loadError": "No se pudo cargar el resto de la lista.",
+    "retry": "Reintentar",
     "optional": "Opcional",
     "choose": "Elige…",
     "filter": "Filtrar…",
-    "uploading": "Subiendo…",
-    "removeFile": "Quitar",
-    "pairTitle": "Empareja tu wallet",
-    "pairLead": "Escanea este código con tu wallet de Almena para empezar tu solicitud a {issuer}.",
-    "paired": "Tu wallet está emparejado, como",
-    "fillTitle": "Rellena el formulario",
-    "credentialsTitle": "Credenciales a presentar",
-    "credentialsLead": "Preséntalas desde tu wallet: los campos que rellenan llegan verificados y no los escribes.",
-    "present": "Presentar desde mi wallet",
     "verified": "Verificado",
-    "needed": "Necesaria",
-    "notPresented": "Sin presentar",
-    "fieldsTitle": "Tus datos",
-    "continue": "Continuar",
     "back": "Volver al formulario",
-    "submitTitle": "Firma y envía",
-    "submitLead": "Escanea este código: tu wallet te enseña todo lo que envías a {issuer}; fírmalo allí para enviarlo.",
-    "gone": "Esta solicitud no está abierta en este navegador, o ha caducado: una solicitud que no se envía en un día se borra.",
-    "toCatalogue": "Ver las credenciales",
     "status": {
       "open": "Empezada",
       "paired": "En curso",
@@ -846,17 +1004,6 @@
       "value": "Elige una de las opciones.",
       "file": "Adjunta el fichero."
     },
-    "presentation": {
-      "issuer_untrusted": "Su emisor no es uno de los que acepta este formulario.",
-      "trust_framework_unsupported": "Esta credencial todavía no se puede verificar.",
-      "expired": "Ha caducado.",
-      "revoked": "Ha sido revocada.",
-      "suspended": "Está suspendida.",
-      "claims_missing": "Le faltan datos que pide el formulario.",
-      "signature_invalid": "Su firma no es válida.",
-      "holder_binding_invalid": "No está vinculada a tu wallet.",
-      "not_presented": "Sin presentar."
-    },
     "errors": {
       "answers_invalid": "Algunas respuestas necesitan otro vistazo.",
       "answers_incomplete": "Completa el formulario, y presenta las credenciales que pide, antes de enviarlo.",
@@ -868,10 +1015,7 @@
       "file_empty": "El fichero está vacío.",
       "gone": "Esta solicitud no está abierta en este navegador.",
       "unavailable": "No se puede contactar con el registro. Inténtalo de nuevo en un momento."
-    },
-    "receiveTitle": "Guárdala en tu wallet",
-    "receiveLead": "Escanea este código con el wallet con el que la solicitaste: solo ese wallet puede recogerla.",
-    "inWallet": "Está en tu wallet."
+    }
   },
   "texts": {
     "otherLanguages": "Otros idiomas"

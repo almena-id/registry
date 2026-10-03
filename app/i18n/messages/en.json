@@ -205,6 +205,31 @@
         "busyLead": "That way in already belongs to another profile, so it wasn't linked to this one. This profile can't be deleted because it already has issuers, verifiers, mediators, invitations or other members. To bring them together, sign in that way and link the way in you're using now from there. This only works if that other profile is empty; if both have content, they can't be brought together.",
         "back": "Back to your profile",
         "cancel": "Cancel"
+      },
+      "tokens": {
+        "title": "API tokens",
+        "hint": "For scripts, CI and the almena command line: each acts as you, in every account you belong to, until it expires or is revoked.",
+        "none": "No tokens yet.",
+        "name": "Name",
+        "namePlaceholder": "CI, my laptop…",
+        "days": "Days valid",
+        "daysHint": "1 to 365.",
+        "create": "Create token",
+        "secretOnce": "The token {name}, shown this once: keep it where it is used. The registry does not keep it.",
+        "copy": "Copy",
+        "copied": "Copied",
+        "expires": "Expires {date}",
+        "lastUsed": "last used {date}",
+        "revoke": "Revoke",
+        "revokeAsk": "Whatever uses it stops at once.",
+        "cancel": "Cancel",
+        "errors": {
+          "unavailable": "The registry cannot be reached. Try again in a moment.",
+          "tooMany": "You have as many tokens as an account may hold. Revoke one first.",
+          "nameRequired": "Give it a name.",
+          "nameLong": "Use at most 100 characters.",
+          "daysInvalid": "Choose between 1 and 365 days."
+        }
       }
     },
     "sections": {
@@ -273,9 +298,6 @@
         "nameLong": "Use at most 200 characters.",
         "descriptionLong": "Use at most 2000 characters.",
         "unavailable": "The registry cannot be reached. Try again in a moment.",
-        "urlRequired": "Enter an address.",
-        "urlInvalid": "Enter an address, like https://mediator.example.org.",
-        "urlInsecure": "Use https:// (plain http only for localhost).",
         "mediatorNotFound": "That mediator is not available to this account.",
         "subdomainRequired": "Enter a subdomain.",
         "subdomainInvalid": "Use letters, digits and hyphens, like relay or eu.relay.",
@@ -292,11 +314,11 @@
       },
       "unused": "Not used yet",
       "url": "Address",
-      "urlHint": "Where it listens, e.g. https://mediator.example.org.",
       "subdomain": "Subdomain",
       "domain": "Domain",
       "addressHint": "A subdomain of one of the account's verified domains.",
       "noDomains": "Mediators listen on a subdomain of one of the account's domains, and it has none verified yet.",
+      "keepAddress": "Now at {url}. Leave the subdomain empty to keep it there.",
       "addDomain": "Verify a domain",
       "mediator": "Mediator",
       "noMediator": "None",
@@ -453,7 +475,10 @@
       "credentials": "Credentials",
       "json": "JSON",
       "loading": "Loading…",
-      "signing": "Signing"
+      "signing": "Signing",
+      "status": "Status lists",
+      "queue": "Queue",
+      "verify": "Verify"
     },
     "signing": {
       "lead": "Who signs for it, from their wallet.",
@@ -471,6 +496,30 @@
         "unavailable": "The registry cannot be reached. Try again in a moment."
       },
       "noWallet": "They have no Almena wallet linked yet: until they link one, the DID document has no key for what they sign."
+    },
+    "queue": {
+      "leadIssuer": "Where this issuer's back office reads, over AMQP, what happens to its applications: submitted, decided, issued, and credential status changes.",
+      "leadVerifier": "Where this verifier's back office will read, over AMQP, what happens to it. Nothing is put in it yet.",
+      "queue": "Queue",
+      "none": "None yet",
+      "user": "User",
+      "address": "Address",
+      "vhost": "Virtual host",
+      "created": "Made",
+      "create": "Make the queue",
+      "passwordOnce": "The user's password, shown this once: keep it in the back office's configuration. The registry does not keep it.",
+      "copy": "Copy",
+      "copied": "Copied",
+      "delete": "Delete the queue",
+      "deleteAsk": "Delete the queue, with every message still in it, and its user? The back office stops reading it.",
+      "deleteConfirm": "Delete",
+      "cancel": "Cancel",
+      "errors": {
+        "unavailable": "The registry cannot be reached. Try again in a moment.",
+        "brokerUnavailable": "The broker cannot be reached. Try again in a moment.",
+        "exists": "It has a queue already.",
+        "missing": "It has no queue."
+      }
     },
     "signature": {
       "title": "Signature",
@@ -649,7 +698,67 @@
       "credentialCount": {
         "one": "{count} credential",
         "other": "{count} credentials"
-      }
+      },
+      "open": "Open: verify, DCQL, schema",
+      "detail": {
+        "tabs": "Sections",
+        "verify": "Verify",
+        "dcql": "DCQL",
+        "schema": "JSON Schema",
+        "nothingToVerify": "This form asks for no credentials: there is nothing a wallet presents for it.",
+        "verifyLead": "Paste what a wallet answered a verifier with for this form: the vp_token of OpenID4VP, and the nonce and audience of the request it answered. The registry checks it as it would for any verifier.",
+        "vpToken": "vp_token",
+        "vpTokenHint": "A JSON object: for each query of the DCQL tab, the presentations given for it.",
+        "nonce": "Nonce",
+        "audience": "Audience (the verifier)",
+        "check": "Verify",
+        "verified": "Verified: every credential the form needs holds.",
+        "notVerified": "Not verified.",
+        "credentialVerified": "Verified",
+        "credentialFailed": "Does not hold",
+        "credentialMissing": "Not presented",
+        "issuer": "Issuer",
+        "fills": "Fills: {fields}",
+        "dcqlTitle": "DCQL query",
+        "dcqlHint": "What a wallet is asked to present for this form (OpenID4VP).",
+        "schemaTitle": "JSON Schema",
+        "schemaHint": "What this form's answers must meet (JSON Schema 2020-12).",
+        "copy": "Copy",
+        "copied": "Copied",
+        "problems": {
+          "issuer_untrusted": "Its issuer is not one this form trusts.",
+          "issuer_unresolvable": "Its issuer's DID does not resolve in the registry.",
+          "trust_framework_unsupported": "Credentials under this framework cannot be verified yet.",
+          "signature_invalid": "Its issuer's signature does not hold.",
+          "holder_binding_invalid": "It is not bound to the key that presented it.",
+          "audience_mismatch": "It was presented to another verifier (audience).",
+          "nonce_mismatch": "It was presented for another request (nonce).",
+          "disclosure_invalid": "One of its disclosures does not hold.",
+          "format_invalid": "It is not written as its format requires.",
+          "type_mismatch": "It is not the credential type the form asks for.",
+          "claims_missing": "It lacks claims the form asks for.",
+          "expired": "It has expired.",
+          "not_yet_valid": "It is not valid yet.",
+          "revoked": "Its issuer revoked it.",
+          "suspended": "Its issuer suspended it.",
+          "status_unverifiable": "Its status list could not be read or checked.",
+          "not_presented": "Not presented."
+        },
+        "errors": {
+          "unavailable": "The registry cannot be reached. Try again in a moment.",
+          "refused": "The registry did not take it.",
+          "vpTokenRequired": "Paste the vp_token.",
+          "vpTokenInvalid": "This is not a vp_token: a JSON object with a list of presentations for each query.",
+          "nonceRequired": "Enter the request's nonce.",
+          "audienceRequired": "Enter who the request was for."
+        }
+      },
+      "trustSearch": "Search issuers by name or DID",
+      "trustChosen": "Trusted issuers",
+      "trustRemove": "Stop trusting {name}",
+      "trustNoMatch": "No published issuer granting it matches.",
+      "trustMore": "More issuers",
+      "trustUnavailable": "The issuers cannot be searched right now. Try again in a moment."
     },
     "catalogue": {
       "title": "Catalogue",
@@ -761,7 +870,72 @@
       "signLead": "Your wallet shows what the credential says; signing it issues it to the holder.",
       "issued": "Issued on {when}, valid until {until}.",
       "delivered": "In the holder's wallet since {when}.",
-      "notDelivered": "Not yet taken by the holder's wallet."
+      "notDelivered": "Not yet taken by the holder's wallet.",
+      "credentialStatuses": {
+        "valid": "Valid",
+        "suspended": "Suspended",
+        "revoked": "Revoked"
+      },
+      "statusCard": "Credential status",
+      "statusSince": "{status} since {when}.",
+      "statusLead": "Verifiers read it from the issuer's status list. Suspending, reinstating or revoking it is a new list the issuer's signer signs.",
+      "noStatusList": "Issued before status lists: it cannot be suspended or revoked.",
+      "entry": "Entry {index} of {uri}",
+      "change": {
+        "suspended": "Suspend",
+        "valid": "Reinstate",
+        "revoked": "Revoke"
+      },
+      "changeTitle": {
+        "suspended": "Suspend the credential",
+        "valid": "Reinstate the credential",
+        "revoked": "Revoke the credential"
+      },
+      "changeLead": {
+        "suspended": "Verifiers will refuse it until it is reinstated. Your wallet shows the change; signing the issuer's status list makes it.",
+        "valid": "Verifiers will accept it again. Your wallet shows the change; signing the issuer's status list makes it.",
+        "revoked": "Revoking is final: no verifier will accept it again, and it cannot be undone. Your wallet shows the change; signing the issuer's status list makes it."
+      },
+      "listUnsigned": "Before its first credential, the issuer's signer signs its status list: where verifiers check whether its credentials still hold.",
+      "signList": "Sign the status list"
+    },
+    "statusLists": {
+      "lead": "Where verifiers check whether this issuer's credentials still hold. Each credential it issues has an entry in one; suspending, reinstating or revoking it is a new list its signer signs from their wallet.",
+      "empty": "No status list yet. Before its first credential, the issuer's signer signs one.",
+      "address": "Address",
+      "entries": "Entries",
+      "taken": "{used} of {size} taken",
+      "revoked": "Revoked",
+      "suspended": "Suspended",
+      "signed": "Signed",
+      "notSigned": "Not signed yet",
+      "toSign": "To sign",
+      "resign": "Signed with a key its DID no longer lists: sign it again, or verifiers cannot check its credentials.",
+      "sign": "Sign",
+      "signFirst": "Sign its status list",
+      "signerNeeded": "This issuer has no signer: name one in its Signing tab, with an Almena wallet linked.",
+      "notTheSigner": "Only the issuer's signer signs its status list.",
+      "signTitle": "Sign the status list of {name}",
+      "signLead": "Your wallet shows the list it signs; once signed, verifiers read it at its address.",
+      "unavailable": "The registry cannot be reached. Try again in a moment."
+    },
+    "verification": {
+      "lead": "Ask a wallet, as this verifier, for what one of your forms asks: show the code to the person, who scans it with their Almena wallet and chooses to present. The verdict shows here.",
+      "form": "Form",
+      "show": "Show the code",
+      "again": "Show a new code",
+      "qr": "Code to scan with the Almena wallet",
+      "open": "Open in Almena wallet",
+      "waiting": "Waiting for the wallet to answer…",
+      "expired": "This code expired unanswered: show a new one.",
+      "unpublished": "Publish this verifier first: the wallet is shown its DID, which does not resolve while it is a draft.",
+      "noForms": "None of your forms asks for credentials, so there is nothing a wallet could present.",
+      "createForm": "Create a form",
+      "errors": {
+        "unavailable": "The registry cannot be reached. Try again in a moment.",
+        "unpublished": "Publish this verifier first.",
+        "nothingToPresent": "This form asks for no credentials."
+      }
     }
   },
   "footer": {
@@ -786,43 +960,27 @@
       "up_to_date": "Nothing to sign: it is up to date.",
       "tenant_pending": "The account's DID is not signed yet.",
       "identity_pending": "Its DID is not signed yet: sign it first.",
-      "identity_outdated": "Its DID does not name your key yet: sign it again first."
+      "identity_outdated": "Its DID does not name your key yet: sign it again first.",
+      "status_list_unsigned": "The issuer's status list is not signed yet: sign it first.",
+      "not_the_issuers_signer": "Only the issuer's signer signs it.",
+      "credential_revoked": "The credential is revoked: that is final.",
+      "status_unchanged": "The credential has that status already.",
+      "not_issued": "The credential is not issued.",
+      "no_status_list": "Issued before status lists: its status cannot change.",
+      "no_draft": "Save the credential's claims first.",
+      "not_paired": "The holder's wallet is not paired."
     }
   },
   "apply": {
     "title": "Application",
-    "catalogueTitle": "Credentials",
-    "catalogueLead": "Credentials you can ask for, from the issuers published in the Almena registry. You apply with your Almena wallet.",
-    "catalogueEmpty": "No issuer offers credentials yet.",
-    "by": "Issued by {issuer}",
-    "start": "Start",
-    "asksTitle": "What you will be asked for",
-    "howTitle": "How it goes",
-    "howPair": "Scan a code with your Almena wallet: it pairs with this issuer under a key of its own.",
-    "howFill": "Fill in the form: present the credentials asked for from your wallet, type the rest and attach the files.",
-    "howSubmit": "Scan a second code: your wallet shows what you send, you sign it and it goes to {issuer}.",
+    "loading": "Loading more…",
+    "loadError": "The rest of the list could not be loaded.",
+    "retry": "Try again",
     "optional": "Optional",
     "choose": "Choose…",
     "filter": "Filter…",
-    "uploading": "Uploading…",
-    "removeFile": "Remove",
-    "pairTitle": "Pair your wallet",
-    "pairLead": "Scan this code with your Almena wallet to start your application to {issuer}.",
-    "paired": "Your wallet is paired, as",
-    "fillTitle": "Fill in the form",
-    "credentialsTitle": "Credentials to present",
-    "credentialsLead": "Present them from your wallet: the fields they fill come verified, and you do not type them.",
-    "present": "Present from my wallet",
     "verified": "Verified",
-    "needed": "Needed",
-    "notPresented": "Not presented",
-    "fieldsTitle": "Your details",
-    "continue": "Continue",
     "back": "Back to the form",
-    "submitTitle": "Sign and send",
-    "submitLead": "Scan this code: your wallet shows everything you send to {issuer}; sign it there to send it.",
-    "gone": "This application is not open in this browser, or it expired: an application not sent within a day is removed.",
-    "toCatalogue": "See the credentials",
     "status": {
       "open": "Started",
       "paired": "In progress",
@@ -846,17 +1004,6 @@
       "value": "Choose one of the options.",
       "file": "Attach the file."
     },
-    "presentation": {
-      "issuer_untrusted": "Its issuer is not one this form trusts.",
-      "trust_framework_unsupported": "This credential cannot be verified yet.",
-      "expired": "It has expired.",
-      "revoked": "It has been revoked.",
-      "suspended": "It is suspended.",
-      "claims_missing": "It lacks data the form needs.",
-      "signature_invalid": "Its signature does not hold.",
-      "holder_binding_invalid": "It is not bound to your wallet.",
-      "not_presented": "Not presented."
-    },
     "errors": {
       "answers_invalid": "Some answers need another look.",
       "answers_incomplete": "Complete the form, and present the credentials it needs, before sending.",
@@ -868,10 +1015,7 @@
       "file_empty": "The file is empty.",
       "gone": "This application is not open in this browser.",
       "unavailable": "The registry cannot be reached. Try again in a moment."
-    },
-    "receiveTitle": "Take it into your wallet",
-    "receiveLead": "Scan this code with the wallet you applied with: only that wallet can take it.",
-    "inWallet": "It is in your wallet."
+    }
   },
   "texts": {
     "otherLanguages": "Other languages"

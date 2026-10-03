@@ -7,3 +7,10 @@ export const statusBadge = {
   open: "muted",
   paired: "muted",
 } as const;
+
+/** How an issued credential's status is tagged. */
+export const credentialBadge = {
+  valid: "brand",
+  suspended: "pending",
+  revoked: "danger",
+} as const;

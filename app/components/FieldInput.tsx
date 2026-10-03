@@ -3,7 +3,6 @@
 import { useState } from "react";
 
 import { Select } from "@/app/components/Select";
-import { Button } from "@/app/components/ui/button";
 import { Checkbox } from "@/app/components/ui/checkbox";
 import { Input } from "@/app/components/ui/input";
 import {
@@ -14,11 +13,6 @@ import {
   FieldSet,
 } from "@/app/components/ui/field";
 import { useI18n } from "@/app/i18n/client";
-import {
-  removeApplicationFile,
-  uploadApplicationFile,
-} from "@/app/lib/application-actions";
-import type { FileMeta } from "@/app/lib/applications";
 import {
   label,
   type CatalogueField,
@@ -43,10 +37,10 @@ function codesFor(field: CatalogueField, narrow: Narrow, domains: Domains) {
 }
 
 /**
- * One field of the catalogue as somebody fills it in, by its type: text,
- * email, phone, date, one or several of a list, a file (uploaded at once to
- * the application) or a group of fields — a holder's answer, or a claim an
- * issuer settles. `error` is the problem the registry found, by code.
+ * One field of the catalogue as an issuer settles a claim, by its type: text,
+ * email, phone, date, one or several of a list, or a group of fields.
+ * `error` is the problem the registry found, by code. (The catalog's copy
+ * also takes files, which holders upload; credentials carry none.)
  */
 export function FieldInput({
   id,
@@ -59,8 +53,6 @@ export function FieldInput({
   onChange,
   domains,
   error,
-  file,
-  onFile,
 }: {
   id: string;
   applicationId: string;
@@ -73,8 +65,6 @@ export function FieldInput({
   domains: Domains;
   /** By key: the field's own, or `{part}` for a group's parts. */
   error?: Record<string, string>;
-  file?: FileMeta;
-  onFile?: (file: FileMeta | null) => void;
 }) {
   const { t, locale } = useI18n();
   const copy = t.apply;
@@ -165,48 +155,9 @@ export function FieldInput({
       </Field>
     );
 
-  if (field.type === "file")
-    return (
-      <FileInput
-        id={id}
-        applicationId={applicationId}
-        head={head}
-        foot={foot}
-        fileKey={id.slice(2)}
-        accept={codesFor(field, narrow, domains)
-          .map((code) => code.media_type)
-          .filter(Boolean)
-          .join(",")}
-        file={file}
-        onFile={(meta) => onFile?.(meta)}
-      />
-    );
-
-  const kind =
-    field.type === "email"
-      ? "email"
-      : field.type === "phone"
-        ? "tel"
-        : field.type === "date"
-          ? "date"
-          : "text";
-  return (
-    <Field data-invalid={own ? true : undefined} className="gap-1.5">
-      {head}
-      <Input
-        id={id}
-        type={kind}
-        value={typeof value === "string" ? value : ""}
-        maxLength={narrow.max_length ?? field.max_length}
-        min={kind === "date" ? narrow.min_date : undefined}
-        max={kind === "date" ? narrow.max_date : undefined}
-        placeholder={kind === "tel" ? "+34 600 000 000" : undefined}
-        onChange={(event) => onChange(event.target.value)}
-        aria-invalid={own ? true : undefined}
-      />
-      {foot}
-    </Field>
-  );
+  // Credentials carry no files: the issuer's claims never ask for one (a
+  // holder's uploads are the catalog's, where applications are filled in).
+  if (field.type === "file") return null;
 }
 
 function CodesInput({
@@ -273,90 +224,6 @@ function CodesInput({
           );
         })}
       </div>
-      {foot}
-    </Field>
-  );
-}
-
-function FileInput({
-  id,
-  fileKey: key,
-  applicationId,
-  head,
-  foot,
-  accept,
-  file,
-  onFile,
-}: {
-  id: string;
-  /** The form's key for the field: what the upload answers. */
-  fileKey: string;
-  applicationId: string;
-  head: React.ReactNode;
-  foot: React.ReactNode;
-  accept: string;
-  file?: FileMeta;
-  onFile: (file: FileMeta | null) => void;
-}) {
-  const { t } = useI18n();
-  const copy = t.apply;
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  return (
-    <Field className="gap-1.5">
-      {head}
-      {file ? (
-        <div className="flex flex-wrap items-center justify-between gap-2 rounded-md border px-3 py-2 text-sm">
-          <span className="min-w-0 truncate">
-            {file.filename}{" "}
-            <span className="text-faint">
-              ({Math.ceil(file.size / 1024)} KB)
-            </span>
-          </span>
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            disabled={busy}
-            onClick={async () => {
-              setBusy(true);
-              await removeApplicationFile(applicationId, key);
-              setBusy(false);
-              onFile(null);
-            }}
-          >
-            {copy.removeFile}
-          </Button>
-        </div>
-      ) : (
-        <Input
-          id={id}
-          type="file"
-          accept={accept}
-          disabled={busy}
-          onChange={async (event) => {
-            const chosen = event.target.files?.[0];
-            if (!chosen) return;
-            setBusy(true);
-            setError(null);
-            const form = new FormData();
-            form.set("key", key);
-            form.set("file", chosen);
-            const result = await uploadApplicationFile(applicationId, form);
-            setBusy(false);
-            if (result.ok) onFile(result.file);
-            else setError(result.error);
-          }}
-        />
-      )}
-      {busy && <p className="text-[13px] text-faint">{copy.uploading}</p>}
-      {error && (
-        <FieldError className="text-[13px]">
-          {copy.errors[error as keyof typeof copy.errors] ??
-            copy.errors.unavailable}
-        </FieldError>
-      )}
       {foot}
     </Field>
   );

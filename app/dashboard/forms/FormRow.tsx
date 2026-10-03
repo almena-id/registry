@@ -1,6 +1,7 @@
 "use client";
 
 import { ChevronRightIcon } from "lucide-react";
+import Link from "next/link";
 
 import {
   Collapsible,
@@ -174,6 +175,12 @@ export function FormRow({
               </ul>
             </div>
           )}
+          <Link
+            href={`/dashboard/forms/${form.id}`}
+            className="justify-self-start text-sm font-medium text-primary hover:underline"
+          >
+            {copy.open}
+          </Link>
         </CollapsibleContent>
       </li>
     </Collapsible>

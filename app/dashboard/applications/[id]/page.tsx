@@ -4,7 +4,9 @@ import { notFound } from "next/navigation";
 
 import { ArrowLeftIcon, ShieldAlertIcon, ShieldCheckIcon } from "lucide-react";
 
+import { Alert, AlertDescription } from "@/app/components/ui/alert";
 import { Badge } from "@/app/components/ui/badge";
+import { Button } from "@/app/components/ui/button";
 import { Card } from "@/app/components/ui/card";
 import { getI18n, getTimeZone } from "@/app/i18n/server";
 import { fetchIssuance, fetchReceivedOne } from "@/app/lib/applications";
@@ -12,7 +14,8 @@ import { fetchCatalogue } from "@/app/lib/field-catalog";
 import { fetchCredentialCatalogue } from "@/app/lib/credential-catalog";
 import { formatDateTime } from "@/app/lib/format";
 import { label } from "@/app/lib/form-fields";
-import { statusBadge } from "../status";
+import { fetchStatusLists } from "@/app/lib/status-lists";
+import { credentialBadge, statusBadge } from "../status";
 import { DecisionForm } from "./DecisionForm";
 import { IssuanceForm } from "./IssuanceForm";
 
@@ -29,7 +32,9 @@ const fact =
  * it says, every answer (those from a verified credential marked), the files
  * to download, the credentials presented, and the decision — to take, or
  * taken. Accepted, the credential to issue: its claims, proposed from the
- * application and settled here, then signed by the issuer's signer.
+ * application and settled here, then signed by the issuer's signer — once
+ * the issuer's status list is signed. Issued, its status in that list, and
+ * for the issuer's signer the ways to suspend, reinstate or revoke it.
  */
 export default async function ApplicationPage({
   params,
@@ -46,6 +51,12 @@ export default async function ApplicationPage({
     item.status === "accepted"
       ? await Promise.all([fetchIssuance(id), fetchCatalogue()])
       : [null, null];
+  // Issued with a status list entry: whether the one asking may change it.
+  const lists =
+    item.status === "issued" && item.status_list
+      ? await fetchStatusLists(item.issuer.id)
+      : null;
+  const credentialStatus = item.credential_status ?? "valid";
   const copy = t.dashboard.applications;
   const types = new Map(
     credentials?.types.map((type) => [type.id, type.labels]),
@@ -195,6 +206,53 @@ export default async function ApplicationPage({
         )}
       </Card>
 
+      {item.status === "issued" && (
+        <Card className="gap-3 p-5">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <h2 className="font-semibold">{copy.statusCard}</h2>
+            <Badge variant={credentialBadge[credentialStatus]}>
+              {copy.credentialStatuses[credentialStatus]}
+            </Badge>
+          </div>
+          {item.status_list ? (
+            <>
+              <p className="text-sm text-muted-foreground">
+                {item.credential_status_at &&
+                  copy.statusSince
+                    .replace("{status}", copy.credentialStatuses[credentialStatus])
+                    .replace(
+                      "{when}",
+                      formatDateTime(item.credential_status_at, locale, timeZone),
+                    )}{" "}
+                {copy.statusLead}
+              </p>
+              <p className="font-mono text-[12px] break-all text-faint">
+                {copy.entry
+                  .replace("{index}", String(item.status_list.index))
+                  .replace("{uri}", item.status_list.uri)}
+              </p>
+              {lists?.can_sign && item.credential_statuses.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {item.credential_statuses.map((to) => (
+                    <Button
+                      key={to}
+                      asChild
+                      variant={to === "revoked" ? "danger" : "outline"}
+                    >
+                      <Link href={`/dashboard/applications/${item.id}/status?to=${to}`}>
+                        {copy.change[to]}
+                      </Link>
+                    </Button>
+                  ))}
+                </div>
+              )}
+            </>
+          ) : (
+            <p className="text-sm text-muted-foreground">{copy.noStatusList}</p>
+          )}
+        </Card>
+      )}
+
       {item.status === "accepted" && (
         <Card className="gap-3 p-5">
           <h2 className="font-semibold">{copy.issuance}</h2>
@@ -211,6 +269,20 @@ export default async function ApplicationPage({
                     ? copy.signerNeeded
                     : copy.notTheSigner}
               </p>
+              {proposal.can_sign && !proposal.status_list_ready && (
+                <Alert variant="notice">
+                  <AlertDescription className="grid gap-3">
+                    <span>{copy.listUnsigned}</span>
+                    <Button asChild className="justify-self-start">
+                      <Link
+                        href={`/dashboard/issuers/${item.issuer.id}/sign-status?back=${encodeURIComponent(`/dashboard/applications/${item.id}`)}`}
+                      >
+                        {copy.signList}
+                      </Link>
+                    </Button>
+                  </AlertDescription>
+                </Alert>
+              )}
               {proposal.can_sign && (
                 <IssuanceForm
                   id={item.id}

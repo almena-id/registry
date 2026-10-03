@@ -15,5 +15,6 @@ services:
       - ./well-known:/app/well-known:ro
     environment:
       REGISTRY_API_URL: ${REGISTRY_API_URL:-https://api.almena.id}
+      REGISTRY_CATALOG_URL: ${REGISTRY_CATALOG_URL:-https://catalog.almena.id}
       # /.well-known/did-configuration.json, from ./well-known.
       REGISTRY_WEB_WELL_KNOWN_DIR: /app/well-known

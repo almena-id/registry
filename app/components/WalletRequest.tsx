@@ -49,7 +49,14 @@ export function WalletRequest({
     setShown(answer);
     // The target is a plain value from the server: its fields say whether it changed.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [purpose, target?.kind, target && "id" in target ? target.id : null, target?.back]);
+  }, [
+    purpose,
+    target?.kind,
+    target && "id" in target ? target.id : null,
+    target && "issuer" in target ? target.issuer : null,
+    target && "status" in target ? target.status : null,
+    target?.back,
+  ]);
 
   useEffect(() => {
     // Once per visit, not once per render in development's double effects.

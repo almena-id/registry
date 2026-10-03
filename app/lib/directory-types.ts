@@ -92,6 +92,8 @@ export type Signed = {
   document: Record<string, unknown>;
   /** What its log says now, as signed; `null` while pending. */
   signed_document: Record<string, unknown> | null;
+  /** The top-level fields `document` changes from `signed_document` (outdated). */
+  changes: string[];
   log_url: string | null;
   document_url: string | null;
   /** A published issuer's, verifier's or mediator's endorsement by its tenant. */

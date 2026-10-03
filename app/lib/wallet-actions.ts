@@ -6,6 +6,7 @@ import QRCode from "qrcode";
 import { getLocale } from "@/app/i18n/server";
 import { api, currentTenant, sessionCookie, type SignedIn } from "./api";
 import { keepMove, keepSession } from "./session";
+import { safeBack } from "./status-lists";
 
 /** The request in flight — purpose, id, poll secret, where to go after — for this browser only. */
 const walletCookie = "almena.wallet";
@@ -25,7 +26,16 @@ export type SignTarget =
       back: string;
     }
   /** An accepted application's credential, signed by its issuer's signer. */
-  | { kind: "credential"; id: string; back: string };
+  | { kind: "credential"; id: string; back: string }
+  /** An issuer's status list as it is (`list`; its current one if absent). */
+  | { kind: "status_list"; issuer: string; list?: string; back: string }
+  /** An issued credential given a new status, in its issuer's status list. */
+  | {
+      kind: "credential_status";
+      id: string;
+      status: "valid" | "suspended" | "revoked";
+      back: string;
+    };
 
 type Kept = { purpose: WalletPurpose; id: string; poll: string; back?: string };
 
@@ -69,15 +79,26 @@ export async function startWallet(
   if (purpose === "sign") {
     const tenant = await currentTenant();
     if (!target || !tenant) return { ok: false, error: null };
-    const path =
+    const base = `/tenants/${tenant.id}`;
+    const [path, extra] =
       target.kind === "identity"
-        ? `/tenants/${tenant.id}/identities/${encodeURIComponent(target.id)}/sign`
+        ? [`${base}/identities/${encodeURIComponent(target.id)}/sign`, {}]
         : target.kind === "credential"
-          ? `/tenants/${tenant.id}/applications/${encodeURIComponent(target.id)}/issuance/sign`
-          : `/tenants/${tenant.id}/${target.section}/${encodeURIComponent(target.id)}/publish`;
+          ? [`${base}/applications/${encodeURIComponent(target.id)}/issuance/sign`, {}]
+          : target.kind === "status_list"
+            ? [
+                `${base}/issuers/${encodeURIComponent(target.issuer)}/status-lists/sign`,
+                target.list ? { status_list_id: target.list } : {},
+              ]
+            : target.kind === "credential_status"
+              ? [
+                  `${base}/applications/${encodeURIComponent(target.id)}/credential-status`,
+                  { status: target.status },
+                ]
+              : [`${base}/${target.section}/${encodeURIComponent(target.id)}/publish`, {}];
     created = await api<Created>(path, {
       method: "POST",
-      body: { locale },
+      body: { locale, ...extra },
       token,
     });
   } else {
@@ -93,7 +114,9 @@ export async function startWallet(
     purpose,
     id: data.id,
     poll: data.poll,
-    back: target?.back,
+    // Where the page goes once signed: the browser says, so only one of the
+    // dashboard's own paths is kept.
+    back: target ? safeBack(target.back, "/dashboard") : undefined,
   };
   store.set(walletCookie, JSON.stringify(kept), {
     httpOnly: true,
@@ -119,7 +142,7 @@ export async function pollWallet(): Promise<WalletPoll> {
     return { status: "expired" };
   }
   const { status, data } = await api<Result>(
-    `/auth/wallet/requests/${kept.id}/result`,
+    `/auth/wallet/requests/${encodeURIComponent(kept.id)}/result`,
     {
       method: "POST",
       body: { poll: kept.poll },

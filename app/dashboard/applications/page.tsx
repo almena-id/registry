@@ -11,7 +11,7 @@ import { fetchReceived } from "@/app/lib/applications";
 import { fetchCredentialCatalogue } from "@/app/lib/credential-catalog";
 import { formatDateTime } from "@/app/lib/format";
 import { label } from "@/app/lib/form-fields";
-import { statusBadge } from "./status";
+import { credentialBadge, statusBadge } from "./status";
 
 export async function generateMetadata(): Promise<Metadata> {
   const { t } = await getI18n();
@@ -71,6 +71,14 @@ export default async function ApplicationsPage() {
                   <Badge variant={statusBadge[item.status]}>
                     {copy.status[item.status]}
                   </Badge>
+                  {item.credential_status &&
+                    item.credential_status !== "valid" && (
+                      <Badge
+                        variant={credentialBadge[item.credential_status]}
+                      >
+                        {copy.credentialStatuses[item.credential_status]}
+                      </Badge>
+                    )}
                   {item.submitted_at && (
                     <time
                       className="flex-none text-[13px] text-faint tabular-nums max-sm:hidden"

@@ -39,6 +39,18 @@ everything (`task --list`); `task check` must pass before finishing.
   is done. The checks and their order are the API's; the portal only words
   them (`dashboard.health.tasks.{check}_{issue}`). Lists tag each row published or
   draft (issuers, verifiers, mediators) and with its DID's signature.
+- Verifiers have a Verify tab (`(tabs)/verify`, `VerifyByQr`,
+  `app/lib/verification-actions.ts`): pick one of the tenant's forms that asks
+  for credentials, show its QR (`POST …/verifiers/{id}/verifications`, the
+  code drawn server side), poll every two seconds until the wallet answers,
+  and show the verdict (`Verdict`, shared with the form's Verify tab). Only a
+  published verifier asks: the wallet is shown its DID.
+- Issuers and verifiers have a Queue tab (`(tabs)/queue`, `lib/queues.ts`,
+  `lib/queue-actions.ts`): their queue at the broker and how their back office
+  connects (AMQP address, virtual host, user). Admins make it — the user's
+  password shows that once, the registry never sees it again — and delete it,
+  asking first; changing the password is the API's and the CLI's
+  (`POST …/queue/access`), not a button here.
 - Pages: `/` (landing) and `/login` live in the `(site)` group, which brings
   the public header; `/login` is in `(auth)`, which sends a signed-in
   visitor to the dashboard), `/dashboard` (its layout asks the API
@@ -130,6 +142,10 @@ everything (`task --list`); `task check` must pass before finishing.
   on `/dashboard/account/taken` (the API's move ticket, or `none`, in the
   `almena.move` cookie): an empty account may be deleted there to continue in
   the other one.
+  Below the ways in, API tokens (`Tokens.tsx`, `app/lib/token*.ts`): for
+  scripts, CI and the `almena` CLI, each acting as the account until it
+  expires (1–365 days) or is revoked (asked inline first); a new one's secret
+  shows once.
 - Every create screen (`/dashboard/{issuers|verifiers|mediators|identities|forms|domains|users}/new`)
   opens with `CreateHeader`: the breadcrumb (shadcn's `Breadcrumb`) — the
   overview, the section's list named as the side menu names it, the screen —
@@ -175,10 +191,16 @@ everything (`task --list`); `task check` must pass before finishing.
   a type of the credential catalogue (`app/lib/credential-catalog.ts`), with
   its name in the form, required or not, a purpose the wallet shows, the
   claims ticked and whom it is trusted from (any published issuer granting
-  it, chosen ones from the public catalogue of issuers, or — the EU PID — its
+  it, chosen ones searched in the public catalogue of issuers — `IssuerPicker`: by a part of the name or DID among those granting the type, a page at a time, `GET /catalog/issuers?grants=…&q=…` through `app/lib/issuer-search-actions.ts` —, or — the EU PID — its
   own framework); each says, live, which of the form's fields it fills.
   Any member creates; the list rows open to show each field, a group's parts,
-  what is restricted, and the credentials asked for.
+  what is restricted, and the credentials asked for. A form opens at
+  `/dashboard/forms/{id}` (tabs in `forms/[id]/(tabs)`): Verify — a
+  verifier's `vp_token` (OpenID4VP), with the nonce and audience its key
+  binding must carry, checked by the API (`POST …/forms/{id}/verify`,
+  `app/lib/verify-actions.ts`) and shown credential by credential, problems
+  worded (`dashboard.forms.detail.problems`) —, DCQL (the query a wallet is
+  asked with) and JSON Schema (what its answers meet).
 - Catalogue (`/dashboard/catalogue`, below Forms): the tenant's own fields
   first, then Almena's, read only, by category — each row opens to its
   standard, a group's parts, its values (long lists summed up by their
@@ -196,25 +218,32 @@ everything (`task --list`); `task check` must pass before finishing.
   (the EU PID) are tagged so. Issuers have a Credentials tab
   (`/dashboard/issuers/{id}/credentials`): the types they grant, ticked by any
   member (`PUT …/credential-types`); the public catalogue lists them.
-- Applying for a credential, public (no account): `/credentials` lists every
-  published issuer's offers (a type it grants with a request form, set in the
-  issuer's Credentials tab); `/credentials/{issuer}/{type}` shows one and
-  "Start" opens an application, whose secret this browser keeps in the
-  HTTP-only `almena.application.{id}` cookie; `/apply/{id}` (`Apply`) follows
-  its status — QR 1 pairs the wallet, then the form (credentials presented
-  from the wallet fill their fields verified; `FieldInput` renders each field
-  by type, files upload at once), then QR 2, where the wallet shows and signs
-  what is sent. Each wallet request is `ApplicationWallet` (QR, deep link,
-  polling), on the sign-in channel. Issuers' members read what arrives at
+- Applying for a credential is the catalog's (`../catalog`,
+  `https://catalog.almena.id`): holders find offers, start, pair, fill in,
+  sign and receive there. Old links here (`/credentials…`, `/apply/{id}`)
+  redirect to it (`REGISTRY_CATALOG_URL`, `app/lib/catalog.ts`); an
+  application started here before kept its secret on this origin and is
+  started again there. Issuers' members read what arrives at
   `/dashboard/applications` (a card of its own, Activity, after the overview): the answers, the
   files (downloaded through a route handler with the session), the
   credentials presented, whether the holder's signature holds, and accept or
   reject. Accepted, the credential is issued from the same page: its claims,
   proposed from the application, are settled in `IssuanceForm` (each a
-  catalogue field, `FieldInput`, shared with the holder's form), then
+  catalogue field, `FieldInput` — the catalog's, without file uploads:
+  credentials carry no files), then
   `/dashboard/applications/{id}/issue` has the issuer's signer's wallet sign it
-  (`WalletRequest`, target `credential`); the holder takes it from `/apply/{id}`
-  with a third QR (`receive`).
+  (`WalletRequest`, target `credential`); the holder takes it in the catalog
+  with a third QR (`receive`), or from the wallet when the issuer's notice
+  arrives. A credential names its entry in the issuer's
+  status list, so that list is signed first: until it is, the issuance card
+  says so and links to `/dashboard/issuers/{id}/sign-status?back=…` (target
+  `status_list`; `back` only ever a dashboard path, `safeBack`). Issued, the
+  page shows its status (valid, suspended, revoked) and the issuer's signer
+  gets Suspend / Reinstate / Revoke, each on its own screen
+  (`/dashboard/applications/{id}/status?to=…`, target `credential_status`):
+  the change holds once the wallet signs the new list. Revoking is final;
+  the list tags suspended and revoked ones, and the holder's application in
+  the catalog says so too (`app/lib/status-lists.ts`).
 - Texts a tenant writes for people to read in its forms and catalogue — a
   form's name and description, a field's help, a credential's purpose, its
   own fields' and options' labels — are by language (`{en, es}`, the portal's
@@ -256,7 +285,11 @@ everything (`task --list`); `task check` must pass before finishing.
   operations beside it in one row, and the tabs below — Summary (`/{id}`, the
   facts), Data (`/{id}/data`, the form; not for identities, which have no
   fields), Credentials (`/{id}/credentials`, issuers: the types they grant), Signing (`/{id}/signing`, issuers and verifiers: the signing system
-  — so far one specific member signs; admins set it, members read it) and JSON
+  — so far one specific member signs; admins set it, members read it), Status
+  lists (`/{id}/status`, issuers: each list's address, entries taken, revoked
+  and suspended, and whether it must be signed — never yet, or by a key the
+  DID no longer lists; the issuer's signer signs it at `/{id}/sign-status`,
+  outside the tabs) and JSON
   (`/{id}/json`, the DID document). `load.ts` asks the API
   for the item once per request; `Detail.tsx` holds the shared shapes. Issuers,
   verifiers and mediators are edited by any member; the operations are icons

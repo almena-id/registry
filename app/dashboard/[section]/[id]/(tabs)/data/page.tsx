@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 
 import { fetchMediatorChoices } from "@/app/lib/directory";
+import { fetchDomains } from "@/app/lib/domains";
 import { DescribedForm } from "../../DescribedForm";
 import { loadItem } from "../../load";
 import { MediatorForm } from "../../MediatorForm";
@@ -18,15 +19,24 @@ export default async function DataTab({
   if (!loaded || loaded.section === "identities") notFound();
   const item = loaded.item;
   if (!item) return null;
-  if (loaded.section === "mediators")
+  if (loaded.section === "mediators") {
+    const url = item.url ?? "";
+    const domains = ((await fetchDomains()) ?? [])
+      .filter((d) => d.verified)
+      .map(({ id, domain }) => ({ id, domain }));
+    const at = placed(url, domains);
     return (
       <MediatorForm
         id={item.id}
         name={item.name}
-        url={item.url ?? ""}
+        url={url}
+        subdomain={at?.subdomain ?? ""}
+        domain={at?.domain}
+        domains={domains}
         isPublic={Boolean(item.public)}
       />
     );
+  }
   return (
     <DescribedForm
       section={loaded.section}
@@ -37,4 +47,28 @@ export default async function DataTab({
       mediators={(await fetchMediatorChoices()) ?? []}
     />
   );
+}
+
+/**
+ * Where `url` sits among the verified `domains`: the subdomain and the domain's
+ * id, the longest domain winning; `null` when it is under none of them.
+ */
+function placed(
+  url: string,
+  domains: { id: string; domain: string }[],
+): { subdomain: string; domain: string } | null {
+  let host: string;
+  try {
+    host = new URL(url).hostname;
+  } catch {
+    return null;
+  }
+  const under = domains
+    .filter((d) => host.endsWith(`.${d.domain}`))
+    .sort((a, b) => b.domain.length - a.domain.length)[0];
+  if (!under) return null;
+  return {
+    subdomain: host.slice(0, -(under.domain.length + 1)),
+    domain: under.id,
+  };
 }

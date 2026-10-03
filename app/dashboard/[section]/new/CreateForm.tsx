@@ -12,10 +12,10 @@ import { Input } from "@/app/components/ui/input";
 import { Textarea } from "@/app/components/ui/textarea";
 import {
   Field,
-  FieldDescription,
   FieldError,
   FieldLabel,
 } from "@/app/components/ui/field";
+import { AddressField } from "@/app/dashboard/[section]/[id]/AddressField";
 import { PublicField } from "@/app/dashboard/[section]/[id]/PublicField";
 import { useI18n } from "@/app/i18n/client";
 import { useAnswerRound } from "@/app/lib/use-answer-round";
@@ -53,18 +53,6 @@ export function CreateForm({
   const errors = state.errors ?? {};
   const error = (key?: keyof typeof copy.errors) =>
     key ? copy.errors[key] : null;
-  // With no verified domain yet, the way to verify one.
-  const addDomain = (
-    <Link
-      href="/dashboard/domains"
-      className="font-medium underline underline-offset-4"
-    >
-      {copy.addDomain}
-    </Link>
-  );
-  const addressDescribedBy =
-    errors.subdomain || errors.domain ? "address-error" : "address-hint";
-
   return (
     <Card className="gap-0 p-6">
       <form className="flex flex-col gap-[18px]" action={action} noValidate>
@@ -105,60 +93,13 @@ export function CreateForm({
           </Field>
 
           {domains && (
-            <Field
-              data-invalid={
-                errors.subdomain || errors.domain ? true : undefined
-              }
-              className="gap-1.5"
-            >
-              <FieldLabel htmlFor="subdomain">{copy.url}</FieldLabel>
-              <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5 font-mono text-sm">
-                <span className="text-faint">https://</span>
-                <Input
-                  id="subdomain"
-                  name="subdomain"
-                  maxLength={200}
-                  required
-                  autoCapitalize="none"
-                  spellCheck={false}
-                  placeholder="mediator"
-                  className="min-w-0 flex-1 basis-32 font-mono"
-                  defaultValue={state.subdomain}
-                  aria-label={copy.subdomain}
-                  aria-invalid={errors.subdomain ? true : undefined}
-                  aria-describedby={addressDescribedBy}
-                />
-                <span className="text-faint">.</span>
-                <div className="min-w-0 flex-1 basis-40">
-                  <Select
-                    key={round}
-                    id="domain"
-                    name="domain"
-                    defaultValue={state.domain ?? domains[0]?.id ?? ""}
-                    aria-invalid={errors.domain ? true : undefined}
-                    aria-describedby={addressDescribedBy}
-                    options={domains.map((d) => ({
-                      value: d.id,
-                      label: d.domain,
-                    }))}
-                  />
-                </div>
-              </div>
-              {errors.subdomain || errors.domain ? (
-                <FieldError className="text-[13px]" id="address-error">
-                  {error(errors.subdomain ?? errors.domain)}{" "}
-                  {domains.length === 0 && addDomain}
-                </FieldError>
-              ) : (
-                <FieldDescription
-                  className="text-[13px] text-faint"
-                  id="address-hint"
-                >
-                  {domains.length > 0 ? copy.addressHint : copy.noDomains}{" "}
-                  {domains.length === 0 && addDomain}
-                </FieldDescription>
-              )}
-            </Field>
+            <AddressField
+              domains={domains}
+              subdomain={state.subdomain}
+              domain={state.domain}
+              error={error(errors.subdomain ?? errors.domain)}
+              round={round}
+            />
           )}
         </div>
 

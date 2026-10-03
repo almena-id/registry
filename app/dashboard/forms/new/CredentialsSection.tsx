@@ -34,7 +34,6 @@ import { useI18n } from "@/app/i18n/client";
 import type {
   CredentialCatalogue,
   CredentialType,
-  PublishedIssuer,
 } from "@/app/lib/credential-catalog";
 import {
   byId,
@@ -45,6 +44,7 @@ import {
   type CredentialProblem,
   type FieldDraft,
 } from "@/app/lib/form-fields";
+import { IssuerPicker } from "./IssuerPicker";
 
 const small = "text-[13px] text-muted-foreground font-normal";
 
@@ -57,7 +57,6 @@ const small = "text-[13px] text-muted-foreground font-normal";
 export function CredentialsSection({
   credentials,
   catalogue,
-  issuers,
   drafts,
   onChange,
   fields,
@@ -65,7 +64,6 @@ export function CredentialsSection({
 }: {
   credentials: CredentialCatalogue;
   catalogue: Catalogue;
-  issuers: PublishedIssuer[];
   drafts: CredentialDraft[];
   onChange: (drafts: CredentialDraft[]) => void;
   fields: FieldDraft[];
@@ -113,9 +111,6 @@ export function CredentialsSection({
               type={type}
               draft={draft}
               catalogue={catalogue}
-              issuers={issuers.filter((issuer) =>
-                issuer.credential_types?.includes(type.id),
-              )}
               fields={fields}
               problem={error?.id === draft.id ? error.problem : undefined}
               onChange={(patch) =>
@@ -208,7 +203,6 @@ function CredentialEditor({
   type,
   draft,
   catalogue,
-  issuers,
   fields,
   problem,
   onChange,
@@ -217,8 +211,6 @@ function CredentialEditor({
   type: CredentialType;
   draft: CredentialDraft;
   catalogue: Catalogue;
-  /** Published issuers granting the type. */
-  issuers: PublishedIssuer[];
   fields: FieldDraft[];
   problem?: CredentialProblem;
   onChange: (patch: Partial<CredentialDraft>) => void;
@@ -394,40 +386,14 @@ function CredentialEditor({
                 </FieldLabel>
               ))}
             </RadioGroup>
-            {draft.trust === "issuers" &&
-              (issuers.length ? (
-                <div className="grid gap-2 rounded-lg bg-sunk p-3.5">
-                  {issuers.map((issuer) => (
-                    <FieldLabel
-                      key={issuer.did}
-                      className="flex cursor-pointer items-center gap-2 font-normal"
-                    >
-                      <Checkbox
-                        checked={draft.issuers.includes(issuer.did)}
-                        onCheckedChange={(checked) =>
-                          onChange({
-                            issuers: toggle(
-                              draft.issuers,
-                              issuer.did,
-                              checked === true,
-                            ),
-                          })
-                        }
-                      />
-                      <span className="min-w-0">
-                        <span className="font-medium">{issuer.name}</span>{" "}
-                        <span className="font-mono text-[11px] break-all text-faint">
-                          {issuer.did}
-                        </span>
-                      </span>
-                    </FieldLabel>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-[13px] text-muted-foreground">
-                  {copy.noIssuers}
-                </p>
-              ))}
+            {draft.trust === "issuers" && (
+              <IssuerPicker
+                type={type.id}
+                chosen={draft.issuers}
+                onChange={(issuers) => onChange({ issuers })}
+                invalid={problem === "trustInvalid"}
+              />
+            )}
           </>
         )}
       </FieldSet>

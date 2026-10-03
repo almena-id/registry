@@ -47,13 +47,6 @@ export type CreateState = {
   };
 };
 
-/** What the API says about a mediator's address, per field. */
-function urlError(detail: string | null): ErrorKey | undefined {
-  if (detail === "mediator_invalid") return "urlInvalid";
-  if (detail === "mediator_insecure") return "urlInsecure";
-  return undefined;
-}
-
 export async function createItem(
   section: string,
   _: CreateState,
@@ -115,44 +108,62 @@ export async function createItem(
 
 export type MediatorState = {
   name?: string;
-  url?: string;
+  subdomain?: string;
+  domain?: string;
   public?: boolean;
   saved?: boolean;
-  errors?: { name?: ErrorKey; url?: ErrorKey; form?: ErrorKey };
+  errors?: {
+    name?: ErrorKey;
+    subdomain?: ErrorKey;
+    domain?: ErrorKey;
+    form?: ErrorKey;
+  };
 };
 
-/** A mediator's name, address and whether it is public; its DID stays. */
+/**
+ * A mediator's name, address and whether it is public; its DID stays. The
+ * address moves as it was made, a subdomain of a verified domain; with the
+ * subdomain left empty it stays where it is.
+ */
 export async function saveMediator(
   id: string,
   _: MediatorState,
   form: FormData,
 ): Promise<MediatorState> {
   const name = String(form.get("name") ?? "").trim();
-  const url = String(form.get("url") ?? "").trim();
+  const subdomain = String(form.get("subdomain") ?? "").trim();
+  const domain = String(form.get("domain") ?? "");
   const isPublic = form.get("public") === "on";
-  const keep = { name, url, public: isPublic };
+  const keep = { name, subdomain, domain, public: isPublic };
   const errors: MediatorState["errors"] = {};
   if (!name) errors.name = "nameRequired";
   else if (name.length > 200) errors.name = "nameLong";
-  if (!url) errors.url = "urlRequired";
+  if (subdomain && !domain) errors.domain = "domainRequired";
   if (Object.keys(errors).length) return { ...keep, errors };
 
   const token = (await cookies()).get(sessionCookie)?.value;
   const tenant = await currentTenant();
   if (!token || !tenant) return { ...keep, errors: { form: "unavailable" } };
+  const body = subdomain
+    ? { name, subdomain, domain_id: domain, public: isPublic }
+    : { name, public: isPublic };
   const { data, detail } = await api<MediatorDetail>(
     `/tenants/${tenant.id}/mediators/${encodeURIComponent(id)}`,
-    { method: "PATCH", body: { name, url, public: isPublic }, token },
+    { method: "PATCH", body, token },
   );
   if (!data) {
-    const url = urlError(detail);
-    if (url) return { ...keep, errors: { url } };
+    if (detail === "subdomain_invalid")
+      return { ...keep, errors: { subdomain: "subdomainInvalid" } };
+    if (detail === "domain_not_found")
+      return { ...keep, errors: { domain: "domainNotFound" } };
+    if (detail === "domain_unverified")
+      return { ...keep, errors: { domain: "domainUnverified" } };
     if (detail === "name_required")
       return { ...keep, errors: { name: "nameRequired" } };
     return { ...keep, errors: { form: "unavailable" } };
   }
   revalidatePath(`/dashboard/mediators/${id}`);
-  return { name: data.name, url: data.url, public: data.public, saved: true };
+  return { ...keep, name: data.name, public: data.public, saved: true };
 }
 
 export type DescribedState = {

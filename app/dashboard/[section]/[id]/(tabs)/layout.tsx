@@ -72,6 +72,7 @@ export default async function DetailLayout({
         editable={isKind(section)}
         signs={section === "issuers" || section === "verifiers"}
         issues={section === "issuers"}
+        verifies={section === "verifiers"}
       />
       {children}
     </div>

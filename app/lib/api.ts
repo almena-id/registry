@@ -110,7 +110,12 @@ export type LinkedAccount = {
   email: string | null;
   created_at: string;
 };
-export type WaysIn = { email: string | null; accounts: LinkedAccount[] };
+export type WaysIn = {
+  email: string | null;
+  accounts: LinkedAccount[];
+  /** Whether one may be unlinked: never the last. */
+  removable: boolean;
+};
 /**
  * Linking a way in: `taken` when it belongs to another account, with the
  * ticket that moves this one there when it is still empty.

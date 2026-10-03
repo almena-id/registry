@@ -8,14 +8,12 @@ import type { Dictionary } from "@/app/i18n/config";
 import { api, currentTenant, sessionCookie } from "./api";
 import { fetchTenantCatalogue } from "./field-catalog";
 import {
-  CUSTOM,
   toCredential,
   toField,
   type CredentialDraft,
   type CredentialProblem,
   type FieldDraft,
   type FieldProblem,
-  type FormField,
 } from "./form-fields";
 import { hasText, longest, textsFrom, type Texts } from "./texts";
 
@@ -29,25 +27,33 @@ export type FormState = {
     description?: ErrorKey;
     form?: ErrorKey;
     /** The first field that does not hold, by its draft's id. */
-    field?: { id: string; problem: FieldProblem | "keyDuplicate" };
+    field?: { id: string; problem: FieldProblem };
     /** The first credential request that does not hold, by its draft's id. */
     credential?: { id: string; problem: CredentialProblem };
   };
 };
 
-const CODES: Record<string, ErrorKey> = {
-  fields_required: "fieldsRequired",
+/** The API's refusals about one of the fields, as the builder words them. */
+const FIELD_CODES: Record<string, FieldProblem> = {
   field_unknown: "fieldUnknown",
   field_rename_invalid: "keyInvalid",
   field_key_invalid: "keyInvalid",
   field_key_duplicate: "keyDuplicate",
   field_narrow_invalid: "narrowInvalid",
-  credential_unknown: "unavailable",
+};
+
+/** The API's refusals about one of the credentials asked for. */
+const CREDENTIAL_CODES: Record<string, CredentialProblem> = {
   credential_key_invalid: "credentialKeyInvalid",
   credential_key_duplicate: "credentialKeyDuplicate",
   credential_type_duplicate: "credentialTypeDuplicate",
   credential_claims_invalid: "claimsInvalid",
   credential_trust_invalid: "trustInvalid",
+};
+
+/** The API's refusals about the form as a whole. */
+const CODES: Record<string, ErrorKey> = {
+  fields_required: "fieldsRequired",
 };
 
 function drafts<T>(form: FormData, name: string): T[] {
@@ -71,63 +77,51 @@ export async function createForm(
   else if (longest(name) > 200) errors.name = "nameLong";
   if (longest(description) > 2000) errors.description = "descriptionLong";
 
-  const catalogue = await fetchTenantCatalogue();
-  if (!catalogue) return { ...keep, errors: { form: "unavailable" } };
-  const fields: FormField[] = [];
-  const keys = new Set<string>();
   const written = drafts<FieldDraft>(form, "fields");
-  for (const draft of written) {
-    const result = toField(draft, catalogue);
-    if ("problem" in result) {
-      errors.field = { id: draft.id, problem: result.problem };
-      break;
-    }
-    const key = result.field.as ?? result.field.ref.replace(CUSTOM, "");
-    if (keys.has(key)) {
-      errors.field = { id: draft.id, problem: "keyDuplicate" };
-      break;
-    }
-    keys.add(key);
-    fields.push(result.field);
-  }
-  const credentials: Record<string, unknown>[] = [];
-  const credentialKeys = new Set<string>();
   const asked = drafts<CredentialDraft>(form, "credentials");
-  for (const draft of asked) {
-    const result = toCredential(draft);
-    if ("problem" in result) {
-      errors.credential = { id: draft.id, problem: result.problem };
-      break;
-    }
-    const key = String(result.request.key);
-    if (credentialKeys.has(key)) {
-      errors.credential = { id: draft.id, problem: "credentialKeyDuplicate" };
-      break;
-    }
-    credentialKeys.add(key);
-    credentials.push(result.request);
-  }
   if (!written.length && !asked.length) errors.form ??= "fieldsRequired";
   if (Object.keys(errors).length) return { ...keep, errors };
 
+  const catalogue = await fetchTenantCatalogue();
   const token = (await cookies()).get(sessionCookie)?.value;
   const tenant = await currentTenant();
-  if (!token || !tenant) return { ...keep, errors: { form: "unavailable" } };
-  const { status, detail } = await api(`/tenants/${tenant.id}/forms`, {
+  if (!catalogue || !token || !tenant)
+    return { ...keep, errors: { form: "unavailable" } };
+  const { status, detail, failure } = await api(`/tenants/${tenant.id}/forms`, {
     method: "POST",
     token,
     body: {
       name,
       description: hasText(description) ? description : null,
-      fields,
-      credentials,
+      // In the drafts' order: the API names the one that does not hold by it.
+      fields: written.map((draft) => toField(draft, catalogue)),
+      credentials: asked.map(toCredential),
     },
   });
-  if (status === null || status >= 300)
-    return {
-      ...keep,
-      errors: { form: (detail && CODES[detail]) || "unavailable" },
+  if (status === null || status >= 300) {
+    const refused = (failure ?? {}) as {
+      code?: string;
+      field?: number;
+      credential?: number;
     };
+    const code = refused.code ?? detail ?? "";
+    const field = refused.field !== undefined && written[refused.field];
+    if (field && FIELD_CODES[code])
+      return {
+        ...keep,
+        errors: { field: { id: field.id, problem: FIELD_CODES[code] } },
+      };
+    const asking =
+      refused.credential !== undefined && asked[refused.credential];
+    if (asking && CREDENTIAL_CODES[code])
+      return {
+        ...keep,
+        errors: {
+          credential: { id: asking.id, problem: CREDENTIAL_CODES[code] },
+        },
+      };
+    return { ...keep, errors: { form: CODES[code] ?? "unavailable" } };
+  }
   revalidatePath("/dashboard", "layout");
   redirect("/dashboard/forms");
 }

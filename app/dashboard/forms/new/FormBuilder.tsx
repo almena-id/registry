@@ -39,7 +39,6 @@ import {
 import { useI18n } from "@/app/i18n/client";
 import type {
   CredentialCatalogue,
-  PublishedIssuer,
 } from "@/app/lib/credential-catalog";
 import { createForm, type FormState } from "@/app/lib/form-actions";
 import type { Texts } from "@/app/lib/texts";
@@ -69,11 +68,9 @@ import { CredentialsSection } from "./CredentialsSection";
 export function FormBuilder({
   catalogue,
   credentials,
-  issuers,
 }: {
   catalogue: Catalogue;
   credentials: CredentialCatalogue;
-  issuers: PublishedIssuer[];
 }) {
   const { t } = useI18n();
   const copy = t.dashboard.forms;
@@ -210,7 +207,6 @@ export function FormBuilder({
       <CredentialsSection
         credentials={credentials}
         catalogue={catalogue}
-        issuers={issuers}
         drafts={asked}
         onChange={setAsked}
         fields={fields}
