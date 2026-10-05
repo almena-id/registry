@@ -8,7 +8,7 @@ import { Badge } from "@/app/components/ui/badge";
 import { Card } from "@/app/components/ui/card";
 import { getI18n, getTimeZone } from "@/app/i18n/server";
 import { fetchReceived } from "@/app/lib/applications";
-import { fetchCredentialCatalogue } from "@/app/lib/credential-catalog";
+import { fetchTenantCredentialCatalogue } from "@/app/lib/credential-catalog";
 import { formatDateTime } from "@/app/lib/format";
 import { label } from "@/app/lib/form-fields";
 import { credentialBadge, statusBadge } from "./status";
@@ -26,7 +26,7 @@ export default async function ApplicationsPage() {
   const [{ t, locale }, received, credentials, timeZone] = await Promise.all([
     getI18n(),
     fetchReceived(),
-    fetchCredentialCatalogue(),
+    fetchTenantCredentialCatalogue(),
     getTimeZone(),
   ]);
   const copy = t.dashboard.applications;
@@ -73,9 +73,7 @@ export default async function ApplicationsPage() {
                   </Badge>
                   {item.credential_status &&
                     item.credential_status !== "valid" && (
-                      <Badge
-                        variant={credentialBadge[item.credential_status]}
-                      >
+                      <Badge variant={credentialBadge[item.credential_status]}>
                         {copy.credentialStatuses[item.credential_status]}
                       </Badge>
                     )}

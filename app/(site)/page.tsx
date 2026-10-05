@@ -62,7 +62,12 @@ export default async function Home() {
       >
         {/* You sign for the tenant from your wallet: dashed, since you act
             for it rather than own it. */}
-        <div className={cn(node, "inline-flex flex-col items-center rounded-full border-faint")}>
+        <div
+          className={cn(
+            node,
+            "inline-flex flex-col items-center rounded-full border-faint",
+          )}
+        >
           {d.you}
           <small className="text-xs font-[450] text-faint">{d.wallet}</small>
         </div>
@@ -72,7 +77,11 @@ export default async function Home() {
             {d.signs}
           </span>
         </div>
-        <div className={cn(node, "border-primary bg-brand-soft text-foreground")}>{d.tenant}</div>
+        <div
+          className={cn(node, "border-primary bg-brand-soft text-foreground")}
+        >
+          {d.tenant}
+        </div>
         {/* The fan: a stem down from the tenant, then an arch over the three. */}
         <div className="relative mt-7 h-7 w-2/3 rounded-t-lg border-2 border-b-0 border-input before:absolute before:-top-[30px] before:left-1/2 before:h-7 before:w-0.5 before:-translate-x-px before:bg-input" />
         <div className="grid w-full grid-cols-3 gap-2">
@@ -80,7 +89,9 @@ export default async function Home() {
           <div className={cn(node, "px-2 text-sm")}>{d.verifiers}</div>
           <div className={cn(node, "px-2 text-sm")}>{d.mediators}</div>
         </div>
-        <figcaption className="mt-6 text-[13px] text-faint">{d.caption}</figcaption>
+        <figcaption className="mt-6 text-[13px] text-faint">
+          {d.caption}
+        </figcaption>
       </figure>
 
       {/* Three numbered points under the hero and the model, across the width. */}

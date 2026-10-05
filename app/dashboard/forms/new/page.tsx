@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 import { Alert, AlertDescription } from "@/app/components/ui/alert";
 import { getI18n } from "@/app/i18n/server";
-import { fetchCredentialCatalogue } from "@/app/lib/credential-catalog";
+import { fetchTenantCredentialCatalogue } from "@/app/lib/credential-catalog";
 import { fetchTenantCatalogue } from "@/app/lib/field-catalog";
 import { CreateHeader } from "@/app/dashboard/CreateHeader";
 import { FormBuilder } from "./FormBuilder";
@@ -23,7 +23,7 @@ export default async function NewFormPage() {
   const [{ t }, catalogue, credentials] = await Promise.all([
     getI18n(),
     fetchTenantCatalogue(),
-    fetchCredentialCatalogue(),
+    fetchTenantCredentialCatalogue(),
   ]);
   const copy = t.dashboard.forms;
   return (

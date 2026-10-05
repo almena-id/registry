@@ -110,7 +110,6 @@
       "mediators": "Mediadores",
       "identities": "Identidades",
       "forms": "Formularios",
-      "catalogue": "Catálogo",
       "soon": "Pronto",
       "users": "Usuarios",
       "tenantLabel": "Cuenta",
@@ -118,7 +117,13 @@
       "signing": "Firma",
       "domains": "Dominios",
       "breadcrumb": "Ruta de navegación",
-      "applications": "Solicitudes"
+      "applications": "Solicitudes",
+      "accounts": "Cuentas",
+      "fields": "Campos",
+      "credentialTypes": "Tipos de credencial",
+      "valueLists": "Listas de valores",
+      "fieldCategories": "Categorías de campos",
+      "credentialCategories": "Categorías de credenciales"
     },
     "overview": {
       "title": "Resumen",
@@ -435,7 +440,8 @@
         "unavailable": "No se puede contactar con el registro. Inténtalo de nuevo en un momento.",
         "mediatorNotFound": "Ese mediador no está disponible para esta cuenta.",
         "signerRequired": "Elige quién firma.",
-        "signerNotMember": "No es miembro de esta cuenta."
+        "signerNotMember": "No es miembro de esta cuenta.",
+        "languagesRequired": "Elige al menos un idioma."
       },
       "identity": "Identidad",
       "identityHint": "El DID propio de la organización, con el nombre de la cuenta.",
@@ -466,7 +472,10 @@
         "howItWorks": "Cómo funciona",
         "signs": "Firma",
         "published": "Se publica"
-      }
+      },
+      "languages": "Idiomas",
+      "languagesHint": "Los idiomas en los que trabaja esta cuenta, de los que habla la plataforma: uno al menos.",
+      "languagesAnchorHint": "El ancla de confianza trabaja en todos los idiomas de la plataforma: el catálogo de Almena es de todos y se nombra en todos."
     },
     "detail": {
       "tabs": "Secciones",
@@ -568,7 +577,41 @@
     },
     "billing": {
       "title": "Facturación",
-      "soon": "La facturación está en camino."
+      "soon": "La facturación está en camino.",
+      "unavailable": "No se puede contactar con el registro. Inténtalo de nuevo en un momento.",
+      "plan": "Plan",
+      "free": "Uso libre",
+      "freeBadge": "Libre",
+      "plans": {
+        "standard": "Estándar"
+      },
+      "statuses": {
+        "active": "Activa",
+        "past_due": "Pago pendiente",
+        "canceled": "Cancelada"
+      },
+      "lapsed": "Terminada",
+      "freeLead": "Esta cuenta usa la plataforma libremente. Una suscripción, de pago mensual, añade lo que aparece abajo.",
+      "lapsedLead": "La suscripción ha terminado. Lo que la cuenta hizo con ella sigue funcionando; crearlo o cambiarlo de nuevo necesita una suscripción.",
+      "until": "Pagada hasta el {date}.",
+      "pastDueUntil": "Hay un pago pendiente: sigue en uso unos días después del {date}.",
+      "openEnded": "Sin fecha de fin.",
+      "featuresTitle": "Lo que añade una suscripción",
+      "features": {
+        "own_fields": {
+          "title": "Campos propios",
+          "lead": "Campos para tus formularios que el catálogo de Almena no tiene."
+        },
+        "own_credential_types": {
+          "title": "Tipos de credencial propios",
+          "lead": "Credenciales que otorgan tus emisores y piden tus formularios, publicadas a nombre de esta cuenta."
+        }
+      },
+      "included": "Incluido",
+      "notIncluded": "No incluido",
+      "howToSubscribe": "Los pagos aún no están abiertos: para suscribirte, contacta con Almena.",
+      "anchorTitle": "Almena Trust Anchor",
+      "anchorLead": "El ancla de confianza tiene todas las funciones y no necesita suscripción. Gestiona las suscripciones de las demás cuentas en Cuentas."
     },
     "domains": {
       "title": "Dominios",
@@ -763,7 +806,6 @@
       "trustUnavailable": "Ahora no se pueden buscar emisores. Inténtalo de nuevo en un momento."
     },
     "catalogue": {
-      "title": "Catálogo",
       "hint": "Los campos con los que se hacen tus formularios: los de Almena, estándar para todas las cuentas, y los tuyos.",
       "create": "Crear campo",
       "yours": "Tus campos",
@@ -803,13 +845,27 @@
         "patternInvalid": "El patrón no es una expresión regular válida.",
         "optionsInvalid": "Escribe al menos dos opciones, cada valor una vez y cada una con su etiqueta.",
         "formatsInvalid": "Marca al menos un formato.",
-        "inUse": "Un formulario pide este campo: quítalo antes del formulario.",
+        "inUse": "Un formulario o un tipo de credencial usa este campo: quítalo de ellos primero.",
         "unavailable": "No se puede contactar con el registro. Inténtalo de nuevo en un momento.",
         "typeInvalid": "Ese tipo de credencial no lo expide ninguna cuenta.",
-        "formInvalid": "Ese formulario no es de esta cuenta."
+        "formInvalid": "Ese formulario no es de esta cuenta.",
+        "labelsEvery": "Dale un nombre en todos los idiomas.",
+        "descriptionsEvery": "Di qué acredita en todos los idiomas.",
+        "categoryRequired": "Elige una categoría.",
+        "sourceRequired": "Indica el estándar del que viene.",
+        "claimsInvalid": "Marca al menos un campo del catálogo como claim.",
+        "vctInvalid": "Un tipo expedido fuera necesita el vct con el que lo nombra su marco (una URI como urn:eudi:pid:1).",
+        "w3cTypeInvalid": "El tipo W3C es una palabra en PascalCase que no use otro tipo.",
+        "doctypeInvalid": "El doctype va con puntos y en minúsculas (org.example.type.1).",
+        "typeInUse": "Un emisor otorga este tipo, un formulario lo pide o se hizo una solicitud de él: se queda.",
+        "typeKeyExists": "El catálogo ya tiene un tipo con esa clave.",
+        "inUseChange": "Algo usa este campo: puede admitir más — un texto más largo, más opciones o formatos — pero no otro tipo, una longitud menor, un patrón nuevo ni menos valores.",
+        "typeInUseChange": "Algo usa este tipo: pueden cambiar sus textos, categoría y estándar, y puede ganar claims opcionales, pero no perder claims, hacer uno obligatorio ni cambiar cómo se emite o se nombra.",
+        "descriptionsRequired": "Di qué acredita en al menos un idioma.",
+        "subscriptionRequired": "La suscripción de esta cuenta no incluye tipos de credencial propios.",
+        "domainInvalid": "Esa lista de valores no la puede usar un campo, o también se escribieron opciones.",
+        "partsInvalid": "Dale al grupo al menos una parte, cada una con una clave sin repetir, etiqueta en todos los idiomas y, si es una lista, su lista de valores."
       },
-      "fieldsTab": "Campos",
-      "credentialsTab": "Tipos de credencial",
       "credentials": "Tipos de credencial de Almena",
       "credentialsHint": "Catálogo {version}: lo que otorgan los emisores y lo que los formularios piden presentar. Sus claims son campos del catálogo; sus identificadores y metadatos de tipo se publican en almena.id. Solo lectura.",
       "external": "Se expide fuera",
@@ -824,7 +880,148 @@
       "saved": "Guardado.",
       "requestForm": "Formulario para solicitarla",
       "notOffered": "No se ofrece (sin formulario)",
-      "label": "Etiqueta"
+      "label": "Etiqueta",
+      "anchorHint": "Catálogo {version}: esta cuenta es el ancla de confianza, y estos campos son de todos — los formularios de cualquier cuenta los piden, y se publican en almena.id. Añade lo que nombran los estándares; borra solo lo que nada use.",
+      "newAnchorLead": "Un campo del catálogo de Almena, para todas las cuentas: nómbralo como lo nombra un estándar y etiquétalo en todos los idiomas.",
+      "labelsEveryHint": "En todos los idiomas: todas las cuentas y carteras lo muestran.",
+      "keyAnchorHint": "minúsculas, dígitos y _; también el nombre del claim",
+      "category": "Categoría",
+      "source": "Estándar",
+      "sourceHint": "de dónde viene su nombre",
+      "choose": "Elige…",
+      "createType": "Crear tipo de credencial",
+      "credentialsAnchorHint": "Catálogo {version}: esta cuenta es el ancla de confianza, y estos tipos son de todos — los emisores de cualquier cuenta los otorgan y los formularios los piden. Sus identificadores y metadatos de tipo se publican en almena.id. Borra solo lo que nada use.",
+      "newType": "Nuevo tipo de credencial",
+      "newTypeLead": "Un tipo de credencial del catálogo de Almena, para los emisores y formularios de todas las cuentas. Sus claims son campos del catálogo; su clave da nombre a su vct.",
+      "typeName": "Nombre",
+      "typeDescription": "Qué acredita",
+      "typeKeyHint": "minúsculas, dígitos y _",
+      "claimsHint": "campos del catálogo, al menos uno",
+      "issuance": "Lo emite",
+      "issuedByAccounts": "El emisor de cualquier cuenta",
+      "vctHint": "cómo lo nombra su marco",
+      "w3cType": "Tipo W3C",
+      "doctype": "Doctype mdoc",
+      "edit": "Editar",
+      "editField": "Editar campo",
+      "editLead": "Cambia «{label}». Su clave no cambia nunca. Mientras un formulario lo use, puede admitir más — un texto más largo, más opciones o formatos — pero nunca rechazar lo que ya admitía.",
+      "editType": "Editar tipo de credencial",
+      "editTypeLead": "Cambia «{label}». Su clave no cambia nunca. Mientras un emisor lo otorgue, un formulario lo pida o haya solicitudes de él, cambian sus textos y puede ganar claims opcionales; nada más.",
+      "keyFixed": "no cambia nunca",
+      "saveChanges": "Guardar cambios",
+      "yourTypes": "Tus tipos de credencial",
+      "yourTypesHint": "Tipos de credencial propios de esta cuenta, para lo que el catálogo de Almena no tiene. Solo los otorgan sus emisores y solo los piden sus formularios; se publican en almena.id a nombre de esta cuenta, porque las credenciales salen de la plataforma.",
+      "yourTypesEmpty": "Aún no tienes tipos de credencial propios.",
+      "newOwnTypeLead": "Un tipo de credencial propio de esta cuenta: lo otorgan sus emisores y lo piden sus formularios. Sus claims son campos del catálogo, de Almena o tuyos. Comprueba antes que el catálogo de Almena no lo tiene: sus tipos los entienden todos los emisores y carteras.",
+      "subscribeForFields": "Los campos propios vienen con una suscripción (mira Ajustes › Facturación).",
+      "subscribeForTypes": "Los tipos de credencial propios vienen con una suscripción (mira Ajustes › Facturación).",
+      "categories": {
+        "create": "Crear categoría",
+        "new": "Nueva categoría",
+        "edit": "Editar categoría",
+        "editLead": "Cambia el nombre de «{label}». Lo que ordena y su clave no cambian nunca.",
+        "name": "Nombre",
+        "kinds": {
+          "field": "Categorías de campos",
+          "credential": "Categorías de credenciales"
+        },
+        "keyHint": "minúsculas, dígitos y _",
+        "uses": {
+          "one": "{count} elemento",
+          "other": "{count} elementos"
+        },
+        "errors": {
+          "keyRequired": "Escribe una clave.",
+          "keyInvalid": "La clave empieza por una letra y solo tiene minúsculas, dígitos y _ (32 como mucho).",
+          "keyExists": "Ya hay una categoría de ese tipo con esa clave.",
+          "labelsRequired": "Dale un nombre en todos los idiomas.",
+          "inUse": "Hay algo en ella: muévelo a otra antes.",
+          "unavailable": "No se puede contactar con el registro. Inténtalo de nuevo en un momento."
+        },
+        "hints": {
+          "field": "Bajo qué se ordenan los campos del catálogo. Todas las cuentas las leen; solo el ancla de confianza las mantiene.",
+          "credential": "Bajo qué se ordenan los tipos de credencial del catálogo. Todas las cuentas las leen; solo el ancla de confianza las mantiene."
+        },
+        "newLeads": {
+          "field": "Una categoría del catálogo de Almena para campos, bajo la que cada cuenta ordena también los suyos.",
+          "credential": "Una categoría del catálogo de Almena para tipos de credencial, bajo la que cada cuenta ordena también los suyos."
+        }
+      },
+      "domains": {
+        "title": "Listas de valores",
+        "hint": "Las listas de códigos de las que toman sus valores los campos de código: países, idiomas, formatos de fichero… Todas las cuentas las leen y pueden basar en ellas sus campos; solo el ancla de confianza las mantiene.",
+        "create": "Crear lista de valores",
+        "new": "Nueva lista de valores",
+        "newLead": "Una lista de códigos de la que tomen sus valores los campos de código, de Almena y de cualquier cuenta.",
+        "edit": "Editar lista de valores",
+        "editLead": "Cambia «{label}»; su clave no cambia nunca. {count} campos la usan: mientras alguno la use, solo puede crecer — códigos renombrados y añadidos, ninguno quitado.",
+        "name": "Nombre",
+        "source": "Origen",
+        "sourceHint": "el estándar o la lista de la que viene",
+        "kind": "Valores",
+        "kinds": {
+          "text": "Textos",
+          "number": "Números enteros"
+        },
+        "keyHint": "minúsculas, dígitos y _",
+        "codes": "Códigos",
+        "codesHint": "{count} en orden; cada valor una vez, con nombre en todos los idiomas",
+        "filter": "Buscar un código",
+        "value": "Valor",
+        "mediaType": "Tipo de medio",
+        "addCode": "Añadir código",
+        "removeCode": "Quitar código",
+        "newCodesHint": "Los formatos de fichero (clave file_format) llevan un tipo de medio en cada código.",
+        "inUseHint": "Las respuestas, los formularios y las credenciales emitidas guardan estos valores: mientras algún campo use la lista, conserva todos los que tenía.",
+        "codeCount": {
+          "one": "{count} código",
+          "other": "{count} códigos"
+        },
+        "uses": {
+          "one": "{count} campo",
+          "other": "{count} campos"
+        },
+        "errors": {
+          "keyRequired": "Escribe una clave.",
+          "keyInvalid": "La clave empieza por una letra y solo tiene minúsculas, dígitos y _.",
+          "keyExists": "Ya hay una lista de valores con esa clave.",
+          "labelsRequired": "Dale un nombre en todos los idiomas.",
+          "sourceRequired": "Indica de dónde viene.",
+          "codesInvalid": "Escribe al menos un código, cada valor una vez, con nombre en todos los idiomas.",
+          "numbersInvalid": "Con números enteros, todos los valores deben serlo.",
+          "mediaTypeInvalid": "Cada formato de fichero necesita un tipo de medio (como application/pdf), y solo ellos lo llevan.",
+          "inUse": "Hay campos que la usan: conserva todos los códigos que tenía (y su tipo de medio).",
+          "unavailable": "No se puede contactar con el registro. Inténtalo de nuevo en un momento."
+        }
+      },
+      "valuesFrom": "Valores de",
+      "ownOptions": "Opciones propias",
+      "parts": "Partes",
+      "partsHint": "en orden; cada una un campo, con etiqueta en todos los idiomas",
+      "addPart": "Añadir parte",
+      "removePart": "Quitar parte",
+      "moveUp": "Subir",
+      "moveDown": "Bajar",
+      "list": {
+        "search": "Buscar por nombre, clave o etiqueta",
+        "noMatch": "Nada coincide.",
+        "empty": "Aún no hay nada.",
+        "open": "Abrir {name}",
+        "duplicate": "Duplicar",
+        "schema": "Abrir su esquema publicado",
+        "delete": "Borrar",
+        "confirmDelete": "¿Borrar «{name}»? No se puede deshacer.",
+        "unavailable": "No se puede contactar con el registro. Inténtalo de nuevo en un momento.",
+        "parts": "Partes: {value}",
+        "valueList": "Valores de {name} ({count})",
+        "claims": {
+          "one": "{count} claim",
+          "other": "{count} claims"
+        },
+        "inUse": "Algo lo usa: no se puede borrar.",
+        "fileFormats": "Los formatos de fichero no se borran nunca: todo campo de fichero los usa."
+      },
+      "typesHint": "Las credenciales que otorgan los emisores y que los formularios piden presentar: las de Almena, estándar para todas las cuentas, y las tuyas."
     },
     "applications": {
       "title": "Solicitudes",
@@ -937,6 +1134,42 @@
         "unavailable": "No se puede acceder al registro. Inténtalo de nuevo en un momento.",
         "unpublished": "Publica antes este verificador.",
         "nothingToPresent": "Este formulario no pide credenciales."
+      }
+    },
+    "accounts": {
+      "title": "Cuentas",
+      "lead": "Todas las demás cuentas de la plataforma y su suscripción. Hasta que se abran los pagos, las suscripciones se gestionan aquí a mano.",
+      "search": "Nombre o slug",
+      "searchButton": "Buscar",
+      "filter": "Suscripción",
+      "all": "Todas",
+      "subscribed": "Con suscripción",
+      "unsubscribed": "Sin suscripción",
+      "empty": "Ninguna cuenta coincide.",
+      "members": {
+        "one": "{count} miembro",
+        "other": "{count} miembros"
+      },
+      "since": "desde el {date}",
+      "firstPage": "Primera página",
+      "nextPage": "Página siguiente",
+      "subscription": "Suscripción",
+      "status": "Estado",
+      "none": "Ninguna (uso libre)",
+      "until": "Pagada hasta",
+      "optional": "Opcional",
+      "untilHint": "Vacío: sin fecha de fin. Con un pago pendiente sigue en uso 7 días después de ese día.",
+      "note": "Nota",
+      "noteHint": "solo la lee Almena",
+      "save": "Guardar",
+      "saved": "Guardado.",
+      "errors": {
+        "planInvalid": "Ese plan no existe.",
+        "untilPast": "Una suscripción activa no puede terminar en el pasado.",
+        "untilInvalid": "Eso no es una fecha.",
+        "notFound": "Esa cuenta no existe.",
+        "notAllowed": "Solo los admins del ancla de confianza gestionan suscripciones.",
+        "unavailable": "No se puede contactar con el registro. Inténtalo de nuevo en un momento."
       }
     }
   },

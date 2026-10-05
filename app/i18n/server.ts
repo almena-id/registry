@@ -2,8 +2,18 @@ import "server-only";
 
 import { cookies, headers } from "next/headers";
 
-import { defaultTimeZone, isTimeZone, timeZoneCookie } from "@/app/lib/timezone";
-import { defaultLocale, dictionaries, isLocale, localeCookie, type Locale } from "./config";
+import {
+  defaultTimeZone,
+  isTimeZone,
+  timeZoneCookie,
+} from "@/app/lib/timezone";
+import {
+  defaultLocale,
+  dictionaries,
+  isLocale,
+  localeCookie,
+  type Locale,
+} from "./config";
 
 /**
  * The language to render in: the one chosen in the selector, else the

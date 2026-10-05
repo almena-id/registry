@@ -16,9 +16,21 @@ type Section =
   | "mediators"
   | "identities"
   | "forms"
-  | "catalogue"
+  | "fields"
+  | "credentialTypes"
+  | "valueLists"
+  | "fieldCategories"
+  | "credentialCategories"
   | "domains"
   | "users";
+
+/** Where a section's list lives, where its path is not its name. */
+const paths: Partial<Record<Section, string>> = {
+  credentialTypes: "credential-types",
+  valueLists: "value-lists",
+  fieldCategories: "categories/fields",
+  credentialCategories: "categories/credentials",
+};
 
 /**
  * The head of every create screen: the breadcrumb — the overview, the
@@ -49,7 +61,9 @@ export async function CreateHeader({
           <BreadcrumbSeparator />
           <BreadcrumbItem>
             <BreadcrumbLink asChild>
-              <Link href={`/dashboard/${section}`}>{nav[section]}</Link>
+              <Link href={`/dashboard/${paths[section] ?? section}`}>
+                {nav[section]}
+              </Link>
             </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />

@@ -43,7 +43,9 @@ export function UserMenu({ account }: { account: string }) {
             aria-label={copy.open}
             title={account}
           >
-            <span className="text-xs font-semibold text-muted-foreground">{copy.label}</span>
+            <span className="text-xs font-semibold text-muted-foreground">
+              {copy.label}
+            </span>
             <span className="w-full truncate">{account}</span>
           </Link>
         </DropdownMenuItem>

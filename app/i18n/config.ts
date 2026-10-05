@@ -14,21 +14,32 @@ export type Locale = (typeof locales)[number];
 export const defaultLocale: Locale = "en";
 
 /** Each language named in itself, for the selector. */
-export const localeNames: Record<Locale, string> = { en: "English", es: "Español" };
+export const localeNames: Record<Locale, string> = {
+  en: "English",
+  es: "Español",
+};
 
 /** Where the chosen language is kept (a year, readable by the server). */
 export const localeCookie = "almena.locale";
 
 export function isLocale(value: unknown): value is Locale {
-  return typeof value === "string" && (locales as readonly string[]).includes(value);
+  return (
+    typeof value === "string" && (locales as readonly string[]).includes(value)
+  );
 }
 
 function withFallback<T>(base: T, override: unknown): T {
-  if (override === null || typeof override !== "object" || Array.isArray(override)) {
+  if (
+    override === null ||
+    typeof override !== "object" ||
+    Array.isArray(override)
+  ) {
     return base;
   }
   const source = override as Record<string, unknown>;
-  const merged: Record<string, unknown> = { ...(base as Record<string, unknown>) };
+  const merged: Record<string, unknown> = {
+    ...(base as Record<string, unknown>),
+  };
   for (const [key, value] of Object.entries(base as Record<string, unknown>)) {
     if (!(key in source)) continue;
     merged[key] =

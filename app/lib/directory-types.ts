@@ -1,3 +1,5 @@
+import type { Texts } from "./texts";
+
 /** A tenant's registered things, as the dashboard lists them. Client-safe. */
 export const sections = [
   "issuers",
@@ -62,7 +64,8 @@ export type Use = {
 export type Item = {
   id: string;
   name: string;
-  description: string | null;
+  /** Issuers and verifiers: by language. */
+  description: Texts | null;
   created_at: string;
   /** Issuers, verifiers and mediators: the identity (DID) they act as. */
   identity?: IdentityRef | null;

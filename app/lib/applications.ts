@@ -23,7 +23,8 @@ export type Offer = {
   issuer: {
     slug: string;
     name: string;
-    description: string | null;
+    /** By language. */
+    description: Texts | null;
     did: string;
   };
   credential_type: CredentialType;
@@ -197,7 +198,13 @@ export const fetchReceivedOne = (id: string) =>
 /** An accepted application's credential, as it would be issued. */
 export type IssuanceProposal = {
   credential_type: CredentialType;
-  claims: { field: CatalogueField; required: boolean; value: unknown }[];
+  /** `name`: the claim in the credential (its field's key). */
+  claims: {
+    name: string;
+    field: CatalogueField;
+    required: boolean;
+    value: unknown;
+  }[];
   valid_until: string;
   holder_did: string;
   /** The one asking is the issuer's signer, with a wallet its DID lists. */

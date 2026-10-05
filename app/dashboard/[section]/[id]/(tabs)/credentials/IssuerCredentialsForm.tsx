@@ -52,7 +52,7 @@ export function IssuerCredentialsForm({
         <p className="text-sm text-muted-foreground">
           {copy.issuesLead}{" "}
           <Link
-            href="/dashboard/catalogue/credentials"
+            href="/dashboard/credential-types"
             className="text-primary hover:underline"
           >
             {copy.seeCatalogue}

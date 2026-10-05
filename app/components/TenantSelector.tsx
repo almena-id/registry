@@ -11,7 +11,11 @@ import {
   CommandItem,
   CommandList,
 } from "@/app/components/ui/command";
-import { Popover, PopoverContent, PopoverTrigger } from "@/app/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/app/components/ui/popover";
 import { useI18n } from "@/app/i18n/client";
 import type { Tenant } from "@/app/lib/api";
 import { chooseTenant } from "@/app/lib/tenant-actions";

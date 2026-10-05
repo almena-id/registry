@@ -39,7 +39,10 @@ export function Tabs({
             asChild
             className="flex-none px-3 data-[state=active]:text-primary after:bg-primary"
           >
-            <Link href={href} aria-current={href === current ? "page" : undefined}>
+            <Link
+              href={href}
+              aria-current={href === current ? "page" : undefined}
+            >
               {text}
             </Link>
           </TabsTrigger>

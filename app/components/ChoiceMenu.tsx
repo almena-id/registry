@@ -45,7 +45,12 @@ export function ChoiceMenu<T extends string>({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="sm" aria-label={label} disabled={disabled}>
+        <Button
+          variant="ghost"
+          size="sm"
+          aria-label={label}
+          disabled={disabled}
+        >
           <span className="text-muted-foreground">{current?.icon ?? icon}</span>
           {current?.label}
         </Button>
@@ -55,7 +60,9 @@ export function ChoiceMenu<T extends string>({
         align="end"
         className="w-44"
       >
-        <DropdownMenuLabel className="text-xs text-muted-foreground">{label}</DropdownMenuLabel>
+        <DropdownMenuLabel className="text-xs text-muted-foreground">
+          {label}
+        </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuRadioGroup
           value={value}
@@ -64,7 +71,11 @@ export function ChoiceMenu<T extends string>({
           }}
         >
           {choices.map((choice) => (
-            <DropdownMenuRadioItem key={choice.value} value={choice.value} lang={choice.lang}>
+            <DropdownMenuRadioItem
+              key={choice.value}
+              value={choice.value}
+              lang={choice.lang}
+            >
               {choice.icon}
               {choice.label}
             </DropdownMenuRadioItem>

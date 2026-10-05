@@ -7,7 +7,7 @@ import { Alert, AlertDescription } from "@/app/components/ui/alert";
 import { Button } from "@/app/components/ui/button";
 import { Card } from "@/app/components/ui/card";
 import { getI18n, getTimeZone } from "@/app/i18n/server";
-import { fetchCredentialCatalogue } from "@/app/lib/credential-catalog";
+import { fetchTenantCredentialCatalogue } from "@/app/lib/credential-catalog";
 import { fetchTenantCatalogue } from "@/app/lib/field-catalog";
 import {
   byId,
@@ -40,7 +40,7 @@ export default async function FormsPage() {
   const [forms, catalogue, credentials, timeZone] = await Promise.all([
     fetchForms(),
     fetchTenantCatalogue(),
-    fetchCredentialCatalogue(),
+    fetchTenantCredentialCatalogue(),
     getTimeZone(),
   ]);
   const fieldLabel = (field: string) => {

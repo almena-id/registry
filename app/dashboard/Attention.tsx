@@ -59,7 +59,9 @@ export async function Attention() {
                   {copy.noWallet}
                 </span>
                 <Button asChild size="sm">
-                  <Link href="/dashboard/account/almena">{copy.linkWallet}</Link>
+                  <Link href="/dashboard/account/almena">
+                    {copy.linkWallet}
+                  </Link>
                 </Button>
               </li>
             )}

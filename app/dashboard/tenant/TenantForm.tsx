@@ -6,14 +6,18 @@ import { Select } from "@/app/components/Select";
 import { Alert, AlertDescription } from "@/app/components/ui/alert";
 import { Button } from "@/app/components/ui/button";
 import { Card } from "@/app/components/ui/card";
+import { Checkbox } from "@/app/components/ui/checkbox";
 import { Input } from "@/app/components/ui/input";
 import {
   Field,
   FieldDescription,
   FieldError,
   FieldLabel,
+  FieldLegend,
+  FieldSet,
 } from "@/app/components/ui/field";
 import { useI18n } from "@/app/i18n/client";
+import { localeNames, locales } from "@/app/i18n/config";
 import { useAnswerRound } from "@/app/lib/use-answer-round";
 import {
   mediatorOptions,
@@ -21,15 +25,24 @@ import {
 } from "@/app/lib/directory-types";
 import { saveTenant, type TenantState } from "@/app/lib/tenant-actions";
 
-/** Admins edit; members see the same fields, read-only. */
+/**
+ * Admins edit; members see the same fields, read-only. The languages it works
+ * in are ticked from the platform's; the trust anchor's are all of them, fixed.
+ */
 export function TenantForm({
   name,
   mediator,
   mediators,
+  languages,
+  anchor,
   identity,
   editable,
 }: {
   name: string;
+  /** The languages it works in, of the platform's. */
+  languages: string[];
+  /** The trust anchor: its catalogue is named in every language. */
+  anchor: boolean;
   /** The chosen mediator's id; empty for none. */
   mediator: string;
   /** The mediators it may pick (its own, or public ones) for its own identity. */
@@ -42,7 +55,7 @@ export function TenantForm({
   const copy = t.dashboard.tenant;
   const [state, action, pending] = useActionState<TenantState, FormData>(
     saveTenant,
-    { name, mediator },
+    { name, mediator, languages },
   );
   const round = useAnswerRound(state);
   const errors = state.errors ?? {};
@@ -131,6 +144,42 @@ export function TenantForm({
             </FieldDescription>
           )}
         </Field>
+
+        <FieldSet
+          data-invalid={errors.languages ? true : undefined}
+          className="gap-1.5"
+        >
+          <FieldLegend variant="label" className="mb-1.5 text-sm font-medium">
+            {copy.languages}
+          </FieldLegend>
+          <div className="flex flex-wrap gap-x-6 gap-y-2">
+            {locales.map((lang) => (
+              <FieldLabel
+                key={lang}
+                className="flex cursor-pointer items-center gap-2 font-normal"
+              >
+                <Checkbox
+                  key={round}
+                  name="languages"
+                  value={lang}
+                  defaultChecked={anchor || state.languages?.includes(lang)}
+                  disabled={!editable || anchor}
+                  aria-invalid={errors.languages ? true : undefined}
+                />
+                <span lang={lang}>{localeNames[lang]}</span>
+              </FieldLabel>
+            ))}
+          </div>
+          {errors.languages ? (
+            <FieldError className="text-[13px]">
+              {copy.errors[errors.languages]}
+            </FieldError>
+          ) : (
+            <FieldDescription className="text-[13px] text-faint">
+              {anchor ? copy.languagesAnchorHint : copy.languagesHint}
+            </FieldDescription>
+          )}
+        </FieldSet>
 
         <dl className="grid gap-3">
           <div className="flex flex-wrap justify-between gap-2 border-t pt-3 text-sm">

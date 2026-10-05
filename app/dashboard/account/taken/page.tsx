@@ -29,16 +29,23 @@ export default async function TakenPage() {
 
   return (
     <div className="grid gap-4">
-      <DetailHead back="/dashboard/account" backLabel={t.dashboard.account.title} />
+      <DetailHead
+        back="/dashboard/account"
+        backLabel={t.dashboard.account.title}
+      />
       <header className="mb-6">
         <h1 className="text-[28px] font-bold tracking-tight">{copy.title}</h1>
       </header>
       <Card className="gap-0 p-5">
-        <p className="mb-4 text-muted-foreground">{ticket ? copy.emptyLead : copy.busyLead}</p>
+        <p className="mb-4 text-muted-foreground">
+          {ticket ? copy.emptyLead : copy.busyLead}
+        </p>
         <form action={moveAccount}>
           <div className="flex justify-end gap-2">
             <Button asChild variant="ghost">
-              <Link href="/dashboard/account">{ticket ? copy.cancel : copy.back}</Link>
+              <Link href="/dashboard/account">
+                {ticket ? copy.cancel : copy.back}
+              </Link>
             </Button>
             {ticket && (
               <Button variant="danger" type="submit">

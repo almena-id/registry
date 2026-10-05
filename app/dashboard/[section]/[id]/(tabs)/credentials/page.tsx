@@ -4,7 +4,7 @@ import { Alert, AlertDescription } from "@/app/components/ui/alert";
 import { Card } from "@/app/components/ui/card";
 import { getI18n } from "@/app/i18n/server";
 import {
-  fetchCredentialCatalogue,
+  fetchTenantCredentialCatalogue,
   fetchIssuerCredentialTypes,
 } from "@/app/lib/credential-catalog";
 import { label } from "@/app/lib/form-fields";
@@ -28,7 +28,7 @@ export default async function IssuerCredentialsTab({
   if (!loaded.item) return null;
   const [{ t, locale }, catalogue, declared, forms] = await Promise.all([
     getI18n(),
-    fetchCredentialCatalogue(),
+    fetchTenantCredentialCatalogue(),
     fetchIssuerCredentialTypes(id),
     fetchForms(),
   ]);

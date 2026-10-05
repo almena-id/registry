@@ -69,11 +69,16 @@ export default async function UsersPage() {
                   <span className="font-semibold">
                     {member.email ?? member.alias ?? copy.noEmail}
                     {member.user_id !== null && member.user_id === me?.id && (
-                      <span className="font-normal text-faint"> · {copy.you}</span>
+                      <span className="font-normal text-faint">
+                        {" "}
+                        · {copy.you}
+                      </span>
                     )}
                   </span>
                   <span className="mt-0.5 flex flex-wrap gap-1.5">
-                    <Badge variant={member.role === "admin" ? "brand" : "muted"}>
+                    <Badge
+                      variant={member.role === "admin" ? "brand" : "muted"}
+                    >
                       {copy.roles[member.role]}
                     </Badge>
                     {member.status === "invited" && (

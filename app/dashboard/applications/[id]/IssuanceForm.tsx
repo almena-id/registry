@@ -30,7 +30,7 @@ export function IssuanceForm({
     Object.fromEntries(
       proposal.claims
         .filter((claim) => claim.value !== null && claim.value !== undefined)
-        .map((claim) => [claim.field.id, claim.value]),
+        .map((claim) => [claim.name, claim.value]),
     ),
   );
   const [validUntil, setValidUntil] = useState(proposal.valid_until);
@@ -66,18 +66,18 @@ export function IssuanceForm({
     >
       {proposal.claims.map((claim) => (
         <FieldInput
-          key={claim.field.id}
-          id={`c-${claim.field.id}`}
+          key={claim.name}
+          id={`c-${claim.name}`}
           applicationId={id}
           field={claim.field}
           narrow={{}}
           required={claim.required}
-          value={claims[claim.field.id]}
+          value={claims[claim.name]}
           onChange={(value) =>
-            setClaims((all) => ({ ...all, [claim.field.id]: value }))
+            setClaims((all) => ({ ...all, [claim.name]: value }))
           }
           domains={domains}
-          error={errorsOf(claim.field.id)}
+          error={errorsOf(claim.name)}
         />
       ))}
       <div className="grid max-w-[240px] gap-1.5">

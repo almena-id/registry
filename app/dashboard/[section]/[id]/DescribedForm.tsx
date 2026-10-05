@@ -1,15 +1,16 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 
 import { Select } from "@/app/components/Select";
 import { Alert, AlertDescription } from "@/app/components/ui/alert";
 import { Button } from "@/app/components/ui/button";
 import { Card } from "@/app/components/ui/card";
 import { Input } from "@/app/components/ui/input";
-import { Textarea } from "@/app/components/ui/textarea";
+import { MultilingualInput } from "@/app/components/MultilingualInput";
 import { Field, FieldError, FieldLabel } from "@/app/components/ui/field";
 import { useI18n } from "@/app/i18n/client";
+import type { Texts } from "@/app/lib/texts";
 import { useAnswerRound } from "@/app/lib/use-answer-round";
 import {
   saveDescribed,
@@ -35,7 +36,8 @@ export function DescribedForm({
   section: "issuers" | "verifiers";
   id: string;
   name: string;
-  description: string;
+  /** By language. */
+  description: Texts;
   mediator: string;
   mediators: MediatorChoice[];
 }) {
@@ -47,6 +49,7 @@ export function DescribedForm({
     { name, description, mediator },
   );
   const round = useAnswerRound(state);
+  const [text, setText] = useState<Texts>(state.description ?? {});
   const errors = state.errors ?? {};
 
   return (
@@ -92,16 +95,16 @@ export function DescribedForm({
             {copy.description}{" "}
             <span className="font-normal text-faint">{copy.optional}</span>
           </FieldLabel>
-          <Textarea
+          <MultilingualInput
             id="description"
             name="description"
+            value={text}
+            onChange={setText}
+            multiline
             rows={4}
             maxLength={2000}
-            defaultValue={state.description}
-            aria-invalid={errors.description ? true : undefined}
-            aria-describedby={
-              errors.description ? "description-error" : undefined
-            }
+            invalid={Boolean(errors.description)}
+            describedBy={errors.description ? "description-error" : undefined}
           />
           {errors.description && (
             <FieldError className="text-[13px]" id="description-error">

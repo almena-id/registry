@@ -31,7 +31,9 @@ export function WalletRequest({
   const { t } = useI18n();
   const copy = t.wallet;
   const [shown, setShown] = useState<Shown | null>(null);
-  const [state, setState] = useState<"waiting" | "expired" | "failed">("waiting");
+  const [state, setState] = useState<"waiting" | "expired" | "failed">(
+    "waiting",
+  );
   const [error, setError] = useState<string | null>(null);
   const [left, setLeft] = useState<number | null>(null);
   const started = useRef(false);
@@ -90,14 +92,17 @@ export function WalletRequest({
   }, [shown, state]);
 
   const time =
-    left === null ? "" : `${Math.floor(left / 60)}:${String(left % 60).padStart(2, "0")}`;
+    left === null
+      ? ""
+      : `${Math.floor(left / 60)}:${String(left % 60).padStart(2, "0")}`;
 
   return (
     <div className="grid gap-3.5">
       {state === "failed" && (
         <Alert variant="destructive" role="alert">
           <AlertDescription>
-            {(error && copy.errors[error as keyof typeof copy.errors]) || copy.failed}
+            {(error && copy.errors[error as keyof typeof copy.errors]) ||
+              copy.failed}
           </AlertDescription>
         </Alert>
       )}
@@ -113,7 +118,10 @@ export function WalletRequest({
           <Button asChild size="lg" className="w-full">
             <a href={shown.deepLink}>{copy.open}</a>
           </Button>
-          <p className="text-center text-sm text-muted-foreground" role="status">
+          <p
+            className="text-center text-sm text-muted-foreground"
+            role="status"
+          >
             {copy.waiting}
             {time && ` ${copy.expiresIn.replace("{time}", time)}`}
           </p>
@@ -122,9 +130,16 @@ export function WalletRequest({
         state !== "waiting" && (
           <>
             {state === "expired" && (
-              <p className="text-center text-sm text-muted-foreground">{copy.expired}</p>
+              <p className="text-center text-sm text-muted-foreground">
+                {copy.expired}
+              </p>
             )}
-            <Button type="button" size="lg" className="w-full" onClick={() => void start()}>
+            <Button
+              type="button"
+              size="lg"
+              className="w-full"
+              onClick={() => void start()}
+            >
               {copy.retry}
             </Button>
           </>

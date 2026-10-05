@@ -13,7 +13,11 @@ import {
   CommandItem,
   CommandList,
 } from "@/app/components/ui/command";
-import { Popover, PopoverContent, PopoverTrigger } from "@/app/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/app/components/ui/popover";
 import { useI18n } from "@/app/i18n/client";
 import {
   detectTimeZone,
@@ -59,7 +63,10 @@ export function TimeZoneSelector({ timeZone }: { timeZone: string }) {
         onSelect={() => select(zone)}
       >
         <CheckIcon
-          className={cn("text-primary", zone === timeZone ? "opacity-100" : "opacity-0")}
+          className={cn(
+            "text-primary",
+            zone === timeZone ? "opacity-100" : "opacity-0",
+          )}
         />
         {timeZoneLabel(zone)}
       </CommandItem>
@@ -84,13 +91,20 @@ export function TimeZoneSelector({ timeZone }: { timeZone: string }) {
       </PopoverTrigger>
       <PopoverContent align="end" className="w-72 p-0">
         <Command>
-          <CommandInput placeholder={copy.searchPlaceholder} aria-label={copy.label} />
+          <CommandInput
+            placeholder={copy.searchPlaceholder}
+            aria-label={copy.label}
+          />
           <CommandList>
             <CommandEmpty>{copy.empty}</CommandEmpty>
             {detected && (
-              <CommandGroup heading={copy.suggestedHeading}>{option(detected)}</CommandGroup>
+              <CommandGroup heading={copy.suggestedHeading}>
+                {option(detected)}
+              </CommandGroup>
             )}
-            <CommandGroup heading={copy.allHeading}>{all.map(option)}</CommandGroup>
+            <CommandGroup heading={copy.allHeading}>
+              {all.map(option)}
+            </CommandGroup>
           </CommandList>
         </Command>
       </PopoverContent>

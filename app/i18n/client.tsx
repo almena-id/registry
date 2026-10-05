@@ -5,10 +5,18 @@ import type { ReactNode } from "react";
 
 import { dictionaries, type Locale, type Dictionary } from "./config";
 
-const I18nContext = createContext<{ locale: Locale; t: Dictionary } | null>(null);
+const I18nContext = createContext<{ locale: Locale; t: Dictionary } | null>(
+  null,
+);
 
 /** Carries the locale the server rendered in to client components. */
-export function I18nProvider({ locale, children }: { locale: Locale; children: ReactNode }) {
+export function I18nProvider({
+  locale,
+  children,
+}: {
+  locale: Locale;
+  children: ReactNode;
+}) {
   return (
     <I18nContext.Provider value={{ locale, t: dictionaries[locale] }}>
       {children}

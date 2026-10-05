@@ -2,7 +2,12 @@
 
 import Link from "next/link";
 
-import { AppleMark, GitHubMark, GoogleMark, MicrosoftMark } from "@/app/components/BrandIcons";
+import {
+  AppleMark,
+  GitHubMark,
+  GoogleMark,
+  MicrosoftMark,
+} from "@/app/components/BrandIcons";
 import { Logo } from "@/app/components/Logo";
 import { Button } from "@/app/components/ui/button";
 import { Separator } from "@/app/components/ui/separator";
@@ -36,7 +41,11 @@ export function SocialButtons({ providers }: { providers: Provider[] }) {
       {/* Icons only, in one row; each says what it is to a screen reader and on hover. */}
       <div className="flex gap-2">
         <Button asChild variant="outline" className={button}>
-          <Link href="/login/almena" aria-label={copy.almena} title={copy.almena}>
+          <Link
+            href="/login/almena"
+            aria-label={copy.almena}
+            title={copy.almena}
+          >
             <Logo size={20} />
           </Link>
         </Button>
@@ -44,7 +53,11 @@ export function SocialButtons({ providers }: { providers: Provider[] }) {
           enabled ? (
             // A full navigation: the provider's page is another site.
             <Button key={id} asChild variant="outline" className={button}>
-              <a href={`/auth/${id}/start`} aria-label={copy[id]} title={copy[id]}>
+              <a
+                href={`/auth/${id}/start`}
+                aria-label={copy[id]}
+                title={copy[id]}
+              >
                 {marks[id]}
               </a>
             </Button>

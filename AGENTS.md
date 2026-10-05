@@ -110,8 +110,10 @@ everything (`task --list`); `task check` must pass before finishing.
   current tenant's items (the header's tenant) with infinite scroll — the first
   page is rendered on the server, the rest come from the `loadMore` server
   action as the marker under the list nears the viewport (`InfiniteList`).
-  "Create" opens `/dashboard/{section}/new`. Issuers and verifiers have a name,
-  a description and, optionally, a mediator; mediators a name, the address
+  "Create" opens `/dashboard/{section}/new`. Issuers and verifiers have a name
+  (one text: the entity's own, carried in its DIDs and credentials), a
+  description by language (`MultilingualInput`, shown in the visitor's
+  language) and, optionally, a mediator; mediators a name, the address
   they listen on — a subdomain typed before one of the tenant's verified
   domains, picked from a list (`https://{subdomain}.{domain}`; with none
   verified, the list is empty and a link leads to Domains) — and whether they are public; identities only a name
@@ -130,8 +132,9 @@ everything (`task --list`); `task check` must pass before finishing.
   (`/dashboard/tenant`, `/dashboard/account`), code and the API keep "tenant"
   and "account".
 - The side menu is three cards: what the tenant works with (overview,
-  issuers, verifiers, mediators, identities), what it asks people for (Forms
-  and Catalogue) and the tenant itself (Account and Users). The
+  issuers, verifiers, mediators, identities), the templates (Forms, Fields,
+  Credential types and, for the trust anchor, Value lists, Field categories
+  and Credential categories) and the tenant itself (Account and Users). The
   avatar menu's top entry opens `/dashboard/account` (the Profile): the
   alias (editable, `PATCH /auth/me`) and the account's ways in — the email
   (optional: an account may have none, so names fall back to the alias) and
@@ -153,10 +156,24 @@ everything (`task --list`); `task check` must pass before finishing.
 - Never delete `.next` while a dev server may be running: it breaks it (500s).
   `task check` builds fine alongside `next dev`.
 - `/dashboard/tenant` has tabs (the shared `Tabs`, as items have): Data (the
-  tenant's name and the mediator its own identity uses; admins edit, members
-  read), Billing (`/dashboard/tenant/billing`: "Soon", nothing to bill yet)
+  tenant's name, the mediator its own identity uses and the languages it works
+  in — ticked from the platform's, `locales`, one at least; a new account starts
+  with the one it signed up in, the trust anchor has them all, fixed; admins
+  edit, members read), Billing (`/dashboard/tenant/billing`, `app/lib/subscriptions.ts`: the
+  subscription — plan, where it stands, until when — and each feature it gives,
+  included or not; with none, the free use; payments are not open yet, so it
+  says to contact Almena; the trust anchor has everything)
   and JSON (`/dashboard/tenant/json`: its DID document, shown as items show
   theirs, `DidDocuments`).
+- Subscriptions: what an account may make of its own (fields, credential
+  types) comes with one (`Tenant.features`, the API's `entitlements`); without
+  it the catalogue offers no "Create" nor "Edit" — what it made stays, works and
+  may be deleted. The trust anchor's admins get one more entry under Account,
+  Accounts (`/dashboard/accounts`): every other account, searched by name or
+  slug, with or without a subscription, a page at a time; each opens
+  (`/dashboard/accounts/{id}`, `SubscriptionForm`, `app/lib/subscription-actions.ts`)
+  to set its status (none: back to the free use), plan, the day it is paid
+  through and a note only the anchor reads — by hand, until payments arrive.
 - Under Account, the side menu has two more entries of the tenant's own:
   Signing (`/dashboard/signing`: the signing flow — who signs as
   the account, listed from `app/lib/signing-flows.ts`, a module of its own so
@@ -201,21 +218,76 @@ everything (`task --list`); `task check` must pass before finishing.
   `app/lib/verify-actions.ts`) and shown credential by credential, problems
   worded (`dashboard.forms.detail.problems`) —, DCQL (the query a wallet is
   asked with) and JSON Schema (what its answers meet).
-- Catalogue (`/dashboard/catalogue`, below Forms): the tenant's own fields
+- The catalogue's screens are entries of the Templates card, below Forms, in
+  the `app/dashboard/(templates)` route group (with the shared `CatalogueList`
+  and `field-draft.ts`); old `/dashboard/catalogue…` links redirect
+  (`next.config.ts`).
+- Fields (`/dashboard/fields`): the tenant's own fields
   first, then Almena's, read only, by category — each row opens to its
   standard, a group's parts, its values (long lists summed up by their
   domain), its bounds and, for Almena's, its published JSON Schema. "Create
-  field" opens `/dashboard/catalogue/new` (`CustomFieldForm`): labels in
+  field" opens `/dashboard/fields/new` (`CustomFieldForm`): labels in
   English and Spanish (one at least), a key (never one of Almena's), the type
-  (no groups) and what it needs — length and pattern, the options with their
-  labels, the file formats. Any member creates and deletes them; a field a
-  form asks for is not deleted (`field_in_use`).
-- The Catalogue has two tabs (`CatalogueTabs`): Fields (above) and
-  Credential types (`/dashboard/catalogue/credentials`): Almena's types, read
+  (groups only for the trust anchor: their parts in `PartsEditor` — key,
+  always present or not, type, label, a length or a value list; moved, added,
+  removed) and what it needs — length and pattern, the options with their
+  labels — or, for a list, one of the anchor's value lists instead ("Values
+  from") —, the file formats. Any member creates, edits and deletes them; a
+  field a form asks for is not deleted (`field_in_use`). Rows open to "Edit"
+  (`/dashboard/fields/{id}/edit`, the same `CustomFieldForm`, its key
+  fixed, filled from the API's `definition`): while something uses the field
+  the API only takes changes that turn away nothing it took (a longer text,
+  more options or formats; a group keeps its parts, new ones optional). The trust anchor (the root,
+  `Tenant.anchor`) keeps Almena's catalogue itself: it has no "Your fields",
+  Almena's rows open to "Delete" (refused while any account's form or one of
+  its credential types uses the field), and its "Create field" also asks the
+  category and the standard (`source`), with labels in every language.
+- Every catalogue screen lists as the dashboard's other lists do
+  (`CatalogueList`): a card of rows — name, key, a line (source, values,
+  description) and tags on the left; facts on the right (type and category,
+  claims and formats, codes and uses); then the actions as icons, no text:
+  duplicate (the create screen filled from it, `?from={id}`, key
+  `{key}_copy`: `field-draft.ts`, `credentials/type-draft.ts`), the published
+  schema, delete (asked first; disabled, with why, while in use). Clicking a
+  row opens it to edit; there is no Edit button. Over 8 rows, a filter.
+- Fields and Credential types are every account's entries; the trust anchor
+  has three more: Value lists (`/dashboard/value-lists`, `app/lib/value-domains.ts`,
+  `app/lib/value-domain-actions.ts`) — the codes coded fields draw on, each
+  with its source, codes and the fields using it; `DomainForm` edits name,
+  source, what the values are (texts or whole numbers, fixed once made) and the
+  codes in order (value, its name with `MultilingualInput` as every text, a media type for file formats),
+  long lists found by a filter; while used it only grows (`domain_in_use`) —,
+  and Field categories and Credential categories (`/dashboard/categories/{fields|credentials}`,
+  one route by kind, `categories/kinds.ts`; `app/lib/categories.ts`,
+  `app/lib/category-actions.ts`), what fields and credential types are
+  filed under, each with how much is filed under it,
+  created (`…/new`, `CategoryForm`: the screen's kind, key, a name in
+  every language), renamed (`…/{id}/edit`; kind and key fixed) and deleted
+  while nothing is (`category_in_use`). Whatever the anchor keeps only it
+  changes; what an account makes of its own only it sees and uses.
+  Credential types (`/dashboard/credential-types`): Almena's types, read
   only, by category — each opens to its claims (fields of the catalogue, the
   always-present ones marked), how each format names it (vct, W3C type, mdoc
   doctype) and its published schema and type metadata; types issued elsewhere
-  (the EU PID) are tagged so. Issuers have a Credentials tab
+  (the EU PID) are tagged so. Above them, "Your credential types": an
+  account's own (`custom:{key}`, `GET …/credential-types`), when its
+  subscription allows it (`Tenant.features` has `own_credential_types`; the
+  API's `entitlements`) or it has some — its issuers grant them, its forms
+  ask for them (`fetchTenantCredentialCatalogue` merges them with Almena's),
+  claims of Almena's fields or its own, published under its slug; the same
+  create and edit screens, without issuance or vct, one language and no
+  standard enough. For the trust anchor Almena's are its own: "Create
+  credential type" opens `/dashboard/credential-types/new`
+  (`CredentialTypeForm`, `app/lib/credential-type-actions.ts`; 404 for any
+  other account) — name and description in every language, key, category,
+  standard, the claims ticked from the catalogue's fields (no files), each
+  always present or not, who issues it (any account's issuer, or a framework
+  of its own with its `vct`) and optional W3C type and mdoc doctype — and each
+  row opens to "Edit" (`/dashboard/credential-types/{id}/edit`, the same
+  form, its key fixed; while something uses the type only its words,
+  category, standard and new optional claims change) and "Delete" (refused
+  while an issuer grants it, a form asks for it or an application was made
+  for it). Issuers have a Credentials tab
   (`/dashboard/issuers/{id}/credentials`): the types they grant, ticked by any
   member (`PUT …/credential-types`); the public catalogue lists them.
 - Applying for a credential is the catalog's (`../catalog`,
@@ -248,7 +320,7 @@ everything (`task --list`); `task check` must pass before finishing.
   form's name and description, a field's help, a credential's purpose, its
   own fields' and options' labels — are by language (`{en, es}`, the portal's
   locales; `app/lib/texts.ts`) and written with `MultilingualInput`: the box
-  in the visitor's language, and after it, outside it, a globe that opens a
+  in the visitor's language, with a globe inside it at its right edge that opens a
   line per other language (marked while another one has text). Shown, they
   read in the visitor's language, else English, else whichever there is
   (`label`).

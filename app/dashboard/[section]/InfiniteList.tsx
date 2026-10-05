@@ -9,6 +9,8 @@ import { Badge } from "@/app/components/ui/badge";
 import { Button } from "@/app/components/ui/button";
 import { Card } from "@/app/components/ui/card";
 import { useI18n } from "@/app/i18n/client";
+import { label } from "@/app/lib/form-fields";
+import { hasText } from "@/app/lib/texts";
 import { loadMore } from "@/app/lib/directory-actions";
 import {
   opens,
@@ -125,9 +127,9 @@ export function InfiniteList({
               ) : (
                 <span className="font-semibold">{item.name}</span>
               )}
-              {item.description && (
+              {hasText(item.description) && (
                 <span className="truncate text-sm text-muted-foreground">
-                  {item.description}
+                  {label(item.description ?? {}, locale)}
                 </span>
               )}
               {item.url && (
@@ -141,9 +143,7 @@ export function InfiniteList({
                     <KeyIcon />
                     {item.identity.name}
                   </Badge>
-                  {item.public && (
-                    <Badge variant="muted">{copy.public}</Badge>
-                  )}
+                  {item.public && <Badge variant="muted">{copy.public}</Badge>}
                   {item.mediator && (
                     <Badge variant="muted" title={copy.mediator}>
                       {copy.mediator} · {item.mediator.name}
@@ -171,7 +171,9 @@ export function InfiniteList({
               <span className="flex flex-wrap justify-end gap-1.5">
                 {section !== "identities" && (
                   <Badge variant={item.published_at ? "brand" : "muted"}>
-                    {item.published_at ? publication.published : publication.draft}
+                    {item.published_at
+                      ? publication.published
+                      : publication.draft}
                   </Badge>
                 )}
                 {item.signature && (

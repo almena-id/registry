@@ -21,7 +21,12 @@ export async function generateMetadata({
   const { t } = await getI18n();
   const titles = t.dashboard.applications.changeTitle;
   return {
-    title: titles[(to as CredentialStatus) in titles ? (to as CredentialStatus) : "suspended"],
+    title:
+      titles[
+        (to as CredentialStatus) in titles
+          ? (to as CredentialStatus)
+          : "suspended"
+      ],
   };
 }
 

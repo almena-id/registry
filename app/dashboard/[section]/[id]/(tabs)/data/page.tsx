@@ -42,7 +42,7 @@ export default async function DataTab({
       section={loaded.section}
       id={item.id}
       name={item.name}
-      description={item.description ?? ""}
+      description={item.description ?? {}}
       mediator={item.mediator?.id ?? ""}
       mediators={(await fetchMediatorChoices()) ?? []}
     />

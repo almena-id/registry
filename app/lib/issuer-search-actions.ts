@@ -1,6 +1,7 @@
 "use server";
 
 import { api } from "./api";
+import { fetchTenant } from "./tenant";
 
 /** A published issuer, as the issuer picker shows it. */
 export type FoundIssuer = { did: string; name: string };
@@ -10,7 +11,8 @@ export type IssuerPage = { items: FoundIssuer[]; next_cursor: string | null };
 /**
  * Published issuers, of any tenant, that grant `type`: those whose name or
  * DID has `text` in it, a page at a time (the API's public catalogue);
- * `null` when it cannot be reached.
+ * `null` when it cannot be reached. A tenant's own type (`custom:{key}`) is
+ * granted only by its issuers: those of the current tenant.
  */
 export async function searchIssuers(
   type: string,
@@ -20,6 +22,11 @@ export async function searchIssuers(
   const query = new URLSearchParams({ grants: type, limit: "20" });
   if (text.trim()) query.set("q", text.trim().slice(0, 100));
   if (cursor) query.set("cursor", cursor);
+  if (type.startsWith("custom:")) {
+    const did = (await fetchTenant())?.identity?.did;
+    if (!did) return { items: [], next_cursor: null };
+    query.set("tenant", did);
+  }
   const { data } = await api<{
     items: { did: string; name: string }[];
     next_cursor: string | null;

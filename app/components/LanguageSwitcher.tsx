@@ -10,7 +10,11 @@ import { setLocale } from "@/app/lib/preferences";
 import { ChoiceMenu } from "./ChoiceMenu";
 
 /** The language menu. The server renders the new language on refresh. */
-export function LanguageSwitcher({ placement }: { placement?: "below" | "above" }) {
+export function LanguageSwitcher({
+  placement,
+}: {
+  placement?: "below" | "above";
+}) {
   const { locale, t } = useI18n();
   const router = useRouter();
   const [pending, startTransition] = useTransition();
@@ -20,7 +24,11 @@ export function LanguageSwitcher({ placement }: { placement?: "below" | "above" 
       label={t.header.language}
       icon={<LanguagesIcon />}
       value={locale}
-      choices={locales.map((code) => ({ value: code, label: localeNames[code], lang: code }))}
+      choices={locales.map((code) => ({
+        value: code,
+        label: localeNames[code],
+        lang: code,
+      }))}
       disabled={pending}
       placement={placement}
       onSelect={(next) =>

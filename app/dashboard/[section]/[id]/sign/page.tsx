@@ -60,7 +60,10 @@ export default async function SignPage({
         </p>
       </header>
       <Card className="max-w-[400px] gap-0 p-6">
-        <WalletRequest purpose="sign" target={{ kind: "identity", id: identityId, back }} />
+        <WalletRequest
+          purpose="sign"
+          target={{ kind: "identity", id: identityId, back }}
+        />
       </Card>
     </div>
   );

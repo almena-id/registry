@@ -25,7 +25,16 @@ export type Tenant = {
   role: Role;
   /** Whether the user signs as the tenant under its flow: signing and publishing are theirs. */
   signs: boolean;
+  /** The trust anchor (the root): its catalogue is Almena's, everyone's. */
+  anchor: boolean;
+  /** What its subscription lets it do (the API's `entitlements`). */
+  features: Feature[];
+  /** The languages it works in, of the platform's, in the platform's order. */
+  languages: string[];
 };
+
+/** Features a subscription may give. */
+export type Feature = "own_fields" | "own_credential_types";
 
 /** A call to the API from the server; `null` status when it cannot be reached. */
 export async function api<T>(

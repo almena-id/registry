@@ -11,7 +11,7 @@ import { Card } from "@/app/components/ui/card";
 import { getI18n, getTimeZone } from "@/app/i18n/server";
 import { fetchIssuance, fetchReceivedOne } from "@/app/lib/applications";
 import { fetchCatalogue } from "@/app/lib/field-catalog";
-import { fetchCredentialCatalogue } from "@/app/lib/credential-catalog";
+import { fetchTenantCredentialCatalogue } from "@/app/lib/credential-catalog";
 import { formatDateTime } from "@/app/lib/format";
 import { label } from "@/app/lib/form-fields";
 import { fetchStatusLists } from "@/app/lib/status-lists";
@@ -43,7 +43,7 @@ export default async function ApplicationPage({
   const [{ t, locale }, item, credentials, timeZone] = await Promise.all([
     getI18n(),
     fetchReceivedOne(id),
-    fetchCredentialCatalogue(),
+    fetchTenantCredentialCatalogue(),
     getTimeZone(),
   ]);
   if (!item) notFound();
@@ -219,10 +219,17 @@ export default async function ApplicationPage({
               <p className="text-sm text-muted-foreground">
                 {item.credential_status_at &&
                   copy.statusSince
-                    .replace("{status}", copy.credentialStatuses[credentialStatus])
+                    .replace(
+                      "{status}",
+                      copy.credentialStatuses[credentialStatus],
+                    )
                     .replace(
                       "{when}",
-                      formatDateTime(item.credential_status_at, locale, timeZone),
+                      formatDateTime(
+                        item.credential_status_at,
+                        locale,
+                        timeZone,
+                      ),
                     )}{" "}
                 {copy.statusLead}
               </p>
@@ -239,7 +246,9 @@ export default async function ApplicationPage({
                       asChild
                       variant={to === "revoked" ? "danger" : "outline"}
                     >
-                      <Link href={`/dashboard/applications/${item.id}/status?to=${to}`}>
+                      <Link
+                        href={`/dashboard/applications/${item.id}/status?to=${to}`}
+                      >
                         {copy.change[to]}
                       </Link>
                     </Button>

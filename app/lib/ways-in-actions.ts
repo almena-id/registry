@@ -31,7 +31,10 @@ async function token(): Promise<string | undefined> {
   return (await cookies()).get(sessionCookie)?.value;
 }
 
-function codeError(status: number | null, detail: string | null): EmailLinkState["errors"] {
+function codeError(
+  status: number | null,
+  detail: string | null,
+): EmailLinkState["errors"] {
   if (detail === "invalid_code") return { code: "invalidCode" };
   if (detail === "too_many_attempts") return { code: "tooManyAttempts" };
   if (detail === "mail_unavailable") return { form: "mailUnavailable" };

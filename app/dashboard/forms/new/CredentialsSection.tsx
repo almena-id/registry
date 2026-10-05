@@ -82,11 +82,12 @@ export function CredentialsSection({
       ...drafts,
       {
         id: `c${next.current++}`,
-        key: type.id,
+        // A tenant's own type is `custom:{key}`; its name in the form, the key.
+        key: type.id.replace(/^custom:/, ""),
         type: type.id,
         required: true,
         purpose: {},
-        claims: type.claims.map((claim) => claim.field),
+        claims: type.claims.map((claim) => claim.name),
         trust: type.issuance === "external" ? "framework" : "registry",
         issuers: [],
       },
@@ -327,22 +328,22 @@ function CredentialEditor({
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
           {type.claims.map((claim) => (
             <FieldLabel
-              key={claim.field}
+              key={claim.name}
               className="flex cursor-pointer items-center gap-2 font-normal"
             >
               <Checkbox
-                checked={draft.claims.includes(claim.field)}
+                checked={draft.claims.includes(claim.name)}
                 onCheckedChange={(checked) => {
                   const ticked = toggle(
                     draft.claims,
-                    claim.field,
+                    claim.name,
                     checked === true,
                   );
                   // Kept in the type's order.
                   onChange({
                     claims: type.claims
-                      .map((c) => c.field)
-                      .filter((field) => ticked.includes(field)),
+                      .map((c) => c.name)
+                      .filter((name) => ticked.includes(name)),
                   });
                 }}
               />

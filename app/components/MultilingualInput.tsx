@@ -30,6 +30,7 @@ export function MultilingualInput({
   autoFocus,
   invalid,
   describedBy,
+  label,
 }: {
   id: string;
   name?: string;
@@ -42,6 +43,8 @@ export function MultilingualInput({
   autoFocus?: boolean;
   invalid?: boolean;
   describedBy?: string;
+  /** Its name for assistive technology, where no label points at it (a row of a list). */
+  label?: string;
 }) {
   const { t, locale } = useI18n();
   const copy = t.texts;
@@ -52,6 +55,8 @@ export function MultilingualInput({
 
   const box = (lang: Locale, boxId: string, first: boolean) => {
     const common = {
+      // The first holds the globe inside, at its right edge.
+      className: first ? "pr-10" : undefined,
       id: boxId,
       value: value[lang] ?? "",
       maxLength,
@@ -60,6 +65,7 @@ export function MultilingualInput({
       autoFocus: first ? autoFocus : undefined,
       "aria-invalid": invalid ? true : undefined,
       "aria-describedby": first ? describedBy : undefined,
+      "aria-label": first ? label : undefined,
       onChange: (
         event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
       ) => onChange({ ...value, [lang]: event.target.value }),
@@ -76,13 +82,17 @@ export function MultilingualInput({
       {name && (
         <input type="hidden" name={name} value={JSON.stringify(value)} />
       )}
-      <div className="flex items-start gap-2">
-        <div className="min-w-0 flex-1">{box(locale, id, true)}</div>
+      <div className="relative">
+        {box(locale, id, true)}
         <Button
           type="button"
           variant="ghost"
-          size="icon"
-          className={cn("flex-none", elsewhere && "text-primary")}
+          size="icon-sm"
+          className={cn(
+            "absolute right-1",
+            multiline ? "top-1" : "top-1/2 -translate-y-1/2",
+            elsewhere && "text-primary",
+          )}
           aria-expanded={open}
           aria-controls={panel}
           aria-label={copy.otherLanguages}

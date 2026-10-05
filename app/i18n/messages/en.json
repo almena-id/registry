@@ -110,7 +110,6 @@
       "mediators": "Mediators",
       "identities": "Identities",
       "forms": "Forms",
-      "catalogue": "Catalogue",
       "soon": "Soon",
       "users": "Users",
       "tenantLabel": "Account",
@@ -118,7 +117,13 @@
       "signing": "Signing",
       "domains": "Domains",
       "breadcrumb": "Breadcrumb",
-      "applications": "Applications"
+      "applications": "Applications",
+      "accounts": "Accounts",
+      "fields": "Fields",
+      "credentialTypes": "Credential types",
+      "valueLists": "Value lists",
+      "fieldCategories": "Field categories",
+      "credentialCategories": "Credential categories"
     },
     "overview": {
       "title": "Overview",
@@ -435,7 +440,8 @@
         "unavailable": "The registry cannot be reached. Try again in a moment.",
         "mediatorNotFound": "That mediator is not available to this account.",
         "signerRequired": "Choose who signs.",
-        "signerNotMember": "Not a member of this account."
+        "signerNotMember": "Not a member of this account.",
+        "languagesRequired": "Choose one language at least."
       },
       "identity": "Identity",
       "identityHint": "The organisation's own DID, named like the account.",
@@ -466,7 +472,10 @@
         "howItWorks": "How it works",
         "signs": "Signs",
         "published": "Published"
-      }
+      },
+      "languages": "Languages",
+      "languagesHint": "The languages this account works in, of those the platform speaks: one at least.",
+      "languagesAnchorHint": "The trust anchor works in every language of the platform: Almena's catalogue is everyone's, named in all of them."
     },
     "detail": {
       "tabs": "Sections",
@@ -568,7 +577,41 @@
     },
     "billing": {
       "title": "Billing",
-      "soon": "Billing is on its way."
+      "soon": "Billing is on its way.",
+      "unavailable": "The registry cannot be reached. Try again in a moment.",
+      "plan": "Plan",
+      "free": "Free use",
+      "freeBadge": "Free",
+      "plans": {
+        "standard": "Standard"
+      },
+      "statuses": {
+        "active": "Active",
+        "past_due": "Payment due",
+        "canceled": "Canceled"
+      },
+      "lapsed": "Ended",
+      "freeLead": "This account uses the platform freely. A subscription, paid by the month, adds what is listed below.",
+      "lapsedLead": "The subscription has ended. What the account made with it keeps working; making and changing it again needs a subscription.",
+      "until": "Paid through {date}.",
+      "pastDueUntil": "A payment is due: it stays in use for a few days past {date}.",
+      "openEnded": "Open-ended.",
+      "featuresTitle": "What a subscription adds",
+      "features": {
+        "own_fields": {
+          "title": "Fields of your own",
+          "lead": "Fields for your forms that Almena's catalogue lacks."
+        },
+        "own_credential_types": {
+          "title": "Credential types of your own",
+          "lead": "Credentials your issuers grant and your forms ask for, published under this account."
+        }
+      },
+      "included": "Included",
+      "notIncluded": "Not included",
+      "howToSubscribe": "Payments are not open yet: to subscribe, contact Almena.",
+      "anchorTitle": "Almena Trust Anchor",
+      "anchorLead": "The trust anchor has every feature and needs no subscription. It sets other accounts' subscriptions under Accounts."
     },
     "domains": {
       "title": "Domains",
@@ -763,7 +806,6 @@
       "trustUnavailable": "The issuers cannot be searched right now. Try again in a moment."
     },
     "catalogue": {
-      "title": "Catalogue",
       "hint": "The fields your forms are made of: Almena's, standard for every account, and your own.",
       "create": "Create field",
       "yours": "Your fields",
@@ -803,13 +845,27 @@
         "patternInvalid": "The pattern is not a valid regular expression.",
         "optionsInvalid": "Write at least two options, each value once and each with a label.",
         "formatsInvalid": "Tick at least one format.",
-        "inUse": "A form asks for this field: take it out of the form first.",
+        "inUse": "A form or a credential type uses this field: take it out of them first.",
         "unavailable": "The registry cannot be reached. Try again in a moment.",
         "typeInvalid": "That credential type is not one an account issues.",
-        "formInvalid": "That form is not one of this account's."
+        "formInvalid": "That form is not one of this account's.",
+        "labelsEvery": "Give it a name in every language.",
+        "descriptionsEvery": "Say what it states in every language.",
+        "categoryRequired": "Choose a category.",
+        "sourceRequired": "Name the standard it comes from.",
+        "claimsInvalid": "Tick at least one field of the catalogue as a claim.",
+        "vctInvalid": "A type issued elsewhere needs the vct its framework names it with (a URI such as urn:eudi:pid:1).",
+        "w3cTypeInvalid": "The W3C type is one word in PascalCase, not taken by another type.",
+        "doctypeInvalid": "The doctype is dotted, in lowercase (org.example.type.1).",
+        "typeInUse": "An issuer grants this type, a form asks for it or an application was made for it: it stays.",
+        "typeKeyExists": "The catalogue already has a type with that key.",
+        "inUseChange": "Something uses this field: it can take more — a longer text, more options or formats — but not another type, a shorter length, a new pattern or fewer values.",
+        "typeInUseChange": "Something uses this type: its words, category and standard can change and it can gain optional claims, but not lose claims, make one always present or change how it is issued or named.",
+        "descriptionsRequired": "Say what it states in at least one language.",
+        "subscriptionRequired": "This account's subscription does not include credential types of its own.",
+        "domainInvalid": "That value list is not one a field may draw on, or options were written too.",
+        "partsInvalid": "Give the group at least one part, each with a key used once, a label in every language and, for lists, its value list."
       },
-      "fieldsTab": "Fields",
-      "credentialsTab": "Credential types",
       "credentials": "Almena's credential types",
       "credentialsHint": "Catalogue {version}: what issuers grant and forms ask to be presented. Their claims are fields of the catalogue; their identifiers and type metadata are published on almena.id. Read only.",
       "external": "Issued elsewhere",
@@ -824,7 +880,148 @@
       "saved": "Saved.",
       "requestForm": "Form to apply with",
       "notOffered": "Not offered (no form)",
-      "label": "Label"
+      "label": "Label",
+      "anchorHint": "Catalogue {version}: this account is the trust anchor, and these fields are everyone's — every account's forms ask for them, and they are published on almena.id. Add what the standards name; delete only what nothing uses.",
+      "newAnchorLead": "A field of Almena's catalogue, for every account: name it as a standard names it, and label it in every language.",
+      "labelsEveryHint": "In every language: every account and wallet shows it.",
+      "keyAnchorHint": "lowercase, digits and _; the claim name too",
+      "category": "Category",
+      "source": "Standard",
+      "sourceHint": "where its name comes from",
+      "choose": "Choose…",
+      "createType": "Create credential type",
+      "credentialsAnchorHint": "Catalogue {version}: this account is the trust anchor, and these types are everyone's — any account's issuers grant them and forms ask for them. Their identifiers and type metadata are published on almena.id. Delete only what nothing uses.",
+      "newType": "New credential type",
+      "newTypeLead": "A credential type of Almena's catalogue, for every account's issuers and forms. Its claims are fields of the catalogue; its key names its vct.",
+      "typeName": "Name",
+      "typeDescription": "What it states",
+      "typeKeyHint": "lowercase, digits and _",
+      "claimsHint": "fields of the catalogue, at least one",
+      "issuance": "Issued by",
+      "issuedByAccounts": "Any account's issuer",
+      "vctHint": "how its framework names it",
+      "w3cType": "W3C type",
+      "doctype": "mdoc doctype",
+      "edit": "Edit",
+      "editField": "Edit field",
+      "editLead": "Change “{label}”. Its key never changes. While a form uses it, it can take more — a longer text, more options or formats — but never turn away what it took.",
+      "editType": "Edit credential type",
+      "editTypeLead": "Change “{label}”. Its key never changes. While an issuer grants it, a form asks for it or an application was made for it, its words change and it may gain optional claims — nothing else.",
+      "keyFixed": "it never changes",
+      "saveChanges": "Save changes",
+      "yourTypes": "Your credential types",
+      "yourTypesHint": "Credential types of this account's own, for what Almena's catalogue lacks. Only its issuers grant them and only its forms ask for them; they are published on almena.id under this account, since the credentials leave the platform.",
+      "yourTypesEmpty": "No credential types of your own yet.",
+      "newOwnTypeLead": "A credential type of this account's own: its issuers grant it and its forms ask for it. Its claims are fields of the catalogue, Almena's or yours. Check first that Almena's catalogue does not have it: its types are understood by every issuer and wallet.",
+      "subscribeForFields": "Fields of your own come with a subscription (see Settings › Billing).",
+      "subscribeForTypes": "Credential types of your own come with a subscription (see Settings › Billing).",
+      "categories": {
+        "create": "Create category",
+        "new": "New category",
+        "edit": "Edit category",
+        "editLead": "Rename “{label}”. What it files and its key never change.",
+        "name": "Name",
+        "kinds": {
+          "field": "Field categories",
+          "credential": "Credential categories"
+        },
+        "keyHint": "lowercase, digits and _",
+        "uses": {
+          "one": "{count} item",
+          "other": "{count} items"
+        },
+        "errors": {
+          "keyRequired": "Enter a key.",
+          "keyInvalid": "The key starts with a letter and has only lowercase letters, digits and _ (32 at most).",
+          "keyExists": "There is a category of that kind with that key already.",
+          "labelsRequired": "Give it a name in every language.",
+          "inUse": "Something is filed under it: move it elsewhere first.",
+          "unavailable": "The registry cannot be reached. Try again in a moment."
+        },
+        "hints": {
+          "field": "What the catalogue's fields are filed under. Every account reads them; only the trust anchor keeps them.",
+          "credential": "What the catalogue's credential types are filed under. Every account reads them; only the trust anchor keeps them."
+        },
+        "newLeads": {
+          "field": "A category of Almena's catalogue for fields, under which every account files its own too.",
+          "credential": "A category of Almena's catalogue for credential types, under which every account files its own too."
+        }
+      },
+      "domains": {
+        "title": "Value lists",
+        "hint": "The lists of codes coded fields draw on: countries, languages, file formats… Every account reads them and may build its own fields on them; only the trust anchor keeps them.",
+        "create": "Create value list",
+        "new": "New value list",
+        "newLead": "A list of codes for coded fields — Almena's and every account's — to draw on.",
+        "edit": "Edit value list",
+        "editLead": "Change “{label}”; its key never changes. {count} fields draw on it: while any does, it only grows — codes renamed and added, none taken away.",
+        "name": "Name",
+        "source": "Source",
+        "sourceHint": "the standard or list it comes from",
+        "kind": "Values",
+        "kinds": {
+          "text": "Texts",
+          "number": "Whole numbers"
+        },
+        "keyHint": "lowercase, digits and _",
+        "codes": "Codes",
+        "codesHint": "{count} in order; each value once, named in every language",
+        "filter": "Find a code",
+        "value": "Value",
+        "mediaType": "Media type",
+        "addCode": "Add code",
+        "removeCode": "Remove code",
+        "newCodesHint": "File formats (the key file_format) carry a media type for each code.",
+        "inUseHint": "Answers, forms and issued credentials hold these values: while a field draws on the list, keep every value it had.",
+        "codeCount": {
+          "one": "{count} code",
+          "other": "{count} codes"
+        },
+        "uses": {
+          "one": "{count} field",
+          "other": "{count} fields"
+        },
+        "errors": {
+          "keyRequired": "Enter a key.",
+          "keyInvalid": "The key starts with a letter and has only lowercase letters, digits and _.",
+          "keyExists": "There is a value list with that key already.",
+          "labelsRequired": "Give it a name in every language.",
+          "sourceRequired": "Name where it comes from.",
+          "codesInvalid": "Write at least one code, each value once, named in every language.",
+          "numbersInvalid": "With whole numbers, every value is one.",
+          "mediaTypeInvalid": "Each file format needs a media type (like application/pdf), and only file formats take one.",
+          "inUse": "Fields draw on it: keep every code it had (and its media type).",
+          "unavailable": "The registry cannot be reached. Try again in a moment."
+        }
+      },
+      "valuesFrom": "Values from",
+      "ownOptions": "Its own options",
+      "parts": "Parts",
+      "partsHint": "in order; each a field of its own, labelled in every language",
+      "addPart": "Add part",
+      "removePart": "Remove part",
+      "moveUp": "Move up",
+      "moveDown": "Move down",
+      "list": {
+        "search": "Find by name, key or tag",
+        "noMatch": "Nothing matches.",
+        "empty": "Nothing here yet.",
+        "open": "Open {name}",
+        "duplicate": "Duplicate",
+        "schema": "Open its published schema",
+        "delete": "Delete",
+        "confirmDelete": "Delete “{name}”? It cannot be undone.",
+        "unavailable": "The registry cannot be reached. Try again in a moment.",
+        "parts": "Parts: {value}",
+        "valueList": "Values from {name} ({count})",
+        "claims": {
+          "one": "{count} claim",
+          "other": "{count} claims"
+        },
+        "inUse": "Something uses it: it cannot be deleted.",
+        "fileFormats": "File formats never go: every file field draws on them."
+      },
+      "typesHint": "The credentials issuers grant and forms ask to be presented: Almena's, standard for every account, and yours."
     },
     "applications": {
       "title": "Applications",
@@ -937,6 +1134,42 @@
         "unavailable": "The registry cannot be reached. Try again in a moment.",
         "unpublished": "Publish this verifier first.",
         "nothingToPresent": "This form asks for no credentials."
+      }
+    },
+    "accounts": {
+      "title": "Accounts",
+      "lead": "Every other account on the platform and its subscription. Until payments open, subscriptions are set here by hand.",
+      "search": "Name or slug",
+      "searchButton": "Search",
+      "filter": "Subscription",
+      "all": "All",
+      "subscribed": "With subscription",
+      "unsubscribed": "Without",
+      "empty": "No accounts match.",
+      "members": {
+        "one": "{count} member",
+        "other": "{count} members"
+      },
+      "since": "since {date}",
+      "firstPage": "First page",
+      "nextPage": "Next page",
+      "subscription": "Subscription",
+      "status": "Status",
+      "none": "None (free use)",
+      "until": "Paid through",
+      "optional": "Optional",
+      "untilHint": "Empty: open-ended. A missed payment (Payment due) keeps it in use for 7 days past that day.",
+      "note": "Note",
+      "noteHint": "only Almena reads it",
+      "save": "Save",
+      "saved": "Saved.",
+      "errors": {
+        "planInvalid": "That plan does not exist.",
+        "untilPast": "An active subscription cannot end in the past.",
+        "untilInvalid": "That is not a date.",
+        "notFound": "That account does not exist.",
+        "notAllowed": "Only the trust anchor's admins set subscriptions.",
+        "unavailable": "The registry cannot be reached. Try again in a moment."
       }
     }
   },

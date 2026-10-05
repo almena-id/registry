@@ -66,7 +66,9 @@ export async function WaysIn({
       )}
       {(error || !waysIn) && (
         <Alert variant="destructive" role="alert" className="mb-3">
-          <AlertDescription>{error ?? t.dashboard.account.errors.unavailable}</AlertDescription>
+          <AlertDescription>
+            {error ?? t.dashboard.account.errors.unavailable}
+          </AlertDescription>
         </Alert>
       )}
       {waysIn && (
@@ -78,9 +80,7 @@ export async function WaysIn({
               </span>
               <span className={main}>
                 <span className="font-semibold">{copy.email}</span>
-                <span className={detail}>
-                  {waysIn.email ?? copy.noEmail}
-                </span>
+                <span className={detail}>{waysIn.email ?? copy.noEmail}</span>
               </span>
               <span className={actions}>
                 <Button asChild variant="ghost" size="sm">
@@ -106,9 +106,7 @@ export async function WaysIn({
                     </span>
                   )}
                 </span>
-                <span className={actions}>
-                  {remove(account.id)}
-                </span>
+                <span className={actions}>{remove(account.id)}</span>
               </li>
             ))}
           </ul>
@@ -120,16 +118,16 @@ export async function WaysIn({
               </Link>
             </Button>
             {providers
-                .filter((p) => p.enabled)
-                .map(({ id }) => (
-                  // A full navigation: the provider's page is another site.
-                  <Button key={id} asChild variant="ghost" size="sm">
-                    <a href={`/auth/${id}/start?link=1`}>
-                      {marks[id]}
-                      {copy.link.replace("{provider}", copy.providers[id])}
-                    </a>
-                  </Button>
-                ))}
+              .filter((p) => p.enabled)
+              .map(({ id }) => (
+                // A full navigation: the provider's page is another site.
+                <Button key={id} asChild variant="ghost" size="sm">
+                  <a href={`/auth/${id}/start?link=1`}>
+                    {marks[id]}
+                    {copy.link.replace("{provider}", copy.providers[id])}
+                  </a>
+                </Button>
+              ))}
           </div>
         </>
       )}

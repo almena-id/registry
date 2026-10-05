@@ -9,7 +9,10 @@ import { oauthLinkCookie, oauthStateCookie } from "@/app/lib/session";
  * With `?link=1`, the signed-in account is linking the provider (from the
  * account screen) rather than signing in.
  */
-export async function GET(request: NextRequest, ctx: RouteContext<"/auth/[provider]/start">) {
+export async function GET(
+  request: NextRequest,
+  ctx: RouteContext<"/auth/[provider]/start">,
+) {
   const { provider } = await ctx.params;
   const store = await cookies();
   const link = request.nextUrl.searchParams.get("link") === "1";
@@ -19,9 +22,15 @@ export async function GET(request: NextRequest, ctx: RouteContext<"/auth/[provid
   if (!isProviderId(provider)) return failed("provider_error");
 
   const token = store.get(sessionCookie)?.value;
-  if (link && !token) return NextResponse.redirect(new URL("/login", request.nextUrl));
-  const { data, detail } = await api<{ authorization_url: string; state: string }>(
-    link ? `/auth/me/accounts/${provider}/start` : `/auth/oauth/${provider}/start`,
+  if (link && !token)
+    return NextResponse.redirect(new URL("/login", request.nextUrl));
+  const { data, detail } = await api<{
+    authorization_url: string;
+    state: string;
+  }>(
+    link
+      ? `/auth/me/accounts/${provider}/start`
+      : `/auth/oauth/${provider}/start`,
     { method: "POST", token: link ? token : undefined },
   );
   if (!data) return failed(detail ?? "unavailable");

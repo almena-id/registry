@@ -16,9 +16,14 @@ export default async function WalletLinkPage() {
 
   return (
     <div>
-      <DetailHead back="/dashboard/account" backLabel={t.dashboard.account.title} />
+      <DetailHead
+        back="/dashboard/account"
+        backLabel={t.dashboard.account.title}
+      />
       <header className="mb-6">
-        <h1 className="text-[28px] font-bold tracking-tight">{copy.linkTitle}</h1>
+        <h1 className="text-[28px] font-bold tracking-tight">
+          {copy.linkTitle}
+        </h1>
         <p className="text-muted-foreground">{copy.lead}</p>
       </header>
       <Card className="max-w-[400px] gap-0 p-6">

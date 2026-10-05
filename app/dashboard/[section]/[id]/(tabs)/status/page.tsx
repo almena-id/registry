@@ -91,7 +91,9 @@ export default async function IssuerStatusTab({
             </div>
             <div className={fact}>
               <dt className="text-muted-foreground">{copy.revoked}</dt>
-              <dd className="tabular-nums">{list.revoked.toLocaleString(locale)}</dd>
+              <dd className="tabular-nums">
+                {list.revoked.toLocaleString(locale)}
+              </dd>
             </div>
             <div className={fact}>
               <dt className="text-muted-foreground">{copy.suspended}</dt>

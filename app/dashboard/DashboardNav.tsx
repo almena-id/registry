@@ -13,11 +13,16 @@ type Entry =
   | "identities"
   | "applications"
   | "forms"
-  | "catalogue"
+  | "fields"
+  | "credentialTypes"
+  | "valueLists"
+  | "fieldCategories"
+  | "credentialCategories"
   | "tenant"
   | "signing"
   | "domains"
-  | "users";
+  | "users"
+  | "accounts";
 
 type Label =
   | "activityLabel"
@@ -29,13 +34,15 @@ type Label =
 // The overview on its own, then five titled cards: the activity that arrives
 // for the account (the tenant) — the applications its issuers receive; the
 // services it publishes and others use, and the identities they act as; the
-// templates it asks and issues with — its forms and the catalogue they are
-// made of; the trust behind its DIDs — the domains they live on and who signs
+// templates it asks and issues with — its forms, then what they are made of:
+// fields and credential types, and, for the trust anchor, the value lists
+// fields draw on and the categories both are filed under; the trust behind its DIDs — the domains they live on and who signs
 // them; then the account itself — its settings, billing among them, and its
-// people. Most used first.
+// people — and, for the trust anchor's admins, every other account and its
+// subscription. Most used first.
 const groups: {
   label: Label | null;
-  entries: { key: Entry; href: string }[];
+  entries: { key: Entry; href: string; anchor?: boolean }[];
 }[] = [
   { label: null, entries: [{ key: "overview", href: "/dashboard" }] },
   {
@@ -55,7 +62,19 @@ const groups: {
     label: "templatesLabel",
     entries: [
       { key: "forms", href: "/dashboard/forms" },
-      { key: "catalogue", href: "/dashboard/catalogue" },
+      { key: "fields", href: "/dashboard/fields" },
+      { key: "credentialTypes", href: "/dashboard/credential-types" },
+      { key: "valueLists", href: "/dashboard/value-lists", anchor: true },
+      {
+        key: "fieldCategories",
+        href: "/dashboard/categories/fields",
+        anchor: true,
+      },
+      {
+        key: "credentialCategories",
+        href: "/dashboard/categories/credentials",
+        anchor: true,
+      },
     ],
   },
   {
@@ -77,7 +96,14 @@ const groups: {
 const item =
   "flex items-center justify-between gap-2 rounded-[10px] px-3 py-[9px] text-[15px] whitespace-nowrap";
 
-export function DashboardNav() {
+export function DashboardNav({
+  anchor = false,
+  anchorAdmin = false,
+}: {
+  /** The trust anchor's: it keeps the value lists and categories too. */
+  anchor?: boolean;
+  anchorAdmin?: boolean;
+}) {
   const { t } = useI18n();
   const pathname = usePathname();
   // An entry stays marked on its own screens too (…/new).
@@ -88,7 +114,15 @@ export function DashboardNav() {
 
   return (
     <>
-      {groups.map(({ label, entries }) => {
+      {groups.map(({ label, entries: all }) => {
+        const listed = all.filter((entry) => anchor || !entry.anchor);
+        const entries =
+          label === "tenantLabel" && anchorAdmin
+            ? [
+                ...listed,
+                { key: "accounts" as const, href: "/dashboard/accounts" },
+              ]
+            : listed;
         const links = entries.map(({ key, href }) => (
           <Link
             key={key}

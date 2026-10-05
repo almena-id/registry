@@ -5,6 +5,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 import type { Dictionary } from "@/app/i18n/config";
+import { hasText, longest, textsFrom, type Texts } from "./texts";
 import { api, currentTenant, sessionCookie } from "./api";
 import { fetchPage } from "./directory";
 import {
@@ -29,7 +30,8 @@ type ErrorKey = keyof Dictionary["dashboard"]["items"]["errors"];
 
 export type CreateState = {
   name?: string;
-  description?: string;
+  /** Issuers and verifiers: by language. */
+  description?: Texts;
   /** Mediators: where they listen, `https://{subdomain}.{domain}`, the
    * domain one of the tenant's verified ones (its id). */
   subdomain?: string;
@@ -54,7 +56,7 @@ export async function createItem(
 ): Promise<CreateState> {
   if (!isSection(section)) return { errors: { form: "unavailable" } };
   const name = String(form.get("name") ?? "").trim();
-  const description = String(form.get("description") ?? "").trim();
+  const description = textsFrom(form.get("description"));
   const subdomain = String(form.get("subdomain") ?? "").trim();
   const domain = String(form.get("domain") ?? "");
   const mediator = String(form.get("mediator") ?? "");
@@ -70,7 +72,7 @@ export async function createItem(
   const errors: CreateState["errors"] = {};
   if (!name) errors.name = "nameRequired";
   else if (name.length > 200) errors.name = "nameLong";
-  if (description.length > 2000) errors.description = "descriptionLong";
+  if (longest(description) > 2000) errors.description = "descriptionLong";
   if (section === "mediators") {
     if (!subdomain) errors.subdomain = "subdomainRequired";
     if (!domain) errors.domain = "domainRequired";
@@ -83,7 +85,11 @@ export async function createItem(
   // Issuers, verifiers and mediators get an identity of their own, which the
   // API creates with the same name.
   const body = hasDescription(section)
-    ? { name, description: description || null, mediator_id: mediator || null }
+    ? {
+        name,
+        description: hasText(description) ? description : null,
+        mediator_id: mediator || null,
+      }
     : section === "mediators"
       ? { name, subdomain, domain_id: domain, public: isPublic }
       : { name };
@@ -168,7 +174,8 @@ export async function saveMediator(
 
 export type DescribedState = {
   name?: string;
-  description?: string;
+  /** By language. */
+  description?: Texts;
   mediator?: string;
   saved?: boolean;
   errors?: {
@@ -187,13 +194,13 @@ export async function saveDescribed(
   form: FormData,
 ): Promise<DescribedState> {
   const name = String(form.get("name") ?? "").trim();
-  const description = String(form.get("description") ?? "").trim();
+  const description = textsFrom(form.get("description"));
   const mediator = String(form.get("mediator") ?? "");
   const keep = { name, description, mediator };
   const errors: DescribedState["errors"] = {};
   if (!name) errors.name = "nameRequired";
   else if (name.length > 200) errors.name = "nameLong";
-  if (description.length > 2000) errors.description = "descriptionLong";
+  if (longest(description) > 2000) errors.description = "descriptionLong";
   if (Object.keys(errors).length) return { ...keep, errors };
 
   const token = (await cookies()).get(sessionCookie)?.value;
@@ -205,7 +212,7 @@ export async function saveDescribed(
       method: "PATCH",
       body: {
         name,
-        description: description || null,
+        description: hasText(description) ? description : null,
         mediator_id: mediator || null,
       },
       token,
@@ -221,7 +228,7 @@ export async function saveDescribed(
   revalidatePath(`/dashboard/${section}/${id}`);
   return {
     name: data.name,
-    description: data.description ?? "",
+    description: data.description ?? {},
     mediator: data.mediator?.id ?? "",
     saved: true,
   };
@@ -252,8 +259,7 @@ export async function setPublished(
     `/tenants/${tenant.id}/${section}/${encodeURIComponent(id)}/${verb}`,
     { method: "POST", token },
   );
-  if (detail === "identity_pending")
-    return { ...state, pendingIdentity: true };
+  if (detail === "identity_pending") return { ...state, pendingIdentity: true };
   if (!data) return { ...state, failed: true };
   revalidatePath(`/dashboard/${section}/${id}`);
   return { published: data.published_at !== null };

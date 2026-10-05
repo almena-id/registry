@@ -65,7 +65,10 @@ export function Select({
         </SelectTrigger>
         <SelectContent position="popper">
           {options.map((option) => (
-            <SelectItem key={option.value || EMPTY} value={option.value || EMPTY}>
+            <SelectItem
+              key={option.value || EMPTY}
+              value={option.value || EMPTY}
+            >
               {option.label}
             </SelectItem>
           ))}

@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-import type { Dictionary } from "@/app/i18n/config";
+import { isLocale, locales, type Dictionary } from "@/app/i18n/config";
 import {
   api,
   currentTenant,
@@ -21,8 +21,15 @@ export type TenantState = {
   name?: string;
   /** The chosen mediator's id; empty for none. */
   mediator?: string;
+  /** The languages it works in, of the platform's. */
+  languages?: string[];
   saved?: boolean;
-  errors?: { name?: ErrorKey; mediator?: ErrorKey; form?: ErrorKey };
+  errors?: {
+    name?: ErrorKey;
+    mediator?: ErrorKey;
+    languages?: ErrorKey;
+    form?: ErrorKey;
+  };
 };
 
 export async function saveTenant(
@@ -31,12 +38,19 @@ export async function saveTenant(
 ): Promise<TenantState> {
   const name = String(form.get("name") ?? "").trim();
   const mediator = String(form.get("mediator") ?? "").trim();
-  const keep = { name, mediator };
-  if (!name) return { ...keep, errors: { name: "nameRequired" } };
-  if (name.length > 200) return { ...keep, errors: { name: "nameLong" } };
-
   const token = (await cookies()).get(sessionCookie)?.value;
   const tenant = await currentTenant();
+  // The trust anchor's are all of them, and not sent.
+  const ticked = form.getAll("languages").map(String).filter(isLocale);
+  const languages = tenant?.anchor
+    ? [...locales]
+    : locales.filter((lang) => ticked.includes(lang));
+  const keep = { name, mediator, languages };
+  if (!name) return { ...keep, errors: { name: "nameRequired" } };
+  if (name.length > 200) return { ...keep, errors: { name: "nameLong" } };
+  if (!languages.length)
+    return { ...keep, errors: { languages: "languagesRequired" } };
+
   if (!token || !tenant) return { ...keep, errors: { form: "unavailable" } };
   const { status, data, detail } = await api<TenantDetail>(
     `/tenants/${tenant.id}`,
@@ -45,6 +59,7 @@ export async function saveTenant(
       body: {
         name,
         mediator_id: mediator || null,
+        ...(tenant.anchor ? {} : { languages }),
       },
       token,
     },
@@ -54,6 +69,8 @@ export async function saveTenant(
       return { ...keep, errors: { name: "nameRequired" } };
     if (detail === "mediator_not_found")
       return { ...keep, errors: { mediator: "mediatorNotFound" } };
+    if (detail === "languages_invalid" || detail === "languages_anchor")
+      return { ...keep, errors: { languages: "languagesRequired" } };
     if (status === 403) return { ...keep, errors: { form: "notAdmin" } };
     return { ...keep, errors: { form: "unavailable" } };
   }
@@ -62,6 +79,7 @@ export async function saveTenant(
   return {
     name: data.name ?? "",
     mediator: data.mediator?.id ?? "",
+    languages: data.languages,
     saved: true,
   };
 }

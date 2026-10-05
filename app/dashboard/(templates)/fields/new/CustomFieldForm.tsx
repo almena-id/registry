@@ -21,11 +21,14 @@ import {
 import { useI18n } from "@/app/i18n/client";
 import {
   createCustomField,
+  updateCustomField,
   type CustomFieldState,
   type OptionDraft,
+  type PartDraft,
 } from "@/app/lib/custom-field-actions";
 import type { Texts } from "@/app/lib/texts";
 import { useAnswerRound } from "@/app/lib/use-answer-round";
+import { blankPart, handle, PartsEditor } from "./PartsEditor";
 
 /** The types a field of the account's own may have (no groups). */
 const types = [
@@ -45,17 +48,38 @@ const blank = (): OptionDraft => ({ value: "", labels: {} });
  * A field of the account's own: its key (never one of Almena's), its label
  * by language (one at least), its type and what the type needs — a
  * length and a pattern for text, the options of a list, the formats of a file.
+ * With `categories` (the trust anchor's), a field of Almena's catalogue: also
+ * its category and the standard it is named after, labelled in every language.
+ * With `edit`, an existing one, its key fixed. The anchor also makes groups:
+ * their parts, each a field of its own (`PartsEditor`).
  */
 export function CustomFieldForm({
   formats,
+  lists = [],
+  categories,
+  edit,
+  initial,
 }: {
   formats: { value: string; label: string }[];
+  /** The value lists a coded field may draw on, in place of its own options. */
+  lists?: { value: string; label: string }[];
+  categories?: { value: string; label: string }[];
+  edit?: { id: string; initial: CustomFieldState };
+  /** A new one's start: a copy of another. */
+  initial?: CustomFieldState;
 }) {
   const { t } = useI18n();
   const copy = t.dashboard.catalogue;
   const [state, action, pending] = useActionState<CustomFieldState, FormData>(
-    createCustomField,
-    {},
+    edit ? updateCustomField.bind(null, edit.id) : createCustomField,
+    edit?.initial ?? initial ?? {},
+  );
+  // Groups are the trust anchor's: only its form offers them.
+  const kinds = categories ? [...types, "group" as const] : types;
+  const [parts, setParts] = useState<PartDraft[]>(
+    state.parts?.length
+      ? state.parts.map((part) => ({ ...part, uid: part.uid ?? handle() }))
+      : [blankPart()],
   );
   const round = useAnswerRound(state);
   const [type, setType] = useState(state.type || "text");
@@ -65,6 +89,7 @@ export function CustomFieldForm({
   );
   const error = state.error;
   const listed = type === "code" || type === "codes";
+  const [domain, setDomain] = useState(state.domain ?? "");
 
   const setOption = (index: number, patch: Partial<OptionDraft>) =>
     setOptions((all) =>
@@ -82,7 +107,9 @@ export function CustomFieldForm({
         )}
 
         <Field className="gap-1.5">
-          <FieldLabel htmlFor="labels">{copy.label}</FieldLabel>
+          <FieldLabel htmlFor="labels" className="items-baseline">
+            {copy.label}
+          </FieldLabel>
           <MultilingualInput
             id="labels"
             name="labels"
@@ -90,15 +117,52 @@ export function CustomFieldForm({
             onChange={setLabels}
             maxLength={200}
             autoFocus
-            invalid={error === "labelsRequired"}
+            invalid={error === "labelsRequired" || error === "labelsEvery"}
             describedBy="labels-hint"
           />
           <FieldDescription className="text-[13px] text-faint" id="labels-hint">
-            {copy.labelsHint}
+            {categories ? copy.labelsEveryHint : copy.labelsHint}
           </FieldDescription>
         </Field>
 
-        <div className="grid gap-3 sm:grid-cols-2">
+        {categories && (
+          <div className="grid items-end gap-3 sm:grid-cols-2">
+            <Field
+              data-invalid={error === "categoryRequired" ? true : undefined}
+              className="gap-1.5"
+            >
+              <FieldLabel htmlFor="category" className="items-baseline">
+                {copy.category}
+              </FieldLabel>
+              <Select
+                key={round}
+                id="category"
+                name="category"
+                defaultValue={state.category}
+                options={[{ value: "", label: copy.choose }, ...categories]}
+                aria-invalid={error === "categoryRequired" ? true : undefined}
+              />
+            </Field>
+            <Field
+              data-invalid={error === "sourceRequired" ? true : undefined}
+              className="gap-1.5"
+            >
+              <FieldLabel htmlFor="source" className="items-baseline">
+                {copy.source} <span className={small}>{copy.sourceHint}</span>
+              </FieldLabel>
+              <Input
+                id="source"
+                name="source"
+                maxLength={200}
+                defaultValue={state.source}
+                placeholder="schema.org identifier"
+                aria-invalid={error === "sourceRequired" ? true : undefined}
+              />
+            </Field>
+          </div>
+        )}
+
+        <div className="grid items-end gap-3 sm:grid-cols-2">
           <Field
             data-invalid={
               error === "keyInvalid" ||
@@ -110,8 +174,15 @@ export function CustomFieldForm({
             }
             className="gap-1.5"
           >
-            <FieldLabel htmlFor="key">
-              {copy.key} <span className={small}>{copy.keyHint}</span>
+            <FieldLabel htmlFor="key" className="items-baseline">
+              {copy.key}{" "}
+              <span className={small}>
+                {edit
+                  ? copy.keyFixed
+                  : categories
+                    ? copy.keyAnchorHint
+                    : copy.keyHint}
+              </span>
             </FieldLabel>
             <Input
               id="key"
@@ -121,6 +192,7 @@ export function CustomFieldForm({
               spellCheck={false}
               autoCapitalize="off"
               defaultValue={state.key}
+              disabled={Boolean(edit)}
               aria-invalid={
                 error === "keyInvalid" ||
                 error === "keyReserved" ||
@@ -132,28 +204,41 @@ export function CustomFieldForm({
             />
           </Field>
           <Field className="gap-1.5">
-            <FieldLabel htmlFor="type">{copy.type}</FieldLabel>
+            <FieldLabel htmlFor="type" className="items-baseline">
+              {copy.type}
+            </FieldLabel>
             <Select
               key={round}
               id="type"
               name="type"
               defaultValue={type}
               onChange={setType}
-              options={types.map((value) => ({
+              options={kinds.map((value) => ({
                 value,
                 label: t.dashboard.forms.types[value],
               }))}
             />
           </Field>
         </div>
+        {type === "group" && (
+          <>
+            <input type="hidden" name="parts" value={JSON.stringify(parts)} />
+            <PartsEditor
+              parts={parts}
+              onChange={setParts}
+              lists={lists}
+              invalid={error === "partsInvalid" ? true : undefined}
+            />
+          </>
+        )}
 
         {type === "text" && (
-          <div className="grid gap-3 rounded-lg bg-sunk p-3.5 sm:grid-cols-[160px_1fr]">
+          <div className="grid gap-3 rounded-lg bg-sunk p-3.5 items-end sm:grid-cols-[200px_1fr]">
             <Field
               data-invalid={error === "lengthInvalid" ? true : undefined}
               className="gap-1.5"
             >
-              <FieldLabel htmlFor="max_length">
+              <FieldLabel htmlFor="max_length" className="items-baseline">
                 {copy.maxLength} <span className={small}>{copy.optional}</span>
               </FieldLabel>
               <Input
@@ -170,7 +255,7 @@ export function CustomFieldForm({
               data-invalid={error === "patternInvalid" ? true : undefined}
               className="gap-1.5"
             >
-              <FieldLabel htmlFor="pattern">
+              <FieldLabel htmlFor="pattern" className="items-baseline">
                 {copy.pattern} <span className={small}>{copy.optional}</span>
               </FieldLabel>
               <Input
@@ -187,9 +272,27 @@ export function CustomFieldForm({
           </div>
         )}
 
-        {listed && (
+        {listed && lists.length > 0 && (
+          <Field className="gap-1.5">
+            <FieldLabel htmlFor="domain">{copy.valuesFrom}</FieldLabel>
+            <Select
+              key={round}
+              id="domain"
+              name="domain"
+              defaultValue={domain}
+              onChange={setDomain}
+              aria-invalid={error === "domainInvalid" ? true : undefined}
+              options={[{ value: "", label: copy.ownOptions }, ...lists]}
+            />
+          </Field>
+        )}
+
+        {listed && !domain && (
           <FieldSet className="grid gap-2 rounded-lg bg-sunk p-3.5">
-            <FieldLegend variant="label" className="mb-1.5 text-sm font-medium">
+            <FieldLegend
+              variant="label"
+              className="mb-1.5 flex items-baseline gap-2 text-sm font-medium"
+            >
               {copy.options} <span className={small}>{copy.optionsHint}</span>
             </FieldLegend>
             <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,2fr)_auto] gap-2 text-[13px] text-muted-foreground">
@@ -217,6 +320,7 @@ export function CustomFieldForm({
                   value={option.labels}
                   onChange={(labels) => setOption(index, { labels })}
                   maxLength={200}
+                  label={`${copy.label} ${index + 1}`}
                 />
                 <Button
                   type="button"
@@ -248,7 +352,10 @@ export function CustomFieldForm({
 
         {type === "file" && (
           <FieldSet className="grid gap-2 rounded-lg bg-sunk p-3.5">
-            <FieldLegend variant="label" className="mb-1.5 text-sm font-medium">
+            <FieldLegend
+              variant="label"
+              className="mb-1.5 flex items-baseline gap-2 text-sm font-medium"
+            >
               {copy.formats} <span className={small}>{copy.formatsHint}</span>
             </FieldLegend>
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
@@ -273,10 +380,10 @@ export function CustomFieldForm({
 
         <div className="flex justify-end gap-2">
           <Button asChild variant="ghost">
-            <Link href="/dashboard/catalogue">{copy.cancel}</Link>
+            <Link href="/dashboard/fields">{copy.cancel}</Link>
           </Button>
           <Button type="submit" disabled={pending}>
-            {copy.save}
+            {edit ? copy.saveChanges : copy.save}
           </Button>
         </div>
       </form>

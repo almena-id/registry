@@ -26,6 +26,8 @@ export default async function TenantPage() {
       identity={tenant.identity?.name ?? null}
       mediator={tenant.mediator?.id ?? ""}
       mediators={mediators ?? []}
+      languages={tenant.languages}
+      anchor={tenant.anchor}
       editable={tenant.role === "admin"}
     />
   ) : (

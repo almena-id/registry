@@ -13,8 +13,12 @@ export type TenantDetail = {
   role: Role;
   /** Whether the user signs as the tenant under its flow. */
   signs: boolean;
+  /** The trust anchor: it works in every language of the platform. */
+  anchor: boolean;
+  /** The languages it works in, of the platform's, in the platform's order. */
+  languages: string[];
   /** The organisation's own identity, and the mediator it receives messages through. */
-  identity: { id: string; name: string } | null;
+  identity: { id: string; name: string; did: string | null } | null;
   /** `own`: the tenant's; otherwise another tenant's public one. */
   mediator: { id: string; name: string; own: boolean } | null;
   /** Who signs as the account: its identities' DIDs and its endorsements. */

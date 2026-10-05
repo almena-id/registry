@@ -12,7 +12,9 @@ const CODES: Record<string, ErrorKey> = {
   not_empty: "notEmpty",
 };
 
-export function accountError(code: string | string[] | undefined): ErrorKey | null {
+export function accountError(
+  code: string | string[] | undefined,
+): ErrorKey | null {
   if (typeof code !== "string" || !code) return null;
   return CODES[code] ?? "unavailable";
 }

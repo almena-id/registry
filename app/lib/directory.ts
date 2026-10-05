@@ -109,13 +109,19 @@ export async function fetchSigning(
 }
 
 /** An identity whose DID waits for a signature. */
-export type Waiting = { id: string; name: string; signature: "pending" | "outdated" };
+export type Waiting = {
+  id: string;
+  name: string;
+  signature: "pending" | "outdated";
+};
 
 /** The current tenant's identities waiting for a signature; `null` when unreachable. */
 export async function fetchWaiting(): Promise<Waiting[] | null> {
   const token = (await cookies()).get(sessionCookie)?.value;
   const tenant = await currentTenant();
   if (!token || !tenant) return null;
-  const { data } = await api<Waiting[]>(`/tenants/${tenant.id}/signatures`, { token });
+  const { data } = await api<Waiting[]>(`/tenants/${tenant.id}/signatures`, {
+    token,
+  });
   return data;
 }

@@ -37,8 +37,7 @@ export default async function DeletePage({
   ]);
   const item = loaded?.item;
   // Only admins delete; anyone else goes back to the item.
-  if (item && tenant?.role !== "admin")
-    redirect(`/dashboard/${section}/${id}`);
+  if (item && tenant?.role !== "admin") redirect(`/dashboard/${section}/${id}`);
 
   return (
     <div className="grid gap-4">

@@ -258,13 +258,19 @@ export function toCredential(draft: CredentialDraft): Record<string, unknown> {
   return request;
 }
 
-/** The fields a credential fills: Almena's, under their own name, it asks for. */
+/**
+ * The fields a credential fills: those, under their own name, it asks for as
+ * claims (a claim is named as its field's key; a tenant's own field's ref is
+ * `custom:{key}`).
+ */
 export function fillsOf(
   claims: string[],
   fields: { ref: string; as?: string }[],
 ) {
   const named = new Set(
-    fields.filter((field) => !field.as).map((field) => field.ref),
+    fields
+      .filter((field) => !field.as)
+      .map((field) => field.ref.replace(/^custom:/, "")),
   );
   return claims.filter((claim) => named.has(claim));
 }

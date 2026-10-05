@@ -15,7 +15,9 @@ export async function generateMetadata({
   const loaded = await loadItem(section, id);
   const { t } = await getI18n();
   const name = loaded?.item?.name ?? "";
-  return { title: t.dashboard.publication.publishTitle.replace("{name}", name) };
+  return {
+    title: t.dashboard.publication.publishTitle.replace("{name}", name),
+  };
 }
 
 /**

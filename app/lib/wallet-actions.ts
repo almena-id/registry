@@ -84,7 +84,10 @@ export async function startWallet(
       target.kind === "identity"
         ? [`${base}/identities/${encodeURIComponent(target.id)}/sign`, {}]
         : target.kind === "credential"
-          ? [`${base}/applications/${encodeURIComponent(target.id)}/issuance/sign`, {}]
+          ? [
+              `${base}/applications/${encodeURIComponent(target.id)}/issuance/sign`,
+              {},
+            ]
           : target.kind === "status_list"
             ? [
                 `${base}/issuers/${encodeURIComponent(target.issuer)}/status-lists/sign`,
@@ -95,7 +98,10 @@ export async function startWallet(
                   `${base}/applications/${encodeURIComponent(target.id)}/credential-status`,
                   { status: target.status },
                 ]
-              : [`${base}/${target.section}/${encodeURIComponent(target.id)}/publish`, {}];
+              : [
+                  `${base}/${target.section}/${encodeURIComponent(target.id)}/publish`,
+                  {},
+                ];
     created = await api<Created>(path, {
       method: "POST",
       body: { locale, ...extra },

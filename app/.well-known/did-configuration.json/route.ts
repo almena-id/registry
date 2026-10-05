@@ -10,7 +10,9 @@ export async function GET() {
   if (!directory) return new Response(null, { status: 404 });
   try {
     const body = await readFile(path.join(directory, "did-configuration.json"));
-    return new Response(body, { headers: { "Content-Type": "application/json" } });
+    return new Response(body, {
+      headers: { "Content-Type": "application/json" },
+    });
   } catch {
     return new Response(null, { status: 404 });
   }

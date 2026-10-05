@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { cn } from "cn";
 
 import { Select } from "@/app/components/Select";
@@ -9,15 +9,12 @@ import { Alert, AlertDescription } from "@/app/components/ui/alert";
 import { Button } from "@/app/components/ui/button";
 import { Card } from "@/app/components/ui/card";
 import { Input } from "@/app/components/ui/input";
-import { Textarea } from "@/app/components/ui/textarea";
-import {
-  Field,
-  FieldError,
-  FieldLabel,
-} from "@/app/components/ui/field";
+import { MultilingualInput } from "@/app/components/MultilingualInput";
+import { Field, FieldError, FieldLabel } from "@/app/components/ui/field";
 import { AddressField } from "@/app/dashboard/[section]/[id]/AddressField";
 import { PublicField } from "@/app/dashboard/[section]/[id]/PublicField";
 import { useI18n } from "@/app/i18n/client";
+import type { Texts } from "@/app/lib/texts";
 import { useAnswerRound } from "@/app/lib/use-answer-round";
 import { createItem, type CreateState } from "@/app/lib/directory-actions";
 import {
@@ -50,6 +47,9 @@ export function CreateForm({
     {},
   );
   const round = useAnswerRound(state);
+  const [description, setDescription] = useState<Texts>(
+    state.description ?? {},
+  );
   const errors = state.errors ?? {};
   const error = (key?: keyof typeof copy.errors) =>
     key ? copy.errors[key] : null;
@@ -112,16 +112,16 @@ export function CreateForm({
               {copy.description}{" "}
               <span className="font-normal text-faint">{copy.optional}</span>
             </FieldLabel>
-            <Textarea
+            <MultilingualInput
               id="description"
               name="description"
+              value={description}
+              onChange={setDescription}
+              multiline
               rows={4}
               maxLength={2000}
-              defaultValue={state.description}
-              aria-invalid={errors.description ? true : undefined}
-              aria-describedby={
-                errors.description ? "description-error" : undefined
-              }
+              invalid={Boolean(errors.description)}
+              describedBy={errors.description ? "description-error" : undefined}
             />
             {errors.description && (
               <FieldError className="text-[13px]" id="description-error">

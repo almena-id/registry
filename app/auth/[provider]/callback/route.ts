@@ -41,28 +41,40 @@ export async function GET(request: NextRequest, ctx: Context) {
 
   const code = params.get("code");
   const state = params.get("state");
-  if (!code || !state || !expected || state !== expected) return failed("invalid_state");
+  if (!code || !state || !expected || state !== expected)
+    return failed("invalid_state");
 
   if (link) {
     const token = store.get(sessionCookie)?.value;
-    if (!token) return NextResponse.redirect(new URL("/login", request.nextUrl));
-    const { data, detail } = await api<LinkResult>(`/auth/me/accounts/${provider}/callback`, {
-      method: "POST",
-      body: { code, state },
-      token,
-    });
+    if (!token)
+      return NextResponse.redirect(new URL("/login", request.nextUrl));
+    const { data, detail } = await api<LinkResult>(
+      `/auth/me/accounts/${provider}/callback`,
+      {
+        method: "POST",
+        body: { code, state },
+        token,
+      },
+    );
     if (!data) return failed(detail ?? "unavailable");
     if (data.status === "linked")
-      return NextResponse.redirect(new URL("/dashboard/account?linked=1", request.nextUrl));
+      return NextResponse.redirect(
+        new URL("/dashboard/account?linked=1", request.nextUrl),
+      );
     await keepMove(data.move_ticket);
-    return NextResponse.redirect(new URL("/dashboard/account/taken", request.nextUrl));
+    return NextResponse.redirect(
+      new URL("/dashboard/account/taken", request.nextUrl),
+    );
   }
 
-  const { data, detail } = await api<SignedIn>(`/auth/oauth/${provider}/callback`, {
-    method: "POST",
-    // The language names the tenant a new account starts with.
-    body: { code, state, locale: await getLocale() },
-  });
+  const { data, detail } = await api<SignedIn>(
+    `/auth/oauth/${provider}/callback`,
+    {
+      method: "POST",
+      // The language names the tenant a new account starts with.
+      body: { code, state, locale: await getLocale() },
+    },
+  );
   if (!data) return failed(detail ?? "unavailable");
   await keepSession(data);
   return NextResponse.redirect(new URL("/dashboard", request.nextUrl));

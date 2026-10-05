@@ -4,6 +4,8 @@ import { Badge } from "@/app/components/ui/badge";
 import { Button } from "@/app/components/ui/button";
 import { Card } from "@/app/components/ui/card";
 import { getI18n, getTimeZone } from "@/app/i18n/server";
+import { label } from "@/app/lib/form-fields";
+import { hasText } from "@/app/lib/texts";
 import { currentTenant } from "@/app/lib/api";
 import type { Signed } from "@/app/lib/directory-types";
 import { formatDateTime } from "@/app/lib/format";
@@ -80,10 +82,17 @@ export default async function SummaryTab({
   );
   const publishedAt = (url: string | null) => (
     <div className={FACT}>
-      <dt className="text-muted-foreground">{t.dashboard.identity.published}</dt>
+      <dt className="text-muted-foreground">
+        {t.dashboard.identity.published}
+      </dt>
       {url ? (
         <dd className="font-mono text-[13px] break-all">
-          <a className="text-primary hover:underline" href={url} target="_blank" rel="noreferrer">
+          <a
+            className="text-primary hover:underline"
+            href={url}
+            target="_blank"
+            rel="noreferrer"
+          >
             {url}
           </a>
         </dd>
@@ -153,8 +162,8 @@ export default async function SummaryTab({
           <>
             <div className={FACT}>
               <dt className="text-muted-foreground">{items.description}</dt>
-              {item.description ? (
-                <dd>{item.description}</dd>
+              {hasText(item.description) ? (
+                <dd>{label(item.description ?? {}, locale)}</dd>
               ) : (
                 <dd className="text-faint">—</dd>
               )}

@@ -33,7 +33,11 @@ export default async function AccountPage({
     getTimeZone(),
   ]);
   const error = accountError(query.error);
-  const notice = query.moved ? copy.waysIn.moved : query.linked ? copy.waysIn.linked : null;
+  const notice = query.moved
+    ? copy.waysIn.moved
+    : query.linked
+      ? copy.waysIn.linked
+      : null;
 
   return (
     <div>
