@@ -36,7 +36,8 @@ const fact =
 /**
  * One linked domain, as a list row: its name, whether it is proved and when
  * it was added. Opened, it shows its configuration — the DNS record that
- * proves it — and, for admins, checking for the record and removing it.
+ * proves it — and, for admins, checking for the record (again, once verified:
+ * gone, it stops being verified) and removing it.
  */
 export function DomainRow({
   domain,
@@ -54,7 +55,7 @@ export function DomainRow({
   const { t } = useI18n();
   const copy = t.dashboard.domains;
   const [checked, check, checking] = useActionState<DomainState>(
-    () => checkDomain(domain.id),
+    () => checkDomain(domain.id, domain.verified),
     {},
   );
   const [removed, remove, removing] = useActionState<DomainState>(
@@ -125,13 +126,16 @@ export function DomainRow({
                       {copy.remove}
                     </Button>
                   </form>
-                  {!domain.verified && (
-                    <form action={check} className="contents">
-                      <Button size="sm" type="submit" disabled={checking}>
-                        {copy.check}
-                      </Button>
-                    </form>
-                  )}
+                  <form action={check} className="contents">
+                    <Button
+                      size="sm"
+                      type="submit"
+                      variant={domain.verified ? "outline" : undefined}
+                      disabled={checking}
+                    >
+                      {domain.verified ? copy.checkAgain : copy.check}
+                    </Button>
+                  </form>
                 </span>
               )}
             </div>

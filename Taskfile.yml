@@ -24,7 +24,7 @@ tasks:
   install:
     desc: Install the dependencies from package-lock.json
     cmds:
-      - npm ci
+      - npm ci --no-fund
     sources:
       - package.json
       - package-lock.json
@@ -32,36 +32,36 @@ tasks:
       - node_modules/.package-lock.json
 
   dev:
-    desc: Run the portal locally with hot reload (the API from ../api, e.g. its task dev)
+    desc: Run the portal locally with hot reload (the API in ../api must already be running, e.g. its task dev)
     deps: [install]
     cmds:
-      - npx next dev --port {{.PORT}}
+      - npm run --silent dev -- --port {{.PORT}}
 
   build:
     desc: Build the production bundle (.next/standalone)
     deps: [install]
     cmds:
-      - npm run build
+      - npm run --silent build
 
   start:
     desc: Serve the production build locally (after task build)
     cmds:
-      - npx next start --port {{.PORT}}
+      - npm run --silent start -- --port {{.PORT}}
 
   lint:
     desc: Lint and type-check
     deps: [install]
     cmds:
-      - npm run lint
-      # Route types (LayoutProps, PageProps…) live in .next/types: generate them first.
-      - npx next typegen
-      - npx tsc --noEmit
+      - npm run --silent lint
+      # Route types (LayoutProps, PageProps…) live in .next/types: typecheck
+      # generates them first.
+      - npm run --silent typecheck
 
   fmt:
     desc: Apply ESLint's automatic fixes
     deps: [install]
     cmds:
-      - npx eslint --fix
+      - npm run --silent lint -- --fix
 
   check:
     desc: Everything that must pass before finishing a change (lint + production build)

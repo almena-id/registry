@@ -582,6 +582,7 @@
       "value": "Valor",
       "recordHint": "Añade este registro a tu DNS y comprueba.",
       "check": "Comprobar",
+      "checkAgain": "Comprobar de nuevo",
       "add": "Vincular un dominio",
       "addButton": "Añadir",
       "addLead": "Después viene su registro DNS: publícalo y comprueba.",
@@ -593,6 +594,7 @@
         "domainInvalid": "Escribe un dominio, como acme.com.",
         "domainExists": "Ya está vinculado.",
         "recordNotFound": "El registro aún no está. El DNS puede tardar un poco.",
+        "recordGone": "El registro ya no está: el dominio deja de estar verificado y sale del documento DID.",
         "dnsUnavailable": "El DNS no respondió. Inténtalo de nuevo en un momento.",
         "notAdmin": "Solo los admins pueden cambiar los dominios.",
         "unavailable": "No se puede contactar con el registro. Inténtalo de nuevo en un momento."

@@ -33,10 +33,9 @@ async function call<T = unknown>(
     `/tenants/${tenant.id}/domains${path}`,
     { ...init, token },
   );
-  if (status !== null && status < 300) {
-    revalidatePath("/dashboard", "layout");
-    return { error: null, data };
-  }
+  // Any answer may have changed the domain: a failed check unverifies it.
+  if (status !== null) revalidatePath("/dashboard", "layout");
+  if (status !== null && status < 300) return { error: null, data };
   return {
     error:
       (detail && CODES[detail]) ||
@@ -64,10 +63,16 @@ export async function addDomain(
   );
 }
 
-export async function checkDomain(id: string): Promise<DomainState> {
+/** `verified`: whether it was verified before this check, so that a record
+ * gone since says so rather than "not there yet". */
+export async function checkDomain(
+  id: string,
+  verified: boolean,
+): Promise<DomainState> {
   const { error } = await call(`/${encodeURIComponent(id)}/check`, {
     method: "POST",
   });
+  if (error === "recordNotFound" && verified) return { error: "recordGone" };
   return error ? { error } : {};
 }
 

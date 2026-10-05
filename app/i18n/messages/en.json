@@ -582,6 +582,7 @@
       "value": "Value",
       "recordHint": "Add this record to your DNS, then check.",
       "check": "Check",
+      "checkAgain": "Check again",
       "add": "Link a domain",
       "addButton": "Add",
       "addLead": "Its DNS record comes next: publish it, then check.",
@@ -593,6 +594,7 @@
         "domainInvalid": "Enter a domain, like acme.com.",
         "domainExists": "It is linked already.",
         "recordNotFound": "The record is not there yet. DNS can take a while.",
+        "recordGone": "The record is gone, so the domain is no longer verified and has left the DID document.",
         "dnsUnavailable": "The DNS did not answer. Try again in a moment.",
         "notAdmin": "Only admins can change domains.",
         "unavailable": "The registry cannot be reached. Try again in a moment."
