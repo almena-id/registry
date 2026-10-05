@@ -28,11 +28,20 @@ everything (`task --list`); `task check` must pass before finishing.
   ways in" is `/login`) and draws the model as it works: you sign for your
   tenant from your wallet, its issuers, verifiers and mediators hang from it;
   three numbered points below.
-- The overview opens with "Awaiting you": identities whose DID is pending or
-  has changes to sign (`GET /tenants/{id}/signatures`) and — for whoever
-  signs as the tenant with no wallet — the way to link one; those who sign
-  get the buttons. Who signs is the tenant's signing flow, not the role: the
-  API says it per tenant (`Tenant.signs`). Below it, "Account health"
+- Pending (`/dashboard/pending`, first entry of the Activity card) lists
+  everything in the tenant that waits to be signed or published, in the
+  order it is done (`GET /tenants/{id}/pending`, `app/lib/pending.ts`):
+  identities whose DID is pending or has changes to sign, issuers, verifiers
+  and mediators still drafts or whose endorsement expired, issuers' status
+  lists to sign (again) and accepted applications' credentials to issue.
+  Each row opens the thing, is tagged with why it waits and, for whoever
+  does it (the API's `yours`: who signs as the tenant; an issuer's signer for
+  its lists and credentials), leads to where it is done — or says what has
+  to be done first (`blocked_by`), linked when the asker can do it. Whoever
+  signs with no Almena wallet is asked to link one first. `PendingRows`
+  draws them; the overview opens with "Awaiting you", its first five and a
+  link to the rest. Who signs as the tenant is its signing flow, not the
+  role: the API says it per tenant (`Tenant.signs`). Below it, "Account health"
   (`Health.tsx`): the API's score (`GET /tenants/{id}/health`, a percentage
   and a bar) and its checks in order — name, mediator, signing flow, more to
   come — each done, or pending with the task and a "Set up" link to where it
@@ -69,7 +78,12 @@ everything (`task --list`); `task check` must pass before finishing.
   as a QR code (`qrcode`, server side) and an `almena://` link, then a poll
   every two seconds (`app/lib/wallet-actions.ts`); the poll secret stays in the
   HTTP-only `almena.wallet` cookie. A new wallet signs up an account with no
-  email.
+  email. Every dashboard screen decided in the wallet — linking it, signing
+  a DID, publishing, signing a status list, issuing a credential, changing
+  its status — is `WalletScreen` (`app/dashboard/WalletScreen.tsx`: the way
+  back, title, lead, an optional warning and the QR card centred under
+  them); never a layout of its own. Every QR code is drawn by `WalletQr`
+  (the code, "Open in the wallet", the wait), the Verify tab's too.
 - Sign-in goes through server actions (`app/lib/auth-actions.ts`): the API's
   bearer token is kept in the HTTP-only `almena.session` cookie on this origin
   and sent by the server (`app/lib/api.ts`); the browser never holds it.

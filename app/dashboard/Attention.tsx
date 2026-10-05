@@ -1,101 +1,35 @@
-import Link from "next/link";
-
 import { Alert, AlertDescription } from "@/app/components/ui/alert";
-import { Badge } from "@/app/components/ui/badge";
-import { Button } from "@/app/components/ui/button";
 import { Card } from "@/app/components/ui/card";
 import { getI18n } from "@/app/i18n/server";
-import { currentTenant } from "@/app/lib/api";
-import { fetchWaiting } from "@/app/lib/directory";
-import { fetchWaysIn } from "@/app/lib/ways-in";
+import { fetchPending } from "@/app/lib/pending";
+import { PendingRows } from "./PendingRows";
 
-const rowClass =
-  "flex items-center justify-between gap-3 border-t py-2.5 first:border-t-0";
-
-const signatureBadge = { pending: "pending", outdated: "danger" } as const;
-
-/** How many waiting identities are named before "and N more". */
+/** How many waiting things are named before "and N more". */
 const SHOWN = 5;
 
 /**
- * What waits for somebody in this tenant: identities whose DID is pending or
- * has changes to sign, and —
- * for whoever signs as the tenant without one — the wallet that signing
- * needs. Those who sign get the way to act on each; others see what waits. Drawn even when nothing does.
+ * What waits for somebody in this tenant: the first of what Pending lists
+ * (`/dashboard/pending`), the rest a link away. Drawn even when nothing
+ * does.
  */
 export async function Attention() {
   const { t } = await getI18n();
-  const copy = t.dashboard.attention;
-  const [waiting, waysIn, tenant] = await Promise.all([
-    fetchWaiting(),
-    fetchWaysIn(),
-    currentTenant(),
-  ]);
-  const signs = Boolean(tenant?.signs);
-  const noWallet =
-    signs &&
-    waysIn !== null &&
-    !waysIn.accounts.some((a) => a.provider === "almena");
-  const rows = waiting ?? [];
-  const nothing = !noWallet && rows.length === 0;
+  const rows = await fetchPending();
 
   return (
     <Card className="mb-4 gap-0 px-6 py-5">
       <section>
-        <h2 className="mb-1 text-[15px] font-semibold">{copy.title}</h2>
-        {waiting === null ? (
+        <h2 className="mb-1 text-[15px] font-semibold">
+          {t.dashboard.attention.title}
+        </h2>
+        {rows === null ? (
           <Alert variant="destructive" role="alert">
             <AlertDescription>
               {t.dashboard.items.errors.unavailable}
             </AlertDescription>
           </Alert>
-        ) : nothing ? (
-          <p className="text-faint">{copy.nothing}</p>
         ) : (
-          <ul>
-            {noWallet && (
-              <li className={rowClass}>
-                <span className="flex min-w-0 flex-wrap items-center gap-2.5">
-                  {copy.noWallet}
-                </span>
-                <Button asChild size="sm">
-                  <Link href="/dashboard/account/almena">
-                    {copy.linkWallet}
-                  </Link>
-                </Button>
-              </li>
-            )}
-            {rows.slice(0, SHOWN).map((row) => (
-              <li key={row.id} className={rowClass}>
-                <span className="flex min-w-0 flex-wrap items-center gap-2.5">
-                  <Button asChild variant="link" className="h-auto p-0">
-                    <Link href={`/dashboard/identities/${row.id}`}>
-                      {row.name || t.header.tenant.unnamed}
-                    </Link>
-                  </Button>
-                  <Badge variant={signatureBadge[row.signature]}>
-                    {t.dashboard.signature.status[row.signature]}
-                  </Badge>
-                </span>
-                {signs && !noWallet && (
-                  <Button asChild variant="ghost" size="sm">
-                    <Link href={`/dashboard/identities/${row.id}/sign`}>
-                      {t.dashboard.signature.sign}
-                    </Link>
-                  </Button>
-                )}
-              </li>
-            ))}
-            {rows.length > SHOWN && (
-              <li className={rowClass}>
-                <Button asChild variant="link" className="h-auto p-0">
-                  <Link href="/dashboard/identities">
-                    {copy.more.replace("{count}", String(rows.length - SHOWN))}
-                  </Link>
-                </Button>
-              </li>
-            )}
-          </ul>
+          <PendingRows rows={rows} back="/dashboard" limit={SHOWN} />
         )}
       </section>
     </Card>

@@ -11,6 +11,7 @@ type Entry =
   | "verifiers"
   | "mediators"
   | "identities"
+  | "pending"
   | "applications"
   | "forms"
   | "fields"
@@ -31,10 +32,10 @@ type Label =
   | "trustLabel"
   | "tenantLabel";
 
-// The overview on its own, then five titled cards: the activity that arrives
-// for the account (the tenant) — the applications its issuers receive; the
-// services it publishes and others use, and the identities they act as; the
-// templates it asks and issues with — its forms, then what they are made of:
+// The overview on its own, then five titled cards: the activity of the
+// account (the tenant) — what waits in it to be signed or published, and the
+// applications its issuers receive; the services it publishes and others
+// use, and the identities they act as; the templates it asks and issues with — its forms, then what they are made of:
 // fields and credential types, and, for the trust anchor, the value lists
 // fields draw on and the categories both are filed under; the trust behind its DIDs — the domains they live on and who signs
 // them; then the account itself — its settings, billing among them, and its
@@ -47,7 +48,10 @@ const groups: {
   { label: null, entries: [{ key: "overview", href: "/dashboard" }] },
   {
     label: "activityLabel",
-    entries: [{ key: "applications", href: "/dashboard/applications" }],
+    entries: [
+      { key: "pending", href: "/dashboard/pending" },
+      { key: "applications", href: "/dashboard/applications" },
+    ],
   },
   {
     label: "servicesLabel",

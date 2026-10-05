@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 
-import { WalletRequest } from "@/app/components/WalletRequest";
-import { Card } from "@/app/components/ui/card";
+import { WalletScreen } from "@/app/dashboard/WalletScreen";
 import { getI18n } from "@/app/i18n/server";
 import { currentTenant } from "@/app/lib/api";
 import { DetailHead, NotFound } from "../Detail";
@@ -49,22 +48,13 @@ export default async function SignPage({
       ? item.id
       : loaded.item.identity.id;
   return (
-    <div className="grid gap-4">
-      <DetailHead back={back} backLabel={item.name} />
-      <header className="mb-6">
-        <h1 className="text-[28px] font-bold tracking-tight">
-          {copy.signTitle.replace("{name}", item.name)}
-        </h1>
-        <p className="text-muted-foreground">
-          {item.signature === "pending" ? copy.firstLead : copy.lead}
-        </p>
-      </header>
-      <Card className="max-w-[400px] gap-0 p-6">
-        <WalletRequest
-          purpose="sign"
-          target={{ kind: "identity", id: identityId, back }}
-        />
-      </Card>
-    </div>
+    <WalletScreen
+      back={back}
+      backLabel={item.name}
+      title={copy.signTitle.replace("{name}", item.name)}
+      lead={item.signature === "pending" ? copy.firstLead : copy.lead}
+      purpose="sign"
+      target={{ kind: "identity", id: identityId, back }}
+    />
   );
 }

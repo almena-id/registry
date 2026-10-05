@@ -117,6 +117,7 @@
       "signing": "Signing",
       "domains": "Domains",
       "breadcrumb": "Breadcrumb",
+      "pending": "Pending",
       "applications": "Applications",
       "accounts": "Accounts",
       "fields": "Fields",
@@ -544,11 +545,7 @@
       "lead": "Its DID document changed: sign the new version from your Almena wallet."
     },
     "attention": {
-      "title": "Awaiting you",
-      "nothing": "Nothing is waiting.",
-      "noWallet": "Link your Almena wallet to sign.",
-      "linkWallet": "Link wallet",
-      "more": "and {count} more"
+      "title": "Awaiting you"
     },
     "health": {
       "title": "Account health",
@@ -1097,6 +1094,42 @@
       },
       "listUnsigned": "Before its first credential, the issuer's signer signs its status list: where verifiers check whether its credentials still hold.",
       "signList": "Sign the status list"
+    },
+    "pending": {
+      "title": "Pending",
+      "hint": "What waits to be signed or published, in the order it is done.",
+      "empty": "Nothing is waiting.",
+      "noWallet": "Link your Almena wallet to sign.",
+      "linkWallet": "Link wallet",
+      "more": "and {count} more",
+      "kinds": {
+        "identity": "Identity",
+        "issuer": "Issuer",
+        "verifier": "Verifier",
+        "mediator": "Mediator",
+        "status_list": "Status list",
+        "credential": "Credential"
+      },
+      "states": {
+        "pending": "Pending signature",
+        "outdated": "Changes to sign",
+        "draft": "Draft",
+        "expired": "Endorsement expired",
+        "unsigned": "Not signed yet",
+        "resign": "To sign again",
+        "accepted": "To issue"
+      },
+      "actions": {
+        "sign": "Sign",
+        "publish": "Publish",
+        "issue": "Issue"
+      },
+      "blocked": {
+        "identity_pending": "Sign its identity first.",
+        "tenant_pending": "Sign the account's identity first.",
+        "signer_needed": "Its issuer has no signer.",
+        "status_list_unsigned": "Sign its status list first."
+      }
     },
     "statusLists": {
       "lead": "Where verifiers check whether this issuer's credentials still hold. Each credential it issues has an entry in one; suspending, reinstating or revoking it is a new list its signer signs from their wallet.",

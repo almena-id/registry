@@ -117,6 +117,7 @@
       "signing": "Firma",
       "domains": "Dominios",
       "breadcrumb": "Ruta de navegación",
+      "pending": "Pendientes",
       "applications": "Solicitudes",
       "accounts": "Cuentas",
       "fields": "Campos",
@@ -544,11 +545,7 @@
       "lead": "Su documento DID ha cambiado: firma la nueva versión desde tu wallet de Almena."
     },
     "attention": {
-      "title": "Pendiente",
-      "nothing": "No hay nada pendiente.",
-      "noWallet": "Vincula tu wallet de Almena para firmar.",
-      "linkWallet": "Vincular wallet",
-      "more": "y {count} más"
+      "title": "Pendiente"
     },
     "health": {
       "title": "Salud de la cuenta",
@@ -1097,6 +1094,42 @@
       },
       "listUnsigned": "Antes de su primera credencial, el firmante del emisor firma su lista de estado: donde los verificadores comprueban si sus credenciales siguen valiendo.",
       "signList": "Firmar la lista de estado"
+    },
+    "pending": {
+      "title": "Pendientes",
+      "hint": "Lo que espera a firmarse o publicarse, en el orden en que se hace.",
+      "empty": "No hay nada pendiente.",
+      "noWallet": "Vincula tu wallet de Almena para firmar.",
+      "linkWallet": "Vincular wallet",
+      "more": "y {count} más",
+      "kinds": {
+        "identity": "Identidad",
+        "issuer": "Emisor",
+        "verifier": "Verificador",
+        "mediator": "Mediador",
+        "status_list": "Lista de estado",
+        "credential": "Credencial"
+      },
+      "states": {
+        "pending": "Pendiente de firma",
+        "outdated": "Cambios por firmar",
+        "draft": "Borrador",
+        "expired": "Aval caducado",
+        "unsigned": "Sin firmar",
+        "resign": "Por volver a firmar",
+        "accepted": "Por emitir"
+      },
+      "actions": {
+        "sign": "Firmar",
+        "publish": "Publicar",
+        "issue": "Emitir"
+      },
+      "blocked": {
+        "identity_pending": "Firma primero su identidad.",
+        "tenant_pending": "Firma primero la identidad de la cuenta.",
+        "signer_needed": "Su emisor no tiene firmante.",
+        "status_list_unsigned": "Firma primero su lista de estado."
+      }
     },
     "statusLists": {
       "lead": "Donde los verificadores comprueban si las credenciales de este emisor siguen valiendo. Cada credencial que emite tiene una entrada en una; suspenderla, rehabilitarla o revocarla es una lista nueva que su firmante firma desde su wallet.",

@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 
-import { WalletRequest } from "@/app/components/WalletRequest";
-import { Card } from "@/app/components/ui/card";
+import { WalletScreen } from "@/app/dashboard/WalletScreen";
 import { getI18n } from "@/app/i18n/server";
 import { currentTenant } from "@/app/lib/api";
 import { DetailHead, NotFound } from "../Detail";
@@ -47,20 +46,13 @@ export default async function PublishPage({
     );
 
   return (
-    <div className="grid gap-4">
-      <DetailHead back={back} backLabel={item.name} />
-      <header className="mb-6">
-        <h1 className="text-[28px] font-bold tracking-tight">
-          {copy.publishTitle.replace("{name}", item.name)}
-        </h1>
-        <p className="text-muted-foreground">{copy.publishLead}</p>
-      </header>
-      <Card className="max-w-[400px] gap-0 p-6">
-        <WalletRequest
-          purpose="sign"
-          target={{ kind: "endorsement", section, id, back }}
-        />
-      </Card>
-    </div>
+    <WalletScreen
+      back={back}
+      backLabel={item.name}
+      title={copy.publishTitle.replace("{name}", item.name)}
+      lead={copy.publishLead}
+      purpose="sign"
+      target={{ kind: "endorsement", section, id, back }}
+    />
   );
 }

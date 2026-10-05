@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 
-import { WalletRequest } from "@/app/components/WalletRequest";
-import { Card } from "@/app/components/ui/card";
+import { WalletScreen } from "@/app/dashboard/WalletScreen";
 import { getI18n } from "@/app/i18n/server";
 import { fetchStatusLists, safeBack } from "@/app/lib/status-lists";
 import { DetailHead, NotFound } from "../Detail";
@@ -49,25 +48,18 @@ export default async function SignStatusPage({
   if (!(await fetchStatusLists(id))?.can_sign) redirect(back);
 
   return (
-    <div className="grid gap-4">
-      <DetailHead back={back} backLabel={item.name} />
-      <header className="mb-6">
-        <h1 className="text-[28px] font-bold tracking-tight">
-          {copy.signTitle.replace("{name}", item.name)}
-        </h1>
-        <p className="text-muted-foreground">{copy.signLead}</p>
-      </header>
-      <Card className="max-w-[400px] gap-0 p-6">
-        <WalletRequest
-          purpose="sign"
-          target={{
-            kind: "status_list",
-            issuer: id,
-            list: typeof list === "string" ? list : undefined,
-            back,
-          }}
-        />
-      </Card>
-    </div>
+    <WalletScreen
+      back={back}
+      backLabel={item.name}
+      title={copy.signTitle.replace("{name}", item.name)}
+      lead={copy.signLead}
+      purpose="sign"
+      target={{
+        kind: "status_list",
+        issuer: id,
+        list: typeof list === "string" ? list : undefined,
+        back,
+      }}
+    />
   );
 }

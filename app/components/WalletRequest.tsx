@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
+import { WalletQr } from "@/app/components/WalletQr";
 import { Alert, AlertDescription } from "@/app/components/ui/alert";
 import { Button } from "@/app/components/ui/button";
 import { useI18n } from "@/app/i18n/client";
@@ -107,25 +108,18 @@ export function WalletRequest({
         </Alert>
       )}
       {shown && state === "waiting" ? (
-        <>
-          <div
-            className="qr mx-auto w-[220px] rounded-xl bg-qr-paper p-2.5"
-            role="img"
-            aria-label={copy.qr}
-            // The SVG comes from the QR library, drawn from the API's link.
-            dangerouslySetInnerHTML={{ __html: shown.qr }}
-          />
-          <Button asChild size="lg" className="w-full">
-            <a href={shown.deepLink}>{copy.open}</a>
-          </Button>
-          <p
-            className="text-center text-sm text-muted-foreground"
-            role="status"
-          >
-            {copy.waiting}
-            {time && ` ${copy.expiresIn.replace("{time}", time)}`}
-          </p>
-        </>
+        <WalletQr
+          qr={shown.qr}
+          deepLink={shown.deepLink}
+          label={copy.qr}
+          open={copy.open}
+          status={
+            <>
+              {copy.waiting}
+              {time && ` ${copy.expiresIn.replace("{time}", time)}`}
+            </>
+          }
+        />
       ) : (
         state !== "waiting" && (
           <>

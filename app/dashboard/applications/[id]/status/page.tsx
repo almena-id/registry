@@ -1,12 +1,8 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
-import { ArrowLeftIcon } from "lucide-react";
-
-import { WalletRequest } from "@/app/components/WalletRequest";
 import { Alert, AlertDescription } from "@/app/components/ui/alert";
-import { Card } from "@/app/components/ui/card";
+import { WalletScreen } from "@/app/dashboard/WalletScreen";
 import { getI18n } from "@/app/i18n/server";
 import { fetchReceivedOne } from "@/app/lib/applications";
 import {
@@ -50,34 +46,23 @@ export default async function CredentialStatusPage({
   if (!(await fetchStatusLists(item.issuer.id))?.can_sign) redirect(back);
   const copy = t.dashboard.applications;
 
+  // Revoking is final: said as a warning over the card, not as the lead.
+  const revoked = wanted === "revoked";
   return (
-    <div className="grid gap-4">
-      <Link
-        href={back}
-        className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
-      >
-        <ArrowLeftIcon className="size-4" />
-        {copy.one}
-      </Link>
-      <header className="mb-2">
-        <h1 className="text-[28px] font-bold tracking-tight">
-          {copy.changeTitle[wanted]}
-        </h1>
-        {wanted !== "revoked" && (
-          <p className="text-muted-foreground">{copy.changeLead[wanted]}</p>
-        )}
-      </header>
-      {wanted === "revoked" && (
-        <Alert variant="destructive" className="max-w-[640px]">
-          <AlertDescription>{copy.changeLead.revoked}</AlertDescription>
-        </Alert>
-      )}
-      <Card className="max-w-[400px] gap-0 p-6">
-        <WalletRequest
-          purpose="sign"
-          target={{ kind: "credential_status", id, status: wanted, back }}
-        />
-      </Card>
-    </div>
+    <WalletScreen
+      back={back}
+      backLabel={copy.one}
+      title={copy.changeTitle[wanted]}
+      lead={revoked ? undefined : copy.changeLead[wanted]}
+      notice={
+        revoked && (
+          <Alert variant="destructive">
+            <AlertDescription>{copy.changeLead.revoked}</AlertDescription>
+          </Alert>
+        )
+      }
+      purpose="sign"
+      target={{ kind: "credential_status", id, status: wanted, back }}
+    />
   );
 }

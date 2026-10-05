@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 
 import { Select } from "@/app/components/Select";
 import { Verdict } from "@/app/components/Verdict";
+import { WalletQr } from "@/app/components/WalletQr";
 import { Alert, AlertDescription } from "@/app/components/ui/alert";
 import { Button } from "@/app/components/ui/button";
 import { Card } from "@/app/components/ui/card";
@@ -125,22 +126,16 @@ export function VerifyByQr({
           </Button>
         </div>
         {shown && (
-          <div className="grid justify-items-center gap-3 border-t pt-4">
-            <div
-              className="w-56 rounded-lg bg-white p-2"
-              role="img"
-              aria-label={copy.qr}
-              dangerouslySetInnerHTML={{ __html: shown.qr }}
+          <div className="border-t pt-4">
+            {/* As wide as the QR card of the wallet screens. */}
+            <WalletQr
+              className="mx-auto max-w-[352px]"
+              qr={shown.qr}
+              deepLink={shown.deepLink}
+              label={copy.qr}
+              open={copy.open}
+              status={state === "expired" ? copy.expired : copy.waiting}
             />
-            <a
-              href={shown.deepLink}
-              className="text-sm font-medium text-primary hover:underline"
-            >
-              {copy.open}
-            </a>
-            <p className="text-sm text-muted-foreground" aria-live="polite">
-              {state === "expired" ? copy.expired : copy.waiting}
-            </p>
           </div>
         )}
       </Card>
