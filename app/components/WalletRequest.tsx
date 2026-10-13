@@ -14,7 +14,7 @@ import {
   type WalletStart,
 } from "@/app/lib/wallet-actions";
 
-type Shown = Extract<WalletStart, { ok: true }>;
+type Shown = Extract<WalletStart, { deepLink: string }>;
 
 /**
  * A request to the Almena wallet: the QR code a phone scans, the deep link
@@ -39,6 +39,8 @@ export function WalletRequest({
   const [left, setLeft] = useState<number | null>(null);
   const started = useRef(false);
 
+  // The target is a plain value from the server: its JSON says whether it changed.
+  const targetKey = JSON.stringify(target ?? null);
   const start = useCallback(async () => {
     setState("waiting");
     setError(null);
@@ -49,17 +51,14 @@ export function WalletRequest({
       setState("failed");
       return;
     }
+    // Signed by the platform: no wallet to wait for.
+    if ("done" in answer) {
+      window.location.assign(answer.done);
+      return;
+    }
     setShown(answer);
-    // The target is a plain value from the server: its fields say whether it changed.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    purpose,
-    target?.kind,
-    target && "id" in target ? target.id : null,
-    target && "issuer" in target ? target.issuer : null,
-    target && "status" in target ? target.status : null,
-    target?.back,
-  ]);
+  }, [purpose, targetKey]);
 
   useEffect(() => {
     // Once per visit, not once per render in development's double effects.

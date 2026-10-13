@@ -29,6 +29,7 @@ Read from the environment or `.env`; [.env.example](.env.example) explains every
 | `NEXT_PUBLIC_REGISTRY_WEB_URL` | `https://registry.almena.id` | Public origin of the portal, for metadata; inlined at build time |
 | `NEXT_PUBLIC_REGISTRY_API_URL` | `https://api.almena.id` | The API as the browser reaches it; inlined into the bundle at build time, so changing it needs a rebuild |
 | `REGISTRY_API_URL` | `https://api.almena.id` | The API as the Next.js server reaches it, read at runtime |
+| `REGISTRY_PORTAL_SECRET` | — | The secret the API shares with its portals (its `REGISTRY_PORTAL_SECRET`): with it every call names the visitor's address (`X-Almena-Client-IP`, from the edge's `X-Forwarded-For`), so the API's limits per network address count visitors, not this server |
 | `REGISTRY_CATALOG_URL` | `https://catalog.almena.id` | The catalog, where holders apply for credentials; the old `/credentials` and `/apply/{id}` links redirect there, read at runtime |
 | `REGISTRY_WEB_WELL_KNOWN_DIR` | — | Directory with the origin's `did-configuration.json`, served at `/.well-known/` (off while empty; Compose mounts `./well-known`) |
 | `REGISTRY_WEB_PORT` | `3000` | Port of the portal on the host |
@@ -44,7 +45,7 @@ Read from the environment or `.env`; [.env.example](.env.example) explains every
 
 ## Development
 
-`task --list` shows every task. Before sending a change, `task check` (ESLint, TypeScript and a production build) must pass; see [CONTRIBUTING.md](CONTRIBUTING.md). This Next.js version differs from older ones: [AGENTS.md](AGENTS.md) points to the documentation bundled in `node_modules/next/dist/docs/`.
+`task --list` shows every task. Before sending a change, `task check` (ESLint, TypeScript, the unit tests, a production build and the smoke tests) must pass: `task test` runs the unit tests alone (Vitest, `app/**/*.test.ts`), `task e2e` the smoke tests alone against the last build (Playwright, `e2e/`, with an API that cannot be reached); see [CONTRIBUTING.md](CONTRIBUTING.md). This Next.js version differs from older ones: [AGENTS.md](AGENTS.md) points to the documentation bundled in `node_modules/next/dist/docs/`.
 
 ## Contributing and security
 

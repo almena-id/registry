@@ -3,6 +3,7 @@ import "server-only";
 import { cookies } from "next/headers";
 import { cache } from "react";
 
+import { locales } from "@/app/i18n/config";
 import { getI18n } from "@/app/i18n/server";
 import { api, currentTenant, sessionCookie } from "./api";
 import type { Catalogue, CatalogueField } from "./form-fields";
@@ -85,7 +86,11 @@ export const fetchTenantCatalogue = cache(
       ...catalogue,
       categories: [
         ...catalogue.categories,
-        { id: "custom", labels: { en: yours, es: yours } },
+        // Already in the visitor's language: the same words under each.
+        {
+          id: "custom",
+          labels: Object.fromEntries(locales.map((lang) => [lang, yours])),
+        },
       ],
       fields: [
         ...catalogue.fields,

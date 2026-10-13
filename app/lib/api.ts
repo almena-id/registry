@@ -1,6 +1,6 @@
 import "server-only";
 
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { cache } from "react";
 
 /** The session token from the API, kept on the portal's own origin. */
@@ -36,6 +36,28 @@ export type Tenant = {
 /** Features a subscription may give. */
 export type Feature = "own_fields" | "own_credential_types";
 
+/**
+ * With the secret the API shares with its portals, every call names the
+ * visitor's address (as the edge proxy saw it), so the API's limits per
+ * network address count visitors rather than this server.
+ */
+async function visitor(): Promise<Record<string, string>> {
+  const secret = process.env.REGISTRY_PORTAL_SECRET;
+  if (!secret) return {};
+  try {
+    const seen = await headers();
+    const address =
+      seen.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+      seen.get("x-real-ip")?.trim();
+    return address
+      ? { "X-Almena-Portal": secret, "X-Almena-Client-IP": address }
+      : {};
+  } catch {
+    // Outside a request (nothing to name).
+    return {};
+  }
+}
+
 /** A call to the API from the server; `null` status when it cannot be reached. */
 export async function api<T>(
   path: string,
@@ -54,7 +76,7 @@ export async function api<T>(
   status: number | null;
   data: T | null;
   detail: string | null;
-  /** A failure's `detail` when it is more than a code (an object). */
+  /** A failure's whole body: its code in `detail`, what more says why beside it. */
   failure?: unknown;
 }> {
   try {
@@ -65,6 +87,7 @@ export async function api<T>(
           ? {}
           : { "Content-Type": init.raw?.type ?? "application/json" }),
         ...(init.token ? { Authorization: `Bearer ${init.token}` } : {}),
+        ...(await visitor()),
         ...init.headers,
       },
       body:
@@ -80,7 +103,7 @@ export async function api<T>(
       status: response.status,
       data: ok ? (json as T) : null,
       detail: !ok && typeof json?.detail === "string" ? json.detail : null,
-      failure: ok ? undefined : json?.detail,
+      failure: ok ? undefined : json,
     };
   } catch {
     return { status: null, data: null, detail: null };

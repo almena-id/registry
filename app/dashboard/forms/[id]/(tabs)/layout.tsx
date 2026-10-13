@@ -6,6 +6,7 @@ import { DetailHead } from "@/app/dashboard/[section]/[id]/Detail";
 import { getI18n } from "@/app/i18n/server";
 import { label } from "@/app/lib/form-fields";
 import { fetchForm } from "@/app/lib/forms";
+import { FormActions } from "../FormActions";
 
 export async function generateMetadata({
   params,
@@ -16,9 +17,10 @@ export async function generateMetadata({
 }
 
 /**
- * One form, opened: the way back, its name, and what a verifier does with
- * it — verify what a wallet presented, the DCQL query a wallet is asked
- * with, and the JSON Schema its answers meet.
+ * One form, opened: the way back, its name with its operations (edit,
+ * delete), and what a verifier does with it — verify what a wallet
+ * presented, the DCQL query a wallet is asked with, and the JSON Schema its
+ * answers meet.
  */
 export default async function FormLayout({
   params,
@@ -35,6 +37,7 @@ export default async function FormLayout({
         back="/dashboard/forms"
         backLabel={t.dashboard.forms.title}
         title={label(form.name, locale)}
+        actions={<FormActions id={form.id} inUse={form.in_use} />}
       />
       <Tabs
         label={copy.tabs}

@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 
 import { locales, type Dictionary } from "@/app/i18n/config";
 import { api, currentTenant, sessionCookie } from "./api";
-import { hasText, textsFrom, type Texts } from "./texts";
+import { hasText, onlyIn, textsFrom, type Texts } from "./texts";
 
 type ErrorKey = keyof Dictionary["dashboard"]["catalogue"]["errors"];
 
@@ -59,6 +59,18 @@ async function call(
     return null;
   }
   return (detail && CODES[detail]) || "unavailable";
+}
+
+/** The type's names and descriptions in the account's languages only. */
+function spoken(
+  keep: CredentialTypeState,
+  languages: readonly string[] | undefined,
+): CredentialTypeState {
+  return {
+    ...keep,
+    labels: onlyIn(keep.labels ?? {}, languages),
+    descriptions: onlyIn(keep.descriptions ?? {}, languages),
+  };
 }
 
 /**
@@ -128,9 +140,10 @@ export async function createCredentialType(
   _: CredentialTypeState,
   form: FormData,
 ): Promise<CredentialTypeState> {
-  const keep = readType(form);
+  const tenant = await currentTenant();
+  const keep = spoken(readType(form), tenant?.languages);
   if (!keep.key) return { ...keep, error: "keyRequired" };
-  const anchor = (await currentTenant())?.anchor ?? false;
+  const anchor = tenant?.anchor ?? false;
   const body = bodyOf(keep, anchor);
   if (typeof body === "string") return { ...keep, error: body };
   const error = await call("", {
@@ -150,8 +163,12 @@ export async function updateCredentialType(
   previous: CredentialTypeState,
   form: FormData,
 ): Promise<CredentialTypeState> {
-  const keep = { ...readType(form), key: previous.key };
-  const anchor = (await currentTenant())?.anchor ?? false;
+  const tenant = await currentTenant();
+  const keep = spoken(
+    { ...readType(form), key: previous.key },
+    tenant?.languages,
+  );
+  const anchor = tenant?.anchor ?? false;
   const body = bodyOf(keep, anchor);
   if (typeof body === "string") return { ...keep, error: body };
   const error = await call(`/${encodeURIComponent(id)}`, {

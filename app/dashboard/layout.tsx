@@ -1,6 +1,8 @@
 import { redirect } from "next/navigation";
 
 import { SiteHeader } from "@/app/components/SiteHeader";
+import { TenantLanguages } from "@/app/components/TenantLanguages";
+import { locales } from "@/app/i18n/config";
 import { getI18n, getTimeZone } from "@/app/i18n/server";
 import { currentTenant, currentTenants, currentUser } from "@/app/lib/api";
 import { DashboardNav } from "./DashboardNav";
@@ -12,6 +14,10 @@ export default async function DashboardLayout({
   if (!user) redirect("/login");
   const { t } = await getI18n();
   const tenant = await currentTenant();
+  // What the account works in, in the portal's order; all while unknown.
+  const languages = tenant
+    ? locales.filter((lang) => tenant.languages.includes(lang))
+    : locales;
 
   return (
     <>
@@ -30,7 +36,13 @@ export default async function DashboardLayout({
               anchorAdmin={Boolean(tenant?.anchor && tenant.role === "admin")}
             />
           </aside>
-          <div className="min-w-0">{children}</div>
+          <div className="min-w-0">
+            <TenantLanguages
+              languages={languages.length ? languages : locales}
+            >
+              {children}
+            </TenantLanguages>
+          </div>
         </div>
       </main>
     </>

@@ -3,20 +3,25 @@ import { notFound } from "next/navigation";
 import { fetchMediatorChoices } from "@/app/lib/directory";
 import { fetchDomains } from "@/app/lib/domains";
 import { DescribedForm } from "../../DescribedForm";
+import { IdentityForm } from "../../IdentityForm";
 import { loadItem } from "../../load";
 import { MediatorForm } from "../../MediatorForm";
 
 /**
  * Data: the fields that change. An issuer's or verifier's name, description
- * and mediator; a mediator's name, address and whether it is public. Any member edits them; the DID
- * stays whatever they become. An identity has no such tab.
+ * and mediator; a mediator's name, address and whether it is public; an
+ * identity's name. Any member edits them; the DID stays whatever they become.
  */
 export default async function DataTab({
   params,
 }: PageProps<"/dashboard/[section]/[id]/data">) {
   const { section, id } = await params;
   const loaded = await loadItem(section, id);
-  if (!loaded || loaded.section === "identities") notFound();
+  if (!loaded) notFound();
+  if (loaded.section === "identities")
+    return loaded.item ? (
+      <IdentityForm id={loaded.item.id} name={loaded.item.name} />
+    ) : null;
   const item = loaded.item;
   if (!item) return null;
   if (loaded.section === "mediators") {

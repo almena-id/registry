@@ -39,9 +39,14 @@ export type SignTarget =
 
 type Kept = { purpose: WalletPurpose; id: string; poll: string; back?: string };
 
-/** Why a request could not be made: the API's code, when it gave one. */
+/**
+ * Why a request could not be made: the API's code, when it gave one. `done`:
+ * nobody's wallet was asked — the platform signed it as the tenant (its
+ * signing flow `none`) — and where to go now.
+ */
 export type WalletStart =
   | { ok: true; deepLink: string; qr: string; expiresAt: string }
+  | { ok: true; done: string }
   | { ok: false; error: string | null };
 
 /** What the page does next: keep waiting, go somewhere, or start over. */
@@ -51,12 +56,10 @@ export type WalletPoll =
   | { status: "expired" }
   | { status: "failed" };
 
-type Created = {
-  id: string;
-  deep_link: string;
-  poll: string;
-  expires_at: string;
-};
+type Created =
+  | { id: string; deep_link: string; poll: string; expires_at: string }
+  /** Signed by the platform, at once (the tenant's signing flow `none`). */
+  | { status: "signed" };
 
 type Result = {
   status: "pending" | "signed_in" | "linked" | "taken" | "signed";
@@ -116,6 +119,11 @@ export async function startWallet(
   }
   const data = created.data;
   if (!data) return { ok: false, error: created.detail };
+  if ("status" in data)
+    return {
+      ok: true,
+      done: `${target ? safeBack(target.back, "/dashboard") : "/dashboard"}?signed=1`,
+    };
   const kept: Kept = {
     purpose,
     id: data.id,

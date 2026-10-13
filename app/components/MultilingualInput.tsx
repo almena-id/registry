@@ -9,14 +9,19 @@ import { Textarea } from "@/app/components/ui/textarea";
 import { FieldLabel } from "@/app/components/ui/field";
 import { useI18n } from "@/app/i18n/client";
 import { localeNames, locales, type Locale } from "@/app/i18n/config";
-import type { Texts } from "@/app/lib/texts";
+import { onlyIn, type Texts } from "@/app/lib/texts";
+import { useTenantLanguages } from "./TenantLanguages";
 import { cn } from "cn";
 
 /**
- * A text written in each of the portal's languages: the box shows the
- * visitor's; the globe, after it and outside it, opens a line per other
- * language, each with its own box. The globe is marked while another
- * language has text. With `name`, the texts travel as JSON in a hidden input.
+ * A text written in each language the account works in (`TenantLanguages`):
+ * the box shows the visitor's, or the account's first when it does not work
+ * in it; the globe, after it and outside it, opens a line per other language,
+ * each with its own box, and there is none with only one. Text kept in a
+ * language the account no longer works in is shown there, read only: it goes
+ * when this is saved. The globe is marked while another language has text.
+ * With `name`, the texts travel as JSON in a hidden input, in the account's
+ * languages only.
  */
 export function MultilingualInput({
   id,
@@ -50,22 +55,36 @@ export function MultilingualInput({
   const copy = t.texts;
   const [open, setOpen] = useState(false);
   const panel = useId();
-  const others = locales.filter((lang) => lang !== locale);
-  const elsewhere = others.some((lang) => value[lang]?.trim());
+  const enabled = useTenantLanguages();
+  const first = enabled.includes(locale) ? locale : enabled[0];
+  const others = enabled.filter((lang) => lang !== first);
+  // Kept from before the account stopped working in them.
+  const stale = locales.filter(
+    (lang) => !enabled.includes(lang) && value[lang]?.trim(),
+  );
+  const elsewhere =
+    others.some((lang) => value[lang]?.trim()) || stale.length > 0;
 
-  const box = (lang: Locale, boxId: string, first: boolean) => {
+  const globe = others.length > 0 || stale.length > 0;
+  const box = (
+    lang: Locale,
+    boxId: string,
+    main: boolean,
+    readOnly = false,
+  ) => {
     const common = {
-      // The first holds the globe inside, at its right edge.
-      className: first ? "pr-10" : undefined,
+      // The main one holds the globe inside, at its right edge.
+      className: main && globe ? "pr-10" : undefined,
       id: boxId,
       value: value[lang] ?? "",
       maxLength,
       lang,
-      placeholder: first ? placeholder : undefined,
-      autoFocus: first ? autoFocus : undefined,
+      readOnly,
+      placeholder: main ? placeholder : undefined,
+      autoFocus: main ? autoFocus : undefined,
       "aria-invalid": invalid ? true : undefined,
-      "aria-describedby": first ? describedBy : undefined,
-      "aria-label": first ? label : undefined,
+      "aria-describedby": main ? describedBy : undefined,
+      "aria-label": main ? label : undefined,
       onChange: (
         event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
       ) => onChange({ ...value, [lang]: event.target.value }),
@@ -80,27 +99,33 @@ export function MultilingualInput({
   return (
     <div className="grid gap-2">
       {name && (
-        <input type="hidden" name={name} value={JSON.stringify(value)} />
+        <input
+          type="hidden"
+          name={name}
+          value={JSON.stringify(onlyIn(value, enabled))}
+        />
       )}
       <div className="relative">
-        {box(locale, id, true)}
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon-sm"
-          className={cn(
-            "absolute right-1",
-            multiline ? "top-1" : "top-1/2 -translate-y-1/2",
-            elsewhere && "text-primary",
-          )}
-          aria-expanded={open}
-          aria-controls={panel}
-          aria-label={copy.otherLanguages}
-          title={copy.otherLanguages}
-          onClick={() => setOpen((shown) => !shown)}
-        >
-          <GlobeIcon />
-        </Button>
+        {box(first, id, true)}
+        {globe && (
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-sm"
+            className={cn(
+              "absolute right-1",
+              multiline ? "top-1" : "top-1/2 -translate-y-1/2",
+              elsewhere && "text-primary",
+            )}
+            aria-expanded={open}
+            aria-controls={panel}
+            aria-label={copy.otherLanguages}
+            title={copy.otherLanguages}
+            onClick={() => setOpen((shown) => !shown)}
+          >
+            <GlobeIcon />
+          </Button>
+        )}
       </div>
       {open && (
         <div
@@ -122,6 +147,26 @@ export function MultilingualInput({
                 {localeNames[lang]}
               </FieldLabel>
               {box(lang, `${id}-${lang}`, false)}
+            </div>
+          ))}
+          {stale.map((lang) => (
+            <div
+              key={lang}
+              className={cn(
+                "grid gap-1.5 sm:grid-cols-[110px_1fr]",
+                multiline ? "sm:items-start" : "sm:items-center",
+              )}
+            >
+              <FieldLabel
+                htmlFor={`${id}-${lang}`}
+                className="text-[13px] font-normal text-muted-foreground"
+              >
+                {localeNames[lang]}
+              </FieldLabel>
+              <div className="grid gap-1">
+                {box(lang, `${id}-${lang}`, false, true)}
+                <p className="text-[12px] text-faint">{copy.notUsed}</p>
+              </div>
             </div>
           ))}
         </div>

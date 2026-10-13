@@ -4,6 +4,7 @@ import { ChevronRightIcon } from "lucide-react";
 import Link from "next/link";
 import { useActionState } from "react";
 
+import { CopyButton } from "@/app/components/CopyButton";
 import { Alert, AlertDescription } from "@/app/components/ui/alert";
 import { Badge } from "@/app/components/ui/badge";
 import { Button } from "@/app/components/ui/button";
@@ -91,20 +92,44 @@ export function DomainRow({
             <dl className="grid gap-3 rounded-lg bg-sunk px-3.5 py-3">
               <div className={fact}>
                 <dt className="text-muted-foreground">{copy.type}</dt>
-                <dd className="font-mono text-[13px] break-all">
-                  {domain.dns_record.type}
+                <dd className="flex min-w-0 items-center gap-1.5">
+                  <span className="font-mono text-[13px] break-all">
+                    {domain.dns_record.type}
+                  </span>
+                  <CopyButton
+                    icon
+                    text={domain.dns_record.type}
+                    label={`${copy.copy} ${copy.type}`}
+                    done={copy.copied}
+                  />
                 </dd>
               </div>
               <div className={fact}>
                 <dt className="text-muted-foreground">{copy.name}</dt>
-                <dd className="font-mono text-[13px] break-all">
-                  {domain.dns_record.name}
+                <dd className="flex min-w-0 items-center gap-1.5">
+                  <span className="font-mono text-[13px] break-all">
+                    {domain.dns_record.name}
+                  </span>
+                  <CopyButton
+                    icon
+                    text={domain.dns_record.name}
+                    label={`${copy.copy} ${copy.name}`}
+                    done={copy.copied}
+                  />
                 </dd>
               </div>
               <div className={fact}>
                 <dt className="text-muted-foreground">{copy.value}</dt>
-                <dd className="font-mono text-[13px] break-all">
-                  {domain.dns_record.value}
+                <dd className="flex min-w-0 items-center gap-1.5">
+                  <span className="font-mono text-[13px] break-all">
+                    {domain.dns_record.value}
+                  </span>
+                  <CopyButton
+                    icon
+                    text={domain.dns_record.value}
+                    label={`${copy.copy} ${copy.value}`}
+                    done={copy.copied}
+                  />
                 </dd>
               </div>
             </dl>

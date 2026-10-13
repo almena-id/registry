@@ -43,3 +43,9 @@ next-env.d.ts
 
 # Task checksums
 .task/
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/

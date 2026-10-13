@@ -57,6 +57,20 @@ tasks:
       # generates them first.
       - npm run --silent typecheck
 
+  test:
+    desc: Run the unit tests (Vitest, app/**/*.test.ts)
+    deps: [install]
+    cmds:
+      - npm run --silent test
+
+  e2e:
+    desc: Run the smoke tests (Playwright, e2e/) against the production build (task build first)
+    deps: [install]
+    cmds:
+      # The browser Playwright drives, once per machine (cached by Playwright).
+      - npx playwright install chromium
+      - npm run --silent e2e
+
   fmt:
     desc: Apply ESLint's automatic fixes
     deps: [install]
@@ -64,10 +78,12 @@ tasks:
       - npm run --silent lint -- --fix
 
   check:
-    desc: Everything that must pass before finishing a change (lint + production build)
+    desc: Everything that must pass before finishing a change (lint, unit tests, production build, smoke tests)
     cmds:
       - task: lint
+      - task: test
       - task: build
+      - task: e2e
 
   docker:build:
     desc: Build the Docker image
@@ -110,5 +126,5 @@ tasks:
       # second run, or one after .env is gone, still works.
       - cd / && docker compose --project-name almena-registry down --volumes --remove-orphans
       - task: clean
-      - rm -rf .task coverage out build next-env.d.ts *.tsbuildinfo
+      - rm -rf .task coverage out build next-env.d.ts *.tsbuildinfo test-results playwright-report blob-report
       - find . -maxdepth 1 -name '.env*' ! -name '.env.example' -exec rm -f {} +

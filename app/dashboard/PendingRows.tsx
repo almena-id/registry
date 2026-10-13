@@ -3,10 +3,10 @@ import Link from "next/link";
 import { Badge } from "@/app/components/ui/badge";
 import { Button } from "@/app/components/ui/button";
 import { getI18n } from "@/app/i18n/server";
-import { currentTenant } from "@/app/lib/api";
 import { fetchTenantCredentialCatalogue } from "@/app/lib/credential-catalog";
 import { label } from "@/app/lib/form-fields";
 import type { Pending } from "@/app/lib/pending";
+import { fetchTenant } from "@/app/lib/tenant";
 import { fetchWaysIn } from "@/app/lib/ways-in";
 
 const rowClass =
@@ -63,7 +63,8 @@ function actionHref(row: Pending, back: string): string {
  * `GET /tenants/{id}/pending`), in the order it is done: each named and
  * tagged with why it waits; for whoever does it, the way to it — or, when
  * something has to be done first, what. Whoever signs without an Almena
- * wallet is asked to link one first. `limit` shows that many, then how many
+ * wallet is asked to link one first — unless the platform signs as the
+ * account (its flow `none`) and nothing else of theirs waits. `limit` shows that many, then how many
  * more, leading to the whole list.
  */
 export async function PendingRows({
@@ -78,7 +79,7 @@ export async function PendingRows({
 }) {
   const [{ t, locale }, tenant, waysIn, credentials] = await Promise.all([
     getI18n(),
-    currentTenant(),
+    fetchTenant(),
     fetchWaysIn(),
     rows.some((row) => row.kind === "credential")
       ? fetchTenantCredentialCatalogue()
@@ -88,8 +89,14 @@ export async function PendingRows({
   const types = new Map(
     credentials?.types.map((type) => [type.id, type.labels]),
   );
+  // Under `none` the platform signs as the account; an issuer's lists and
+  // credentials are still signed from its signer's wallet.
+  const platform = tenant?.signing_flow === "none";
+  const walletWork = (row: Pending) =>
+    row.yours &&
+    (!platform || row.kind === "status_list" || row.kind === "credential");
   const noWallet =
-    (Boolean(tenant?.signs) || rows.some((row) => row.yours)) &&
+    ((Boolean(tenant?.signs) && !platform) || rows.some(walletWork)) &&
     waysIn !== null &&
     !waysIn.accounts.some((a) => a.provider === "almena");
   const shown = limit === undefined ? rows : rows.slice(0, limit);

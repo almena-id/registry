@@ -38,12 +38,19 @@ import {
 } from "@/app/components/ui/field";
 import { useI18n } from "@/app/i18n/client";
 import type { CredentialCatalogue } from "@/app/lib/credential-catalog";
-import { createForm, type FormState } from "@/app/lib/form-actions";
+import {
+  createForm,
+  updateForm,
+  type FormState,
+} from "@/app/lib/form-actions";
+import type { Form } from "@/app/lib/forms";
 import type { Texts } from "@/app/lib/texts";
 import {
   byId,
   codesOf,
+  credentialDraftOf,
   draftFor,
+  fieldDraftOf,
   label,
   type Catalogue,
   type CatalogueField,
@@ -61,29 +68,41 @@ import { CredentialsSection } from "./CredentialsSection";
  * allows it, makes it stricter: fewer values or formats, a date range, a
  * shorter text. Below them, the credentials it asks to be presented
  * (`CredentialsSection`). Fields and credentials travel as JSON, one hidden
- * input each.
+ * input each. Given a `form`, it edits that one instead, filled with it; in
+ * use, it says what a change may still do.
  */
 export function FormBuilder({
   catalogue,
   credentials,
+  form,
 }: {
   catalogue: Catalogue;
   credentials: CredentialCatalogue;
+  form?: Form;
 }) {
   const { t } = useI18n();
   const copy = t.dashboard.forms;
   const [state, action, pending] = useActionState<FormState, FormData>(
-    createForm,
+    form ? updateForm.bind(null, form.id) : createForm,
     {},
   );
   const next = useRef(0);
-  const [fields, setFields] = useState<FieldDraft[]>([]);
-  // By language; kept across answers, as the fields are.
-  const [name, setName] = useState<Texts>(state.name ?? {});
-  const [description, setDescription] = useState<Texts>(
-    state.description ?? {},
+  // A form edited starts with its own; their ids apart from the new ones'.
+  const [fields, setFields] = useState<FieldDraft[]>(() =>
+    (form?.fields ?? []).map((field, index) =>
+      fieldDraftOf(field, `e${index}`),
+    ),
   );
-  const [asked, setAsked] = useState<CredentialDraft[]>([]);
+  // By language; kept across answers, as the fields are.
+  const [name, setName] = useState<Texts>(state.name ?? form?.name ?? {});
+  const [description, setDescription] = useState<Texts>(
+    state.description ?? form?.description ?? {},
+  );
+  const [asked, setAsked] = useState<CredentialDraft[]>(() =>
+    (form?.credentials ?? []).map((request, index) =>
+      credentialDraftOf(request, `e${index}`),
+    ),
+  );
   const errors = state.errors ?? {};
   const fieldsById = useMemo(() => byId(catalogue), [catalogue]);
 
@@ -109,6 +128,11 @@ export function FormBuilder({
     <form className="flex flex-col gap-5" action={action} noValidate>
       <input type="hidden" name="fields" value={JSON.stringify(fields)} />
       <input type="hidden" name="credentials" value={JSON.stringify(asked)} />
+      {form?.in_use && (
+        <Alert variant="notice">
+          <AlertDescription>{copy.inUseNotice}</AlertDescription>
+        </Alert>
+      )}
       {errors.form && (
         <Alert variant="destructive" role="alert">
           <AlertDescription>{copy.errors[errors.form]}</AlertDescription>
@@ -213,10 +237,12 @@ export function FormBuilder({
 
       <div className="flex justify-end gap-2">
         <Button asChild variant="ghost">
-          <Link href="/dashboard/forms">{copy.cancel}</Link>
+          <Link href={form ? `/dashboard/forms/${form.id}` : "/dashboard/forms"}>
+            {copy.cancel}
+          </Link>
         </Button>
         <Button type="submit" disabled={pending}>
-          {copy.save}
+          {form ? copy.saveChanges : copy.save}
         </Button>
       </div>
     </form>

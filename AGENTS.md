@@ -14,6 +14,14 @@ The web portal of the Almena ID registry; its data comes from
 `../api` (FastAPI). Everything is written in English. Use `task` for
 everything (`task --list`); `task check` must pass before finishing.
 
+- Tests: unit tests next to what they test (`app/**/*.test.ts`, Vitest,
+  `vitest.config.mts`; `test/setup.ts` mocks Next's cookies, redirect and
+  cache, `server-only` is an empty module) — the `lib/` helpers and the
+  server actions with the API mocked: what each sends and how a refusal is
+  worded. Smoke tests in `e2e/` (Playwright, `playwright.config.ts`) run the
+  production build with no API reachable. A new server action, or a new
+  refusal it words, comes with its unit test.
+
 - The portal is `https://registry.almena.id` (`NEXT_PUBLIC_REGISTRY_WEB_URL`),
   the API `https://api.almena.id`: `process.env.REGISTRY_API_URL`
   on the server, `process.env.NEXT_PUBLIC_REGISTRY_API_URL` in the browser
@@ -87,6 +95,10 @@ everything (`task --list`); `task check` must pass before finishing.
 - Sign-in goes through server actions (`app/lib/auth-actions.ts`): the API's
   bearer token is kept in the HTTP-only `almena.session` cookie on this origin
   and sent by the server (`app/lib/api.ts`); the browser never holds it.
+  With `REGISTRY_PORTAL_SECRET` (the API's own), every call also names the
+  visitor's address (`X-Almena-Client-IP`), so the API's limits per network
+  address count visitors, not the portal; a limit hit is `429` with a code
+  (`too_many_codes`, `too_many_attempts`, `too_many_requests`) worded here.
 - Rules checked here (required, lengths, formats, allowed values, what an
   item's state lets you do) are for the person's sake, never the guard: the
   API checks every one of them again and is the one that decides. A rule
@@ -130,8 +142,7 @@ everything (`task --list`); `task check` must pass before finishing.
   language) and, optionally, a mediator; mediators a name, the address
   they listen on — a subdomain typed before one of the tenant's verified
   domains, picked from a list (`https://{subdomain}.{domain}`; with none
-  verified, the list is empty and a link leads to Domains) — and whether they are public; identities only a name
-  until the DID method is decided.
+  verified, the list is empty and a link leads to Domains) — and whether they are public; identities only a name.
   The tenant has no menu entry: it is chosen in the header, kept by id in the
   HTTP-only `almena.tenant` cookie (the oldest while none is chosen, or the
   chosen one is no longer the account's); choosing one goes back to the
@@ -141,6 +152,12 @@ everything (`task --list`); `task check` must pass before finishing.
   invitations; admins see "Add user", which opens `/dashboard/users/new`
   (email + role, admin or member). The invitee joins the next time they sign
   in with that address. The user's role comes with `/tenants` (`Tenant.role`).
+  Each row ends with `MemberActions` (a menu, `app/lib/member-actions.ts`):
+  admins make a member admin or member again, remove them or take an
+  invitation back; anyone leaves (then the dashboard opens in another of
+  their accounts, or the one the API gives them). Removing, leaving and
+  taking back are asked in the row first; the API's refusals (`last_admin`,
+  `member_signs`) are worded in the row.
 - Naming: the interface calls the tenant an **Account** ("Cuenta") and the
   person's own account a **Profile** ("Perfil"). Only the words changed: routes
   (`/dashboard/tenant`, `/dashboard/account`), code and the API keep "tenant"
@@ -193,7 +210,9 @@ everything (`task --list`); `task check` must pass before finishing.
   the account, listed from `app/lib/signing-flows.ts`, a module of its own so
   the client form can import it — in two halves: on the left its
   configuration, the choice and what that flow asks for (`single_user`: the
-  member who signs, admin or not); on the right how the flow in the select
+  member who signs, admin or not; `none`: nobody — the platform signs for the
+  account with a key it keeps, each DID change at once, so no wallet is
+  needed and pending asks for none); on the right how the flow in the select
   works, drawn by `FlowExplained` with what it gains and costs, redrawn as
   the select changes; admins edit, members read) and
   Domains (`/dashboard/domains`: the domains linked to the
@@ -226,7 +245,11 @@ everything (`task --list`); `task check` must pass before finishing.
   own framework); each says, live, which of the form's fields it fills.
   Any member creates; the list rows open to show each field, a group's parts,
   what is restricted, and the credentials asked for. A form opens at
-  `/dashboard/forms/{id}` (tabs in `forms/[id]/(tabs)`): Verify — a
+  `/dashboard/forms/{id}`, its operations beside the title (`FormActions`):
+  edit (`/dashboard/forms/{id}/edit`, the same `FormBuilder` filled with it;
+  in use — the API's `in_use` — it says it may only take more, and the API's
+  refusal points at the field or credential) and delete (asked beside the
+  icons; off, with why, while in use). Its tabs (`forms/[id]/(tabs)`): Verify — a
   verifier's `vp_token` (OpenID4VP), with the nonce and audience its key
   binding must carry, checked by the API (`POST …/forms/{id}/verify`,
   `app/lib/verify-actions.ts`) and shown credential by credential, problems
@@ -333,11 +356,16 @@ everything (`task --list`); `task check` must pass before finishing.
 - Texts a tenant writes for people to read in its forms and catalogue — a
   form's name and description, a field's help, a credential's purpose, its
   own fields' and options' labels — are by language (`{en, es}`, the portal's
-  locales; `app/lib/texts.ts`) and written with `MultilingualInput`: the box
-  in the visitor's language, with a globe inside it at its right edge that opens a
-  line per other language (marked while another one has text). Shown, they
-  read in the visitor's language, else English, else whichever there is
-  (`label`).
+  locales; `app/lib/texts.ts`) and written with `MultilingualInput`, in the
+  languages the account works in only (`Tenant.languages`, given by the
+  dashboard layout through `TenantLanguages`): the box in the visitor's
+  language (else the account's first), with a globe inside it at its right
+  edge that opens a line per other language (marked while another one has
+  text; none with a single language). Text kept in a language the account no
+  longer works in shows there read only, saying it goes on saving; the
+  actions send only the account's languages (`onlyIn`), and the API refuses
+  any other (`language_not_enabled`). Shown, they read in the visitor's
+  language, else English, else whichever there is (`label`).
 - Mediators are registered, not discovered: the API fetches nothing from the
   address, it gives the mediator an identity of its own whose DID document
   publishes that address; the DID documents of the tenant, issuers and
@@ -354,7 +382,10 @@ everything (`task --list`); `task check` must pass before finishing.
   sign — and whoever signs as the tenant gets "Sign", which opens `/dashboard/{section}/{id}/sign`
   (outside the tabs, like delete): `WalletRequest` with `purpose: "sign"`
   asks the API to prepare the identity's next log entry and shows the QR for
-  the signer's wallet; signed, it comes back to the item. Publishing an item
+  the signer's wallet; signed, it comes back to the item. When the platform
+  signs (the flow `none`) the API answers `signed` and the screen goes straight
+  back (`startWallet`'s `done`); a wallet is only shown for the entry that
+  hands over to `none`, signed by the old flow's signers. Publishing an item
   whose identity is pending is refused ("Sign its identity first"). The JSON
   tab shows the published document when signed, the one to sign while
   pending, and both when there are changes to sign — saying in which fields
@@ -369,8 +400,7 @@ everything (`task --list`); `task check` must pass before finishing.
 - Every item opens at `/dashboard/{section}/{id}`, all laid out alike: the
   layout in `[section]/[id]/(tabs)/` draws the way back, the name with the
   operations beside it in one row, and the tabs below — Summary (`/{id}`, the
-  facts), Data (`/{id}/data`, the form; not for identities, which have no
-  fields), Credentials (`/{id}/credentials`, issuers: the types they grant), Signing (`/{id}/signing`, issuers and verifiers: the signing system
+  facts), Data (`/{id}/data`, the form; an identity's, its name only), Credentials (`/{id}/credentials`, issuers: the types they grant), Signing (`/{id}/signing`, issuers and verifiers: the signing system
   — so far one specific member signs; admins set it, members read it), Status
   lists (`/{id}/status`, issuers: each list's address, entries taken, revoked
   and suspended, and whether it must be signed — never yet, or by a key the
@@ -382,6 +412,10 @@ everything (`task --list`); `task check` must pass before finishing.
   (`ResourceActions`): publish, for whoever signs as the tenant — which is
   endorsing it: its own screen (`/{id}/publish`), where the signer's wallet
   signs the tenant's membership credential and the item's `whois.vp` in one
-  approval — and, for admins, unpublish and delete, which asks on its own screen (`/{id}/delete`). The
+  approval; under the flow `none` that screen is a button instead
+  (`PublishForm`, `app/lib/publish-actions.ts`) and the platform signs — and,
+  for admins, unpublish and delete, which asks on its own screen (`/{id}/delete`);
+  an identity's only operation is delete, for admins, on the same screen and
+  only while nothing acts as it and nobody signed it (`IdentityActions`). The
   Summary shows the endorsement (its `whois.vp`, until when). A draft's DID does not
   resolve and the API's public catalogue does not list it.

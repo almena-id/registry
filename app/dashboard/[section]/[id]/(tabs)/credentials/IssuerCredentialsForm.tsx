@@ -9,7 +9,12 @@ import { Alert, AlertDescription } from "@/app/components/ui/alert";
 import { Button } from "@/app/components/ui/button";
 import { Card } from "@/app/components/ui/card";
 import { Checkbox } from "@/app/components/ui/checkbox";
-import { FieldLabel, FieldLegend, FieldSet } from "@/app/components/ui/field";
+import {
+  Field,
+  FieldLabel,
+  FieldLegend,
+  FieldSet,
+} from "@/app/components/ui/field";
 import { useI18n } from "@/app/i18n/client";
 import {
   saveIssuerCredentialTypes,
@@ -93,7 +98,7 @@ export function IssuerCredentialsForm({
                   </span>
                 </FieldLabel>
                 {ticked.includes(type.id) && (
-                  <div className="grid gap-1.5 pl-6.5">
+                  <Field className="gap-1.5 pl-6.5">
                     <FieldLabel
                       htmlFor={`form-${type.id}`}
                       className="text-[13px]"
@@ -112,7 +117,7 @@ export function IssuerCredentialsForm({
                         })),
                       ]}
                     />
-                  </div>
+                  </Field>
                 )}
               </div>
             ))}

@@ -6,6 +6,7 @@ import { currentTenant } from "@/app/lib/api";
 import { DetailHead, NotFound } from "../Detail";
 import { DetailTabs } from "../DetailTabs";
 import { isKind, ITEM, loadItem } from "../load";
+import { IdentityActions } from "../IdentityActions";
 import { ResourceActions } from "../ResourceActions";
 
 export async function generateMetadata({
@@ -20,8 +21,8 @@ export async function generateMetadata({
 
 /**
  * Every item's screens (an identity, an issuer, a verifier, a mediator): the
- * way back, its name with the operations beside it (admins, and not for
- * identities), and the tabs below. The tab shows the rest.
+ * way back, its name with the operations beside it (an identity's, delete,
+ * for admins), and the tabs below. The tab shows the rest.
  */
 export default async function DetailLayout({
   params,
@@ -55,21 +56,29 @@ export default async function DetailLayout({
         backLabel={own.back}
         title={item.name}
         actions={
-          resource &&
-          (admin || signs) && (
-            <ResourceActions
-              section={section}
-              id={item.id}
-              published={Boolean(item.published_at)}
-              admin={admin}
-              signs={signs}
-            />
-          )
+          loaded.section === "identities"
+            ? admin &&
+              loaded.item && (
+                <IdentityActions
+                  id={loaded.item.id}
+                  used={loaded.item.used_by.length > 0}
+                  signed={loaded.item.did !== null}
+                />
+              )
+            : resource &&
+              (admin || signs) && (
+                <ResourceActions
+                  section={section}
+                  id={item.id}
+                  published={Boolean(item.published_at)}
+                  admin={admin}
+                  signs={signs}
+                />
+              )
         }
       />
       <DetailTabs
         base={`${back}/${item.id}`}
-        editable={isKind(section)}
         signs={section === "issuers" || section === "verifiers"}
         issues={section === "issuers"}
         verifies={section === "verifiers"}

@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 
 import { locales, type Dictionary } from "@/app/i18n/config";
 import { api, currentTenant, sessionCookie } from "./api";
-import { cleanTexts, hasText, textsFrom, type Texts } from "./texts";
+import { cleanTexts, hasText, onlyIn, textsFrom, type Texts } from "./texts";
 
 type ErrorKey = keyof Dictionary["dashboard"]["catalogue"]["errors"];
 
@@ -106,6 +106,21 @@ function readField(form: FormData): CustomFieldState {
   };
 }
 
+/** The field's and its options' labels in the account's languages only. */
+function spoken(
+  keep: CustomFieldState,
+  languages: readonly string[] | undefined,
+): CustomFieldState {
+  return {
+    ...keep,
+    labels: onlyIn(keep.labels ?? {}, languages),
+    options: (keep.options ?? []).map((option) => ({
+      ...option,
+      labels: onlyIn(option.labels, languages),
+    })),
+  };
+}
+
 /** A group's parts to send, or what is wrong with them. */
 function partsOf(parts: PartDraft[]): unknown[] | ErrorKey {
   const rows = parts.filter((part) => part.key.trim());
@@ -182,9 +197,10 @@ export async function createCustomField(
   _: CustomFieldState,
   form: FormData,
 ): Promise<CustomFieldState> {
-  const keep = readField(form);
+  const tenant = await currentTenant();
+  const keep = spoken(readField(form), tenant?.languages);
   if (!keep.key) return { ...keep, error: "keyRequired" };
-  const anchor = (await currentTenant())?.anchor ?? false;
+  const anchor = tenant?.anchor ?? false;
   const body = bodyOf(keep, anchor);
   if (typeof body === "string") return { ...keep, error: body };
   const error = await call("", {
@@ -205,8 +221,12 @@ export async function updateCustomField(
   previous: CustomFieldState,
   form: FormData,
 ): Promise<CustomFieldState> {
-  const keep = { ...readField(form), key: previous.key };
-  const anchor = (await currentTenant())?.anchor ?? false;
+  const tenant = await currentTenant();
+  const keep = spoken(
+    { ...readField(form), key: previous.key },
+    tenant?.languages,
+  );
+  const anchor = tenant?.anchor ?? false;
   const body = bodyOf(keep, anchor);
   if (typeof body === "string") return { ...keep, error: body };
   const error = await call(`/${encodeURIComponent(id)}`, {

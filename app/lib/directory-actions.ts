@@ -5,7 +5,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 import type { Dictionary } from "@/app/i18n/config";
-import { hasText, longest, textsFrom, type Texts } from "./texts";
+import { hasText, longest, onlyIn, textsFrom, type Texts } from "./texts";
 import { api, currentTenant, sessionCookie } from "./api";
 import { fetchPage } from "./directory";
 import {
@@ -56,7 +56,10 @@ export async function createItem(
 ): Promise<CreateState> {
   if (!isSection(section)) return { errors: { form: "unavailable" } };
   const name = String(form.get("name") ?? "").trim();
-  const description = textsFrom(form.get("description"));
+  const description = onlyIn(
+    textsFrom(form.get("description")),
+    (await currentTenant())?.languages,
+  );
   const subdomain = String(form.get("subdomain") ?? "").trim();
   const domain = String(form.get("domain") ?? "");
   const mediator = String(form.get("mediator") ?? "");
@@ -194,7 +197,11 @@ export async function saveDescribed(
   form: FormData,
 ): Promise<DescribedState> {
   const name = String(form.get("name") ?? "").trim();
-  const description = textsFrom(form.get("description"));
+  // Written in the account's languages only: what was in another goes now.
+  const description = onlyIn(
+    textsFrom(form.get("description")),
+    (await currentTenant())?.languages,
+  );
   const mediator = String(form.get("mediator") ?? "");
   const keep = { name, description, mediator };
   const errors: DescribedState["errors"] = {};
@@ -334,4 +341,55 @@ export async function saveSigning(
     signer: data.signer?.id ?? "",
     saved: true,
   };
+}
+
+export type IdentityState = {
+  name?: string;
+  saved?: boolean;
+  errors?: { name?: ErrorKey; form?: ErrorKey };
+};
+
+/** An identity's name; its DID stays, and whatever acts as it keeps its own. */
+export async function renameIdentity(
+  id: string,
+  _: IdentityState,
+  form: FormData,
+): Promise<IdentityState> {
+  const name = String(form.get("name") ?? "").trim();
+  if (!name) return { name, errors: { name: "nameRequired" } };
+  if (name.length > 200) return { name, errors: { name: "nameLong" } };
+  const token = (await cookies()).get(sessionCookie)?.value;
+  const tenant = await currentTenant();
+  if (!token || !tenant) return { name, errors: { form: "unavailable" } };
+  const { data } = await api<{ name: string }>(
+    `/tenants/${tenant.id}/identities/${encodeURIComponent(id)}`,
+    { method: "PATCH", body: { name }, token },
+  );
+  if (!data) return { name, errors: { form: "unavailable" } };
+  revalidatePath(`/dashboard/identities/${id}`);
+  return { name: data.name, saved: true };
+}
+
+/** Why an identity could not be deleted. */
+export type IdentityDeleteState = {
+  error?: "inUse" | "signed" | "gone" | "failed";
+};
+
+/** Delete an identity nothing acts as and nobody signed; back to the list. */
+export async function deleteIdentity(id: string): Promise<IdentityDeleteState> {
+  const token = (await cookies()).get(sessionCookie)?.value;
+  const tenant = await currentTenant();
+  if (!token || !tenant) return { error: "failed" };
+  const { status, detail } = await api(
+    `/tenants/${tenant.id}/identities/${encodeURIComponent(id)}`,
+    { method: "DELETE", token },
+  );
+  if (status !== 204) {
+    if (detail === "identity_in_use") return { error: "inUse" };
+    if (detail === "identity_signed") return { error: "signed" };
+    if (status === 404) return { error: "gone" };
+    return { error: "failed" };
+  }
+  revalidatePath("/dashboard/identities");
+  redirect("/dashboard/identities");
 }

@@ -11,6 +11,7 @@ import { getI18n, getTimeZone } from "@/app/i18n/server";
 import { currentTenant, currentUser } from "@/app/lib/api";
 import { formatDateTime } from "@/app/lib/format";
 import { fetchMembers } from "@/app/lib/members";
+import { MemberActions } from "./MemberActions";
 
 export async function generateMetadata(): Promise<Metadata> {
   return { title: (await getI18n()).t.dashboard.users.title };
@@ -21,7 +22,7 @@ export async function generateMetadata(): Promise<Metadata> {
  * in. Each row says whether they have an Almena wallet linked — everybody
  * needs one to work in the platform — in a cell of its own between the person
  * and the date; somebody only invited has no account yet, so the cell holds a
- * dash.
+ * dash. The last cell holds what can be done about them (`MemberActions`).
  */
 export default async function UsersPage() {
   const { locale, t } = await getI18n();
@@ -110,6 +111,12 @@ export default async function UsersPage() {
                 >
                   {formatDateTime(member.since, locale, timeZone)}
                 </time>
+                <MemberActions
+                  member={member}
+                  name={member.email ?? member.alias ?? copy.noEmail}
+                  isAdmin={isAdmin}
+                  isMe={member.user_id !== null && member.user_id === me?.id}
+                />
               </li>
             ))}
           </ul>

@@ -8,6 +8,8 @@ export type Member = {
   status: "member" | "invited";
   /** Members only: their account, and what they like to be called. */
   user_id: string | null;
+  /** Invitations only: what takes it back. */
+  invitation_id: string | null;
   alias: string | null;
   /** `null` for a member whose account has no email. */
   email: string | null;

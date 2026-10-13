@@ -14,7 +14,7 @@
 # a number. Runs queue up (never in parallel), so two merges cannot take the
 # same number.
 #
-# Lint and type-check go first. Each architecture then builds on its own
+# Lint, type-check, unit and smoke tests go first. Each architecture then builds on its own
 # native runner, in parallel (no emulation), and pushes its image by digest;
 # the last job joins both into one multi-architecture image and tags it:
 #
@@ -61,7 +61,7 @@ jobs:
           echo "Version: $version"
 
   check:
-    name: Lint and type-check
+    name: Lint, type-check and test
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
@@ -81,6 +81,15 @@ jobs:
           # Route types (LayoutProps, PageProps…) live in .next/types: generate them first.
           npx next typegen
           npx tsc --noEmit
+
+      - name: Unit tests
+        run: npm test
+
+      - name: Smoke tests
+        run: |
+          npm run build
+          npx playwright install --with-deps chromium
+          npm run e2e
 
   build:
     name: Build ${{ matrix.platform }}

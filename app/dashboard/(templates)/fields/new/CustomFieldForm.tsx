@@ -155,7 +155,7 @@ export function CustomFieldForm({
                 name="source"
                 maxLength={200}
                 defaultValue={state.source}
-                placeholder="schema.org identifier"
+                placeholder={copy.sourcePlaceholder}
                 aria-invalid={error === "sourceRequired" ? true : undefined}
               />
             </Field>

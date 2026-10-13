@@ -6,7 +6,7 @@ import { FieldInput, type Domains } from "@/app/components/FieldInput";
 import { Alert, AlertDescription } from "@/app/components/ui/alert";
 import { Button } from "@/app/components/ui/button";
 import { Input } from "@/app/components/ui/input";
-import { FieldLabel } from "@/app/components/ui/field";
+import { Field, FieldError, FieldLabel } from "@/app/components/ui/field";
 import { useI18n } from "@/app/i18n/client";
 import { saveIssuance } from "@/app/lib/application-actions";
 import type { IssuanceProposal } from "@/app/lib/applications";
@@ -80,7 +80,10 @@ export function IssuanceForm({
           error={errorsOf(claim.name)}
         />
       ))}
-      <div className="grid max-w-[240px] gap-1.5">
+      <Field
+        className="max-w-[240px] gap-1.5"
+        data-invalid={failure === "valid_until_invalid" ? true : undefined}
+      >
         <FieldLabel htmlFor="valid-until">{copy.validUntil}</FieldLabel>
         <Input
           id="valid-until"
@@ -88,9 +91,17 @@ export function IssuanceForm({
           value={validUntil}
           onChange={(event) => setValidUntil(event.target.value)}
           aria-invalid={failure === "valid_until_invalid" ? true : undefined}
+          aria-describedby={
+            failure === "valid_until_invalid" ? "valid-until-error" : undefined
+          }
         />
-      </div>
-      {failure && (
+        {failure === "valid_until_invalid" && (
+          <FieldError className="text-[13px]" id="valid-until-error">
+            {copy.errors.valid_until_invalid}
+          </FieldError>
+        )}
+      </Field>
+      {failure && failure !== "valid_until_invalid" && (
         <Alert variant="destructive" role="alert">
           <AlertDescription>
             {copy.errors[failure as keyof typeof copy.errors] ??

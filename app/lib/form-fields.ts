@@ -92,6 +92,22 @@ export function draftFor(id: string, ref: string, as = ""): FieldDraft {
   };
 }
 
+/** A form's field as a draft, to edit it again. */
+export function fieldDraftOf(field: FormField, id: string): FieldDraft {
+  return {
+    ...draftFor(id, field.ref, field.as ?? ""),
+    required: field.required,
+    help: field.help ?? {},
+    values: (field.narrow?.values ?? []).map(String),
+    min_date: field.narrow?.min_date ?? "",
+    max_date: field.narrow?.max_date ?? "",
+    max_length:
+      field.narrow?.max_length === undefined
+        ? ""
+        : String(field.narrow.max_length),
+  };
+}
+
 /** A label in the visitor's language, else English. */
 export function label(
   labels: Record<string, string | undefined>,
@@ -118,7 +134,11 @@ export function codesOf(catalogue: Catalogue, field: CatalogueField): Code[] {
 }
 
 export type FieldProblem =
-  "keyInvalid" | "keyDuplicate" | "narrowInvalid" | "fieldUnknown";
+  | "keyInvalid"
+  | "keyDuplicate"
+  | "narrowInvalid"
+  | "fieldUnknown"
+  | "inUseField";
 
 /**
  * The draft as the API takes it. The API checks it — and says which field
@@ -241,7 +261,25 @@ export type CredentialProblem =
   | "credentialKeyDuplicate"
   | "credentialTypeDuplicate"
   | "claimsInvalid"
-  | "trustInvalid";
+  | "trustInvalid"
+  | "inUseCredential";
+
+/** A form's credential request as a draft, to edit it again. */
+export function credentialDraftOf(
+  request: CredentialRequest,
+  id: string,
+): CredentialDraft {
+  return {
+    id,
+    key: request.key,
+    type: request.type,
+    required: request.required,
+    purpose: request.purpose ?? {},
+    claims: request.claims,
+    trust: request.trust,
+    issuers: request.issuers ?? [],
+  };
+}
 
 /** The draft as the API takes it; the API checks it and says which does not hold. */
 export function toCredential(draft: CredentialDraft): Record<string, unknown> {

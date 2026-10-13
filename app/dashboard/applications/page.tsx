@@ -5,6 +5,7 @@ import { ChevronRightIcon } from "lucide-react";
 
 import { Alert, AlertDescription } from "@/app/components/ui/alert";
 import { Badge } from "@/app/components/ui/badge";
+import { Button } from "@/app/components/ui/button";
 import { Card } from "@/app/components/ui/card";
 import { getI18n, getTimeZone } from "@/app/i18n/server";
 import { fetchReceived } from "@/app/lib/applications";
@@ -20,16 +21,21 @@ export async function generateMetadata(): Promise<Metadata> {
 
 /**
  * Applications: what holders signed and sent the account's issuers, newest
- * first, each opening to what it says and the decision.
+ * first, each opening to what it says and the decision; fifty a page, older
+ * ones a link away (`?cursor=`).
  */
-export default async function ApplicationsPage() {
-  const [{ t, locale }, received, credentials, timeZone] = await Promise.all([
+export default async function ApplicationsPage({
+  searchParams,
+}: PageProps<"/dashboard/applications">) {
+  const { cursor } = await searchParams;
+  const [{ t, locale }, page, credentials, timeZone] = await Promise.all([
     getI18n(),
-    fetchReceived(),
+    fetchReceived(typeof cursor === "string" ? cursor : undefined),
     fetchTenantCredentialCatalogue(),
     getTimeZone(),
   ]);
   const copy = t.dashboard.applications;
+  const received = page?.items ?? null;
   const types = new Map(
     credentials?.types.map((type) => [type.id, type.labels]),
   );
@@ -92,6 +98,24 @@ export default async function ApplicationsPage() {
           </ul>
         )}
       </Card>
+      {(page?.next_cursor || cursor) && (
+        <nav className="mt-4 flex justify-end gap-2">
+          {cursor && (
+            <Button asChild variant="ghost">
+              <Link href="/dashboard/applications">{copy.newest}</Link>
+            </Button>
+          )}
+          {page?.next_cursor && (
+            <Button asChild variant="outline">
+              <Link
+                href={`/dashboard/applications?cursor=${encodeURIComponent(page.next_cursor)}`}
+              >
+                {copy.older}
+              </Link>
+            </Button>
+          )}
+        </nav>
+      )}
     </div>
   );
 }

@@ -79,7 +79,9 @@
       "emailInvalid": "Introduce un correo válido.",
       "codeFormat": "El código tiene 6 cifras.",
       "invalidCode": "Ese código no es correcto o ha caducado.",
-      "tooManyAttempts": "Demasiados intentos. Pide un código nuevo.",
+      "tooManyAttempts": "Demasiados códigos incorrectos para este correo. Espera unos minutos antes de volver a intentarlo.",
+      "tooManyCodes": "Se acaba de enviar un código, o demasiados en esta hora. Espera un poco y vuelve a pedirlo.",
+      "tooManyRequests": "Demasiados intentos desde tu conexión. Inténtalo más tarde.",
       "mailUnavailable": "No se ha podido enviar el correo. Inténtalo de nuevo en un momento.",
       "unavailable": "No se puede contactar con el registro. Inténtalo de nuevo en un momento.",
       "invalidState": "El inicio de sesión tardó demasiado o se interrumpió. Inténtalo de nuevo.",
@@ -94,7 +96,6 @@
       "apple": "Continuar con Apple",
       "github": "Continuar con GitHub",
       "or": "o",
-      "soon": "Pronto",
       "notConfigured": "Aún no disponible"
     }
   },
@@ -110,7 +111,6 @@
       "mediators": "Mediadores",
       "identities": "Identidades",
       "forms": "Formularios",
-      "soon": "Pronto",
       "users": "Usuarios",
       "tenantLabel": "Cuenta",
       "tenant": "Ajustes",
@@ -161,7 +161,9 @@
         "emailInvalid": "Escribe un correo válido.",
         "codeFormat": "El código tiene 6 dígitos.",
         "invalidCode": "Ese código es incorrecto o ha caducado.",
-        "tooManyAttempts": "Demasiados intentos. Pide un código nuevo.",
+        "tooManyAttempts": "Demasiados códigos incorrectos para este correo. Espera unos minutos antes de volver a intentarlo.",
+        "tooManyCodes": "Se acaba de enviar un código, o demasiados en esta hora. Espera un poco y vuelve a pedirlo.",
+        "tooManyRequests": "Demasiados intentos desde tu conexión. Inténtalo más tarde.",
         "mailUnavailable": "No se pudo enviar el correo. Inténtalo de nuevo en un momento.",
         "lastWayIn": "Es tu única forma de entrar.",
         "invalidState": "La vinculación tardó demasiado o se interrumpió. Inténtalo de nuevo.",
@@ -298,7 +300,6 @@
       "loading": "Cargando más…",
       "loadError": "No se ha podido cargar el resto de la lista.",
       "retry": "Reintentar",
-      "noTenant": "No hay ninguna cuenta en la que trabajar.",
       "errors": {
         "nameRequired": "Escribe un nombre.",
         "nameLong": "Usa como mucho 200 caracteres.",
@@ -341,7 +342,13 @@
       "created": "Creada",
       "published": "Publicado en",
       "document": "Documento DID",
-      "notFound": "Esta identidad no está en esta cuenta."
+      "notFound": "Esta identidad no está en esta cuenta.",
+      "save": "Guardar",
+      "saved": "Guardado.",
+      "deleteLead": "Nunca se ha firmado y nada actúa como ella: simplemente desaparece.",
+      "inUse": "Algo actúa como ella: borra eso en su lugar, y esta se va con ello.",
+      "signed": "Su DID existe y otros pueden depender de él: se queda.",
+      "gone": "Esta identidad ya no está aquí."
     },
     "mediator": {
       "back": "Mediadores",
@@ -386,6 +393,7 @@
       "identityPending": "Firma primero su identidad.",
       "publishTitle": "Publicar {name}",
       "publishLead": "Tu organización lo avala, firmado desde tu wallet; entonces se publica.",
+      "publishLeadNone": "Tu organización lo avala, firmado por la plataforma en nombre de la cuenta; después se publica.",
       "endorsement": "Aval",
       "endorsedUntil": "hasta {date}",
       "notEndorsed": "Sin aval"
@@ -411,7 +419,6 @@
       "inviteLead": "Le enviaremos un correo. Entra en cuanto inicie sesión con esa dirección.",
       "send": "Enviar invitación",
       "cancel": "Cancelar",
-      "adminOnly": "Solo los administradores pueden añadir usuarios.",
       "errors": {
         "emailInvalid": "Introduce un correo válido.",
         "alreadyMember": "Esa persona ya pertenece a esta cuenta.",
@@ -422,7 +429,27 @@
       "noEmail": "Sin correo",
       "walletLinked": "Wallet vinculado",
       "noWallet": "Sin wallet",
-      "noAccount": "Aún sin cuenta"
+      "noAccount": "Aún sin cuenta",
+      "manage": {
+        "actions": "Acciones para {name}",
+        "makeAdmin": "Hacer admin",
+        "makeMember": "Hacer miembro",
+        "remove": "Quitar de la cuenta",
+        "removeAsk": "¿Quitar a {name} de esta cuenta?",
+        "leave": "Salir de la cuenta",
+        "leaveAsk": "¿Salir de esta cuenta? Necesitarás una nueva invitación para volver.",
+        "withdraw": "Anular la invitación",
+        "withdrawAsk": "¿Anular la invitación a {name}?",
+        "confirm": "Sí, adelante",
+        "keep": "No",
+        "errors": {
+          "lastAdmin": "Una cuenta necesita al menos un admin: haz admin a otra persona primero.",
+          "memberSigns": "Firma por esta cuenta, o por uno de sus emisores o verificadores: elige a otra persona en Firma primero.",
+          "notAdmin": "Solo los administradores gestionan usuarios.",
+          "gone": "Esa persona o invitación ya no está aquí.",
+          "unavailable": "No se puede contactar con el registro. Inténtalo de nuevo en un momento."
+        }
+      }
     },
     "tenant": {
       "title": "Cuenta",
@@ -442,12 +469,13 @@
         "mediatorNotFound": "Ese mediador no está disponible para esta cuenta.",
         "signerRequired": "Elige quién firma.",
         "signerNotMember": "No es miembro de esta cuenta.",
-        "languagesRequired": "Elige al menos un idioma."
+        "languagesRequired": "Elige al menos un idioma.",
+        "vaultUnavailable": "No se puede acceder al almacén de claves de la plataforma, así que no puede crear la clave con la que firma. Inténtalo de nuevo en un momento."
       },
       "identity": "Identidad",
       "identityHint": "El DID propio de la organización, con el nombre de la cuenta.",
       "noMediators": "Aún no hay mediadores.",
-      "signingLead": "Quién firma por la cuenta, desde su wallet.",
+      "signingLead": "Quién firma por la cuenta: alguien desde su wallet, o nadie.",
       "signingFlow": "Flujo de firma",
       "signingFlows": {
         "any_admin": {
@@ -463,6 +491,13 @@
           "people": "Miembros",
           "gains": "Una sola persona responde de lo que se publica.",
           "costs": "Si esa persona no está, no se publica nada."
+        },
+        "none": {
+          "label": "Sin firma",
+          "hint": "Nadie firma: la plataforma firma por la cuenta en cuanto hay algo que firmar. Los administradores siguen decidiendo qué se publica.",
+          "people": "Nadie",
+          "gains": "Trabajar sin wallets: lo que creas queda firmado al momento.",
+          "costs": "La plataforma guarda la clave de la cuenta: le confías tu firma."
         }
       },
       "signing": {
@@ -475,7 +510,7 @@
         "published": "Se publica"
       },
       "languages": "Idiomas",
-      "languagesHint": "Los idiomas en los que trabaja esta cuenta, de los que habla la plataforma: uno al menos.",
+      "languagesHint": "Los idiomas en los que trabaja esta cuenta, de los que habla la plataforma: uno al menos. Sus formularios, campos y descripciones se escriben en ellos; los textos ya escritos en un idioma que quites se mantienen hasta que se editan, y entonces se quitan.",
       "languagesAnchorHint": "El ancla de confianza trabaja en todos los idiomas de la plataforma: el catálogo de Almena es de todos y se nombra en todos."
     },
     "detail": {
@@ -560,7 +595,8 @@
         "mediator_missing": "Elige un mediador",
         "mediator_unpublished": "Publica su mediador",
         "signing_flow_no_signer": "Elige quién firma",
-        "signing_flow_no_wallet": "Quien firma necesita una wallet vinculada"
+        "signing_flow_no_wallet": "Quien firma necesita una wallet vinculada",
+        "signing_flow_no_key": "La plataforma aún no tiene clave con la que firmar: vuelve a elegir el flujo"
       }
     },
     "json": {
@@ -574,7 +610,6 @@
     },
     "billing": {
       "title": "Facturación",
-      "soon": "La facturación está en camino.",
       "unavailable": "No se puede contactar con el registro. Inténtalo de nuevo en un momento.",
       "plan": "Plan",
       "free": "Uso libre",
@@ -629,6 +664,8 @@
       "cancel": "Cancelar",
       "added": "Añadido",
       "record": "Registro DNS",
+      "copy": "Copiar",
+      "copied": "Copiado",
       "errors": {
         "domainRequired": "Escribe un dominio.",
         "domainInvalid": "Escribe un dominio, como acme.com.",
@@ -696,7 +733,11 @@
         "credentialKeyDuplicate": "Otra credencial ya se llama así.",
         "credentialTypeDuplicate": "Esta credencial ya se pide en el formulario.",
         "claimsInvalid": "Marca al menos un claim.",
-        "trustInvalid": "Elige al menos un emisor, o confía en cualquier emisor del registro."
+        "trustInvalid": "Elige al menos un emisor, o confía en cualquier emisor del registro.",
+        "inUse": "Este formulario está en uso: no se puede quitar nada de lo que pide.",
+        "inUseField": "El formulario está en uso: este campo solo puede aceptar más que antes — el mismo campo, no obligatorio si no lo era, no más estricto.",
+        "inUseCredential": "El formulario está en uso: esta credencial solo puede aceptar más que antes — las mismas afirmaciones, no obligatoria si no lo era, la confianza igual de amplia.",
+        "gone": "Este formulario ya no está aquí."
       },
       "noFields": "Todavía no hay campos: añádelos desde el catálogo.",
       "search": "Buscar en el catálogo…",
@@ -800,7 +841,17 @@
       "trustRemove": "Dejar de confiar en {name}",
       "trustNoMatch": "Ningún emisor publicado que la emita coincide.",
       "trustMore": "Más emisores",
-      "trustUnavailable": "Ahora no se pueden buscar emisores. Inténtalo de nuevo en un momento."
+      "trustUnavailable": "Ahora no se pueden buscar emisores. Inténtalo de nuevo en un momento.",
+      "edit": "Editar",
+      "editTitle": "Editar formulario",
+      "editLead": "Cambia su nombre, sus campos y las credenciales que pide.",
+      "saveChanges": "Guardar cambios",
+      "inUseNotice": "Este formulario está en uso: una oferta lo usa o hay gente que lo ha respondido. Puedes añadir campos y credenciales opcionales, pedir menos y cambiar sus textos; nada de lo que pide se puede quitar ni hacer más estricto.",
+      "delete": "Borrar",
+      "deleteAsk": "¿Borrar este formulario?",
+      "deleteInUse": "En uso: una oferta lo usa o hay gente que lo ha respondido.",
+      "confirm": "Sí, borrar",
+      "keep": "No"
     },
     "catalogue": {
       "hint": "Los campos con los que se hacen tus formularios: los de Almena, estándar para todas las cuentas, y los tuyos.",
@@ -866,9 +917,7 @@
       "credentials": "Tipos de credencial de Almena",
       "credentialsHint": "Catálogo {version}: lo que otorgan los emisores y lo que los formularios piden presentar. Sus claims son campos del catálogo; sus identificadores y metadatos de tipo se publican en almena.id. Solo lectura.",
       "external": "Se expide fuera",
-      "externalHint": "Se expide bajo un marco propio: los formularios pueden pedirla, ninguna cuenta la expide.",
-      "claimCount": "{count} claims",
-      "claims": "Claims",
+      "claims": "Afirmaciones",
       "mandatory": "Siempre presente",
       "identifiers": "Identificadores",
       "issuesLead": "Los tipos de credencial que otorga este emisor, del catálogo de Almena. El catálogo público de emisores los muestra, para que los titulares encuentren quién otorga qué.",
@@ -885,6 +934,7 @@
       "category": "Categoría",
       "source": "Estándar",
       "sourceHint": "de dónde viene su nombre",
+      "sourcePlaceholder": "p. ej. schema.org, OIDC, ISO 23220",
       "choose": "Elige…",
       "createType": "Crear tipo de credencial",
       "credentialsAnchorHint": "Catálogo {version}: esta cuenta es el ancla de confianza, y estos tipos son de todos — los emisores de cualquier cuenta los otorgan y los formularios los piden. Sus identificadores y metadatos de tipo se publican en almena.id. Borra solo lo que nada use.",
@@ -1012,8 +1062,8 @@
         "parts": "Partes: {value}",
         "valueList": "Valores de {name} ({count})",
         "claims": {
-          "one": "{count} claim",
-          "other": "{count} claims"
+          "one": "{count} afirmación",
+          "other": "{count} afirmaciones"
         },
         "inUse": "Algo lo usa: no se puede borrar.",
         "fileFormats": "Los formatos de fichero no se borran nunca: todo campo de fichero los usa."
@@ -1093,7 +1143,9 @@
         "revoked": "Revocar es definitivo: ningún verificador volverá a aceptarla y no se puede deshacer. Tu wallet muestra el cambio; firmar la lista de estado del emisor lo hace efectivo."
       },
       "listUnsigned": "Antes de su primera credencial, el firmante del emisor firma su lista de estado: donde los verificadores comprueban si sus credenciales siguen valiendo.",
-      "signList": "Firmar la lista de estado"
+      "signList": "Firmar la lista de estado",
+      "older": "Más antiguas",
+      "newest": "Volver a las más recientes"
     },
     "pending": {
       "title": "Pendientes",
@@ -1236,56 +1288,27 @@
       "not_issued": "La credencial no está emitida.",
       "no_status_list": "Emitida antes de las listas de estado: su estado no puede cambiar.",
       "no_draft": "Guarda primero las afirmaciones de la credencial.",
-      "not_paired": "El wallet del titular no está emparejado."
+      "not_paired": "El wallet del titular no está emparejado.",
+      "too_many_requests": "Demasiados inicios de sesión pedidos desde tu conexión. Inténtalo más tarde.",
+      "tenant_outdated": "El DID de la cuenta aún nombra las claves de quienes firmaban: firman ellos primero el cambio de flujo.",
+      "vault_unavailable": "No se puede acceder a las claves ahora mismo. Inténtalo de nuevo en un momento.",
+      "log_moved": "Se firmó otra cosa entretanto. Inténtalo de nuevo."
     }
   },
   "apply": {
-    "title": "Solicitud",
-    "loading": "Cargando más…",
-    "loadError": "No se pudo cargar el resto de la lista.",
-    "retry": "Reintentar",
     "optional": "Opcional",
     "choose": "Elige…",
     "filter": "Filtrar…",
-    "verified": "Verificado",
-    "back": "Volver al formulario",
-    "status": {
-      "open": "Empezada",
-      "paired": "En curso",
-      "submitted": "Enviada",
-      "accepted": "Aceptada",
-      "rejected": "No aceptada",
-      "issued": "Emitida"
-    },
-    "statusLead": {
-      "open": "",
-      "paired": "",
-      "submitted": "{issuer} tiene tu solicitud de {type}: la revisará y decidirá.",
-      "accepted": "{issuer} ha aceptado tu solicitud de {type}.",
-      "rejected": "{issuer} no ha aceptado tu solicitud de {type}.",
-      "issued": "{issuer} ha emitido tu credencial de {type}."
-    },
     "problems": {
       "required": "Esto es necesario.",
       "format": "No está escrito como se espera.",
       "range": "Está fuera de lo que se acepta.",
       "value": "Elige una de las opciones.",
       "file": "Adjunta el fichero."
-    },
-    "errors": {
-      "answers_invalid": "Algunas respuestas necesitan otro vistazo.",
-      "answers_incomplete": "Completa el formulario, y presenta las credenciales que pide, antes de enviarlo.",
-      "application_closed": "Esta solicitud ya se ha enviado.",
-      "application_not_paired": "Empareja antes tu wallet.",
-      "nothing_to_present": "Este formulario no pide credenciales.",
-      "file_type_invalid": "Aquí no se acepta ese tipo de fichero.",
-      "file_too_large": "El fichero supera los 10 MB.",
-      "file_empty": "El fichero está vacío.",
-      "gone": "Esta solicitud no está abierta en este navegador.",
-      "unavailable": "No se puede contactar con el registro. Inténtalo de nuevo en un momento."
     }
   },
   "texts": {
-    "otherLanguages": "Otros idiomas"
+    "otherLanguages": "Otros idiomas",
+    "notUsed": "No es un idioma de esta cuenta: se quita al guardar."
   }
 }

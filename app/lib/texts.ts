@@ -38,3 +38,18 @@ export function textsFrom(raw: FormDataEntryValue | null): Texts {
 export function longest(value: Texts): number {
   return Math.max(0, ...Object.values(value).map((text) => text?.length ?? 0));
 }
+
+/**
+ * Only the texts in `languages` (the account's): what was written in one it
+ * no longer works in goes when the text is written again. Without
+ * `languages`, all of them.
+ */
+export function onlyIn(
+  value: Texts,
+  languages: readonly string[] | undefined,
+): Texts {
+  if (!languages) return value;
+  return Object.fromEntries(
+    Object.entries(value).filter(([lang]) => languages.includes(lang)),
+  );
+}

@@ -15,7 +15,7 @@ import {
   type FieldDraft,
   type FieldProblem,
 } from "./form-fields";
-import { hasText, longest, textsFrom, type Texts } from "./texts";
+import { hasText, longest, onlyIn, textsFrom, type Texts } from "./texts";
 
 type ErrorKey = keyof Dictionary["dashboard"]["forms"]["errors"];
 
@@ -54,6 +54,8 @@ const CREDENTIAL_CODES: Record<string, CredentialProblem> = {
 /** The API's refusals about the form as a whole. */
 const CODES: Record<string, ErrorKey> = {
   fields_required: "fieldsRequired",
+  form_in_use: "inUse",
+  form_not_found: "gone",
 };
 
 function drafts<T>(form: FormData, name: string): T[] {
@@ -65,20 +67,46 @@ function drafts<T>(form: FormData, name: string): T[] {
   }
 }
 
+/** A new form. */
 export async function createForm(
+  state: FormState,
+  form: FormData,
+): Promise<FormState> {
+  return saveForm(null, state, form);
+}
+
+/** A form changed, the whole of it; in use, it may only take more. */
+export async function updateForm(
+  id: string,
+  state: FormState,
+  form: FormData,
+): Promise<FormState> {
+  return saveForm(id, state, form);
+}
+
+async function saveForm(
+  id: string | null,
   _: FormState,
   form: FormData,
 ): Promise<FormState> {
-  const name = textsFrom(form.get("name"));
-  const description = textsFrom(form.get("description"));
+  // Written in the account's languages only: what was in another goes now.
+  const languages = (await currentTenant())?.languages;
+  const name = onlyIn(textsFrom(form.get("name")), languages);
+  const description = onlyIn(textsFrom(form.get("description")), languages);
   const keep = { name, description };
   const errors: FormState["errors"] = {};
   if (!hasText(name)) errors.name = "nameRequired";
   else if (longest(name) > 200) errors.name = "nameLong";
   if (longest(description) > 2000) errors.description = "descriptionLong";
 
-  const written = drafts<FieldDraft>(form, "fields");
-  const asked = drafts<CredentialDraft>(form, "credentials");
+  const written = drafts<FieldDraft>(form, "fields").map((draft) => ({
+    ...draft,
+    help: onlyIn(draft.help, languages),
+  }));
+  const asked = drafts<CredentialDraft>(form, "credentials").map((draft) => ({
+    ...draft,
+    purpose: onlyIn(draft.purpose, languages),
+  }));
   if (!written.length && !asked.length) errors.form ??= "fieldsRequired";
   if (Object.keys(errors).length) return { ...keep, errors };
 
@@ -87,8 +115,11 @@ export async function createForm(
   const tenant = await currentTenant();
   if (!catalogue || !token || !tenant)
     return { ...keep, errors: { form: "unavailable" } };
-  const { status, detail, failure } = await api(`/tenants/${tenant.id}/forms`, {
-    method: "POST",
+  const path = `/tenants/${tenant.id}/forms`;
+  const { status, detail, failure } = await api(
+    id ? `${path}/${encodeURIComponent(id)}` : path,
+    {
+    method: id ? "PUT" : "POST",
     token,
     body: {
       name,
@@ -97,15 +128,17 @@ export async function createForm(
       fields: written.map((draft) => toField(draft, catalogue)),
       credentials: asked.map(toCredential),
     },
-  });
+  },
+  );
   if (status === null || status >= 300) {
     const refused = (failure ?? {}) as {
-      code?: string;
       field?: number;
       credential?: number;
     };
-    const code = refused.code ?? detail ?? "";
+    const code = detail ?? "";
     const field = refused.field !== undefined && written[refused.field];
+    if (field && code === "form_in_use")
+      return { ...keep, errors: { field: { id: field.id, problem: "inUseField" } } };
     if (field && FIELD_CODES[code])
       return {
         ...keep,
@@ -113,6 +146,13 @@ export async function createForm(
       };
     const asking =
       refused.credential !== undefined && asked[refused.credential];
+    if (asking && code === "form_in_use")
+      return {
+        ...keep,
+        errors: {
+          credential: { id: asking.id, problem: "inUseCredential" },
+        },
+      };
     if (asking && CREDENTIAL_CODES[code])
       return {
         ...keep,
@@ -122,6 +162,22 @@ export async function createForm(
       };
     return { ...keep, errors: { form: CODES[code] ?? "unavailable" } };
   }
+  revalidatePath("/dashboard", "layout");
+  redirect(id ? `/dashboard/forms/${encodeURIComponent(id)}` : "/dashboard/forms");
+}
+
+/** Deletes a form no offer puts and nothing was made with; why not, otherwise. */
+export async function deleteForm(
+  id: string,
+): Promise<{ error?: ErrorKey }> {
+  const token = (await cookies()).get(sessionCookie)?.value;
+  const tenant = await currentTenant();
+  if (!token || !tenant) return { error: "unavailable" };
+  const { status, detail } = await api(
+    `/tenants/${tenant.id}/forms/${encodeURIComponent(id)}`,
+    { method: "DELETE", token },
+  );
+  if (status !== 204) return { error: CODES[detail ?? ""] ?? "unavailable" };
   revalidatePath("/dashboard", "layout");
   redirect("/dashboard/forms");
 }

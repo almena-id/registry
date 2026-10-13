@@ -41,7 +41,13 @@ export type HealthCheck = {
   check: "name" | "mediator" | "signing_flow";
   done: boolean;
   /** What is missing, when not done. */
-  issue: "missing" | "unpublished" | "no_signer" | "no_wallet" | null;
+  issue:
+    | "missing"
+    | "unpublished"
+    | "no_signer"
+    | "no_wallet"
+    | "no_key"
+    | null;
 };
 export type TenantHealth = {
   /** The share of checks done, 0 to 100. */

@@ -14,6 +14,8 @@ export type Form = {
   description: Texts | null;
   fields: FormField[];
   credentials: CredentialRequest[];
+  /** An offer puts it, or something was made with it: never deleted, only taking more. */
+  in_use: boolean;
   created_at: string;
   updated_at: string;
 };

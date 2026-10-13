@@ -79,7 +79,9 @@
       "emailInvalid": "Enter a valid email.",
       "codeFormat": "The code has 6 digits.",
       "invalidCode": "That code is wrong or has expired.",
-      "tooManyAttempts": "Too many tries. Ask for a new code.",
+      "tooManyAttempts": "Too many wrong codes for this address. Wait a few minutes before trying again.",
+      "tooManyCodes": "A code went out just now, or too many this hour. Wait a little and ask again.",
+      "tooManyRequests": "Too many tries from your connection. Try again later.",
       "mailUnavailable": "The email could not be sent. Try again in a moment.",
       "unavailable": "The registry cannot be reached. Try again in a moment.",
       "invalidState": "The sign-in took too long or was interrupted. Try again.",
@@ -94,7 +96,6 @@
       "apple": "Continue with Apple",
       "github": "Continue with GitHub",
       "or": "or",
-      "soon": "Soon",
       "notConfigured": "Not available yet"
     }
   },
@@ -110,7 +111,6 @@
       "mediators": "Mediators",
       "identities": "Identities",
       "forms": "Forms",
-      "soon": "Soon",
       "users": "Users",
       "tenantLabel": "Account",
       "tenant": "Settings",
@@ -161,7 +161,9 @@
         "emailInvalid": "Enter a valid email.",
         "codeFormat": "The code has 6 digits.",
         "invalidCode": "That code is wrong or has expired.",
-        "tooManyAttempts": "Too many tries. Ask for a new code.",
+        "tooManyAttempts": "Too many wrong codes for this address. Wait a few minutes before trying again.",
+        "tooManyCodes": "A code went out just now, or too many this hour. Wait a little and ask again.",
+        "tooManyRequests": "Too many tries from your connection. Try again later.",
         "mailUnavailable": "The email could not be sent. Try again in a moment.",
         "lastWayIn": "That is your only way in.",
         "invalidState": "Linking took too long or was interrupted. Try again.",
@@ -298,7 +300,6 @@
       "loading": "Loading more…",
       "loadError": "The rest of the list could not be loaded.",
       "retry": "Try again",
-      "noTenant": "There is no account to work in.",
       "errors": {
         "nameRequired": "Enter a name.",
         "nameLong": "Use at most 200 characters.",
@@ -341,7 +342,13 @@
       "created": "Created",
       "published": "Published at",
       "document": "DID document",
-      "notFound": "This identity is not in this account."
+      "notFound": "This identity is not in this account.",
+      "save": "Save",
+      "saved": "Saved.",
+      "deleteLead": "It was never signed and nothing acts as it: it simply goes.",
+      "inUse": "Something acts as it: delete that instead, and this goes with it.",
+      "signed": "Its DID exists and others may rely on it: it stays.",
+      "gone": "This identity is no longer here."
     },
     "mediator": {
       "back": "Mediators",
@@ -386,6 +393,7 @@
       "identityPending": "Sign its identity first.",
       "publishTitle": "Publish {name}",
       "publishLead": "Your organisation vouches for it, signed from your wallet; then it is published.",
+      "publishLeadNone": "Your organisation vouches for it, signed by the platform for the account; then it is published.",
       "endorsement": "Endorsement",
       "endorsedUntil": "until {date}",
       "notEndorsed": "Not endorsed"
@@ -411,7 +419,6 @@
       "inviteLead": "We will email them. They join when they sign in with that address.",
       "send": "Send invitation",
       "cancel": "Cancel",
-      "adminOnly": "Only admins can add users.",
       "errors": {
         "emailInvalid": "Enter a valid email.",
         "alreadyMember": "That person already belongs to this account.",
@@ -422,7 +429,27 @@
       "noEmail": "No email",
       "walletLinked": "Wallet linked",
       "noWallet": "No wallet",
-      "noAccount": "No account yet"
+      "noAccount": "No account yet",
+      "manage": {
+        "actions": "Actions for {name}",
+        "makeAdmin": "Make admin",
+        "makeMember": "Make member",
+        "remove": "Remove from the account",
+        "removeAsk": "Remove {name} from this account?",
+        "leave": "Leave the account",
+        "leaveAsk": "Leave this account? You will need a new invitation to come back.",
+        "withdraw": "Cancel the invitation",
+        "withdrawAsk": "Cancel the invitation to {name}?",
+        "confirm": "Yes, go ahead",
+        "keep": "No",
+        "errors": {
+          "lastAdmin": "An account needs one admin at least: make somebody else admin first.",
+          "memberSigns": "They sign for this account, or for one of its issuers or verifiers: choose somebody else in Signing first.",
+          "notAdmin": "Only admins manage users.",
+          "gone": "That person or invitation is no longer here.",
+          "unavailable": "The registry cannot be reached. Try again in a moment."
+        }
+      }
     },
     "tenant": {
       "title": "Account",
@@ -442,12 +469,13 @@
         "mediatorNotFound": "That mediator is not available to this account.",
         "signerRequired": "Choose who signs.",
         "signerNotMember": "Not a member of this account.",
-        "languagesRequired": "Choose one language at least."
+        "languagesRequired": "Choose one language at least.",
+        "vaultUnavailable": "The platform's key store cannot be reached, so it cannot make the key it signs with. Try again in a moment."
       },
       "identity": "Identity",
       "identityHint": "The organisation's own DID, named like the account.",
       "noMediators": "No mediators yet.",
-      "signingLead": "Who signs for the account, from their wallet.",
+      "signingLead": "Who signs for the account: someone from their wallet, or nobody.",
       "signingFlow": "Signing flow",
       "signingFlows": {
         "any_admin": {
@@ -463,6 +491,13 @@
           "people": "Members",
           "gains": "One person answers for what is published.",
           "costs": "If they are away, nothing is published."
+        },
+        "none": {
+          "label": "No signature",
+          "hint": "Nobody signs: the platform signs for the account, as soon as there is something to sign. Admins still decide what is published.",
+          "people": "Nobody",
+          "gains": "Work without wallets: what you make is signed at once.",
+          "costs": "The platform holds the account's key: you trust it with your signature."
         }
       },
       "signing": {
@@ -475,7 +510,7 @@
         "published": "Published"
       },
       "languages": "Languages",
-      "languagesHint": "The languages this account works in, of those the platform speaks: one at least.",
+      "languagesHint": "The languages this account works in, of those the platform speaks: one at least. Its forms, fields and descriptions are written in them; texts already written in a language you take away stay until they are edited, and then go.",
       "languagesAnchorHint": "The trust anchor works in every language of the platform: Almena's catalogue is everyone's, named in all of them."
     },
     "detail": {
@@ -560,7 +595,8 @@
         "mediator_missing": "Choose a mediator",
         "mediator_unpublished": "Publish its mediator",
         "signing_flow_no_signer": "Choose who signs",
-        "signing_flow_no_wallet": "Whoever signs needs a linked wallet"
+        "signing_flow_no_wallet": "Whoever signs needs a linked wallet",
+        "signing_flow_no_key": "The platform has no key to sign with yet: choose the flow again"
       }
     },
     "json": {
@@ -574,7 +610,6 @@
     },
     "billing": {
       "title": "Billing",
-      "soon": "Billing is on its way.",
       "unavailable": "The registry cannot be reached. Try again in a moment.",
       "plan": "Plan",
       "free": "Free use",
@@ -629,6 +664,8 @@
       "cancel": "Cancel",
       "added": "Added",
       "record": "DNS record",
+      "copy": "Copy",
+      "copied": "Copied",
       "errors": {
         "domainRequired": "Enter a domain.",
         "domainInvalid": "Enter a domain, like acme.com.",
@@ -696,7 +733,11 @@
         "credentialKeyDuplicate": "Another credential already goes by this name.",
         "credentialTypeDuplicate": "This credential is already asked for in the form.",
         "claimsInvalid": "Tick at least one claim.",
-        "trustInvalid": "Choose at least one issuer, or trust any issuer in the registry."
+        "trustInvalid": "Choose at least one issuer, or trust any issuer in the registry.",
+        "inUse": "This form is in use: nothing it asks for can be taken away.",
+        "inUseField": "The form is in use: this field may only take more than it did — the same field, not required if it was not, no stricter.",
+        "inUseCredential": "The form is in use: this credential may only take more than it did — the same claims, not required if it was not, trust as wide.",
+        "gone": "This form is no longer here."
       },
       "noFields": "No fields yet: add them from the catalogue.",
       "search": "Search the catalogue…",
@@ -800,7 +841,17 @@
       "trustRemove": "Stop trusting {name}",
       "trustNoMatch": "No published issuer granting it matches.",
       "trustMore": "More issuers",
-      "trustUnavailable": "The issuers cannot be searched right now. Try again in a moment."
+      "trustUnavailable": "The issuers cannot be searched right now. Try again in a moment.",
+      "edit": "Edit",
+      "editTitle": "Edit form",
+      "editLead": "Change its name, its fields and the credentials it asks for.",
+      "saveChanges": "Save changes",
+      "inUseNotice": "This form is in use: an offer puts it, or people have answered it. You can add optional fields and credentials, ask for less and change its words; nothing it asks for can be taken away or made stricter.",
+      "delete": "Delete",
+      "deleteAsk": "Delete this form?",
+      "deleteInUse": "In use: an offer puts it, or people have answered it.",
+      "confirm": "Yes, delete",
+      "keep": "No"
     },
     "catalogue": {
       "hint": "The fields your forms are made of: Almena's, standard for every account, and your own.",
@@ -866,8 +917,6 @@
       "credentials": "Almena's credential types",
       "credentialsHint": "Catalogue {version}: what issuers grant and forms ask to be presented. Their claims are fields of the catalogue; their identifiers and type metadata are published on almena.id. Read only.",
       "external": "Issued elsewhere",
-      "externalHint": "It is issued under a framework of its own: forms may ask for it, no account issues it.",
-      "claimCount": "{count} claims",
       "claims": "Claims",
       "mandatory": "Always present",
       "identifiers": "Identifiers",
@@ -885,6 +934,7 @@
       "category": "Category",
       "source": "Standard",
       "sourceHint": "where its name comes from",
+      "sourcePlaceholder": "e.g. schema.org, OIDC, ISO 23220",
       "choose": "Choose…",
       "createType": "Create credential type",
       "credentialsAnchorHint": "Catalogue {version}: this account is the trust anchor, and these types are everyone's — any account's issuers grant them and forms ask for them. Their identifiers and type metadata are published on almena.id. Delete only what nothing uses.",
@@ -1093,7 +1143,9 @@
         "revoked": "Revoking is final: no verifier will accept it again, and it cannot be undone. Your wallet shows the change; signing the issuer's status list makes it."
       },
       "listUnsigned": "Before its first credential, the issuer's signer signs its status list: where verifiers check whether its credentials still hold.",
-      "signList": "Sign the status list"
+      "signList": "Sign the status list",
+      "older": "Older",
+      "newest": "Back to the newest"
     },
     "pending": {
       "title": "Pending",
@@ -1236,56 +1288,27 @@
       "not_issued": "The credential is not issued.",
       "no_status_list": "Issued before status lists: its status cannot change.",
       "no_draft": "Save the credential's claims first.",
-      "not_paired": "The holder's wallet is not paired."
+      "not_paired": "The holder's wallet is not paired.",
+      "too_many_requests": "Too many sign-ins asked for from your connection. Try again later.",
+      "tenant_outdated": "The account's DID still names the old signers' keys: they sign the change of flow first.",
+      "vault_unavailable": "The keys cannot be reached right now. Try again in a moment.",
+      "log_moved": "Something else was signed meanwhile. Try again."
     }
   },
   "apply": {
-    "title": "Application",
-    "loading": "Loading more…",
-    "loadError": "The rest of the list could not be loaded.",
-    "retry": "Try again",
     "optional": "Optional",
     "choose": "Choose…",
     "filter": "Filter…",
-    "verified": "Verified",
-    "back": "Back to the form",
-    "status": {
-      "open": "Started",
-      "paired": "In progress",
-      "submitted": "Sent",
-      "accepted": "Accepted",
-      "rejected": "Not accepted",
-      "issued": "Issued"
-    },
-    "statusLead": {
-      "open": "",
-      "paired": "",
-      "submitted": "{issuer} has your application for {type}: it will check it and decide.",
-      "accepted": "{issuer} accepted your application for {type}.",
-      "rejected": "{issuer} did not accept your application for {type}.",
-      "issued": "{issuer} has issued your {type} credential."
-    },
     "problems": {
       "required": "This is needed.",
       "format": "This is not written as expected.",
       "range": "This is outside what is accepted.",
       "value": "Choose one of the options.",
       "file": "Attach the file."
-    },
-    "errors": {
-      "answers_invalid": "Some answers need another look.",
-      "answers_incomplete": "Complete the form, and present the credentials it needs, before sending.",
-      "application_closed": "This application has already been sent.",
-      "application_not_paired": "Pair your wallet first.",
-      "nothing_to_present": "This form asks for no credentials.",
-      "file_type_invalid": "That kind of file is not accepted here.",
-      "file_too_large": "The file is larger than 10 MB.",
-      "file_empty": "The file is empty.",
-      "gone": "This application is not open in this browser.",
-      "unavailable": "The registry cannot be reached. Try again in a moment."
     }
   },
   "texts": {
-    "otherLanguages": "Other languages"
+    "otherLanguages": "Other languages",
+    "notUsed": "Not a language of this account: it goes when this is saved."
   }
 }

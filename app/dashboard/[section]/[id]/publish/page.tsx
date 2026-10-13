@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 
+import { Card } from "@/app/components/ui/card";
 import { WalletScreen } from "@/app/dashboard/WalletScreen";
 import { getI18n } from "@/app/i18n/server";
-import { currentTenant } from "@/app/lib/api";
+import { fetchTenant } from "@/app/lib/tenant";
 import { DetailHead, NotFound } from "../Detail";
 import { isKind, ITEM, loadItem } from "../load";
+import { PublishForm } from "./PublishForm";
 
 export async function generateMetadata({
   params,
@@ -23,7 +25,9 @@ export async function generateMetadata({
  * Publishing an issuer, verifier or mediator is endorsing it: the wallet of
  * whoever signs as the tenant signs the tenant's membership credential for it and, in the same
  * approval, its `whois.vp`; then it is published. A screen of its own, like
- * any decision; only for those the tenant's signing flow names.
+ * any decision; only for those the tenant's signing flow names. Under the
+ * flow `none` nobody's wallet is asked: an admin publishes with a button and
+ * the platform signs.
  */
 export default async function PublishPage({
   params,
@@ -36,12 +40,29 @@ export default async function PublishPage({
   const own = t.dashboard[ITEM[section]];
   const back = `/dashboard/${section}/${id}`;
   const item = loaded?.item;
-  if (item && !(await currentTenant())?.signs) redirect(back);
+  const tenant = await fetchTenant();
+  if (item && !tenant?.signs) redirect(back);
   if (!item)
     return (
       <div className="grid gap-4">
         <DetailHead back={`/dashboard/${section}`} backLabel={own.back} />
         <NotFound message={own.notFound} />
+      </div>
+    );
+
+  if (tenant?.signing_flow === "none")
+    return (
+      <div className="grid gap-4">
+        <DetailHead back={back} backLabel={item.name} />
+        <header className="mb-6">
+          <h1 className="text-[28px] font-bold tracking-tight break-words">
+            {copy.publishTitle.replace("{name}", item.name)}
+          </h1>
+        </header>
+        <Card className="gap-0 p-5">
+          <p className="mb-4 text-muted-foreground">{copy.publishLeadNone}</p>
+          <PublishForm section={section} id={item.id} />
+        </Card>
       </div>
     );
 

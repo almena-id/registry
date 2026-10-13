@@ -189,8 +189,18 @@ async function tenantCall<T>(path: string): Promise<T | null> {
   return data;
 }
 
-/** The applications the current tenant's issuers received. */
-export const fetchReceived = () => tenantCall<ReceivedSummary[]>("");
+/** A page of what the current tenant's issuers received, newest first. */
+export type ReceivedPage = {
+  items: ReceivedSummary[];
+  /** The next page's; `null` on the last one. */
+  next_cursor: string | null;
+};
+
+/** A page of the applications the current tenant's issuers received. */
+export const fetchReceived = (cursor?: string) =>
+  tenantCall<ReceivedPage>(
+    `?limit=50${cursor ? `&cursor=${encodeURIComponent(cursor)}` : ""}`,
+  );
 
 export const fetchReceivedOne = (id: string) =>
   tenantCall<Received>(`/${encodeURIComponent(id)}`);

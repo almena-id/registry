@@ -30,6 +30,8 @@ function apiError(
 ): AuthState["errors"] {
   if (detail === "invalid_code") return { code: "invalidCode" };
   if (detail === "too_many_attempts") return { code: "tooManyAttempts" };
+  if (detail === "too_many_codes") return { code: "tooManyCodes" };
+  if (detail === "too_many_requests") return { form: "tooManyRequests" };
   if (detail === "mail_unavailable") return { form: "mailUnavailable" };
   // The API's email check is stricter than the pattern here (reserved domains).
   if (status === 422) return { email: "emailInvalid" };
