@@ -17,12 +17,11 @@ import { cn } from "cn";
  * Each flow's drawing: the account's people, then the signature, then what is
  * published. Green has one job here — who can sign. `any_admin` lights every
  * admin (any one of them will do); `single_user` lights one person among the
- * members and leaves the rest dim; `none` lights nobody: the platform signs.
+ * members and leaves the rest dim.
  */
 const PEOPLE: Record<SigningFlow, boolean[]> = {
   any_admin: [true, true, true],
   single_user: [false, true, false],
-  none: [false, false, false],
 };
 
 /**

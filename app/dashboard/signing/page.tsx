@@ -16,9 +16,8 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 /**
- * Signing: who signs as the tenant — its identities' did:webvh log entries and
- * its endorsements of what it publishes. Nothing the tenant publishes counts
- * without those signatures, whatever is changed on the server, so the flow is
+ * Signing: who signs as the tenant — its identities' did:webvh log entries.
+ * Nothing the tenant publishes counts without those signatures, whatever is changed on the server, so the flow is
  * the account's real safeguard and gets a menu entry of its own.
  *
  * Configuration on the left (the flow, and what that flow asks for); on the

@@ -58,8 +58,8 @@
         "body": "Every version of every DID is signed and published, so what was signed still verifies."
       },
       {
-        "title": "Endorsed by your organisation",
-        "body": "Everything you publish carries your organisation's signed endorsement, verifiable by anyone."
+        "title": "Controlled by your organisation",
+        "body": "Every issuer, verifier and mediator names your organisation's DID as its controller, signed from your wallet."
       }
     ]
   },
@@ -114,6 +114,7 @@
       "users": "Users",
       "tenantLabel": "Account",
       "tenant": "Settings",
+      "billing": "Billing",
       "signing": "Signing",
       "domains": "Domains",
       "breadcrumb": "Breadcrumb",
@@ -391,12 +392,7 @@
       "deleteLead": "Its DID stops resolving. This cannot be undone.",
       "cancel": "Cancel",
       "identityPending": "Sign its identity first.",
-      "publishTitle": "Publish {name}",
-      "publishLead": "Your organisation vouches for it, signed from your wallet; then it is published.",
-      "publishLeadNone": "Your organisation vouches for it, signed by the platform for the account; then it is published.",
-      "endorsement": "Endorsement",
-      "endorsedUntil": "until {date}",
-      "notEndorsed": "Not endorsed"
+      "tenantPending": "Sign the account's identity first."
     },
     "users": {
       "title": "Users",
@@ -469,13 +465,12 @@
         "mediatorNotFound": "That mediator is not available to this account.",
         "signerRequired": "Choose who signs.",
         "signerNotMember": "Not a member of this account.",
-        "languagesRequired": "Choose one language at least.",
-        "vaultUnavailable": "The platform's key store cannot be reached, so it cannot make the key it signs with. Try again in a moment."
+        "languagesRequired": "Choose one language at least."
       },
       "identity": "Identity",
       "identityHint": "The organisation's own DID, named like the account.",
       "noMediators": "No mediators yet.",
-      "signingLead": "Who signs for the account: someone from their wallet, or nobody.",
+      "signingLead": "Who signs for the account, from their wallet.",
       "signingFlow": "Signing flow",
       "signingFlows": {
         "any_admin": {
@@ -491,13 +486,6 @@
           "people": "Members",
           "gains": "One person answers for what is published.",
           "costs": "If they are away, nothing is published."
-        },
-        "none": {
-          "label": "No signature",
-          "hint": "Nobody signs: the platform signs for the account, as soon as there is something to sign. Admins still decide what is published.",
-          "people": "Nobody",
-          "gains": "Work without wallets: what you make is signed at once.",
-          "costs": "The platform holds the account's key: you trust it with your signature."
         }
       },
       "signing": {
@@ -585,18 +573,39 @@
     "health": {
       "title": "Account health",
       "fix": "Set up",
+      "next": "Next",
       "checks": {
         "name": "Name",
-        "mediator": "Mediator",
-        "signing_flow": "Signing flow"
+        "signing_flow": "Signing flow",
+        "domain": "Domain",
+        "identity": "Identity",
+        "mediator": "Mediator"
       },
       "tasks": {
         "name_missing": "Give the account a name",
-        "mediator_missing": "Choose a mediator",
-        "mediator_unpublished": "Publish its mediator",
         "signing_flow_no_signer": "Choose who signs",
         "signing_flow_no_wallet": "Whoever signs needs a linked wallet",
-        "signing_flow_no_key": "The platform has no key to sign with yet: choose the flow again"
+        "domain_missing": "Add the domain it is known by",
+        "domain_unverified": "Verify its domain",
+        "identity_pending": "Sign the account's identity",
+        "identity_outdated": "Sign the account's identity again",
+        "mediator_missing": "Choose a mediator",
+        "mediator_unsigned": "Sign its mediator's identity",
+        "mediator_unpublished": "Publish its mediator",
+        "mediator_unchosen": "Choose its mediator"
+      },
+      "reasons": {
+        "name_missing": "It is what holders and other accounts see it as.",
+        "signing_flow_no_signer": "Nothing is signed as the account until someone may.",
+        "signing_flow_no_wallet": "Every signature from here on is made with that phone's key.",
+        "domain_missing": "Its mediator is served under it, and its DID names it.",
+        "domain_unverified": "Until the DNS record is found, nothing can be served under it. Verifying it before signing saves a signature.",
+        "identity_pending": "Its DID must exist before anything is published under it: its mediator names it as controller.",
+        "identity_outdated": "Its document has changed since it was signed — a new mediator, domain or signer — and goes out once signed again.",
+        "mediator_missing": "The trust anchor has no other mediator to receive through: create its own.",
+        "mediator_unsigned": "Signed after the account's identity, so that it names the account as its controller.",
+        "mediator_unpublished": "Publishing makes its DID resolve; until then nothing routes through it.",
+        "mediator_unchosen": "Once chosen, the account's document names its service and has to be signed again. New accounts start with it."
       }
     },
     "json": {
@@ -610,6 +619,7 @@
     },
     "billing": {
       "title": "Billing",
+      "lead": "The account's subscription and what it gives.",
       "unavailable": "The registry cannot be reached. Try again in a moment.",
       "plan": "Plan",
       "free": "Free use",
@@ -1166,7 +1176,6 @@
         "pending": "Pending signature",
         "outdated": "Changes to sign",
         "draft": "Draft",
-        "expired": "Endorsement expired",
         "unsigned": "Not signed yet",
         "resign": "To sign again",
         "accepted": "To issue"

@@ -46,7 +46,6 @@ export default async function DetailLayout({
 
   const tenant = await currentTenant();
   const admin = tenant?.role === "admin";
-  const signs = Boolean(tenant?.signs);
   const resource = isKind(section) && "published_at" in item;
 
   return (
@@ -66,13 +65,11 @@ export default async function DetailLayout({
                 />
               )
             : resource &&
-              (admin || signs) && (
+              admin && (
                 <ResourceActions
                   section={section}
                   id={item.id}
                   published={Boolean(item.published_at)}
-                  admin={admin}
-                  signs={signs}
                 />
               )
         }

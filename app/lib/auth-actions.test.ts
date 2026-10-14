@@ -1,6 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-
 const api = vi.fn();
 vi.mock("./api", () => ({
   sessionCookie: "almena.session",
@@ -40,6 +39,10 @@ describe("asking for a sign-in code", () => {
   it("moves on to the code once it is sent", async () => {
     api.mockResolvedValue({ status: 202, data: null, detail: null });
     const state = await authenticate({ step: "email" }, send("ada@acme.com"));
-    expect(state).toEqual({ step: "code", email: "ada@acme.com", resent: false });
+    expect(state).toEqual({
+      step: "code",
+      email: "ada@acme.com",
+      resent: false,
+    });
   });
 });

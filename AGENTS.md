@@ -40,10 +40,10 @@ everything (`task --list`); `task check` must pass before finishing.
   everything in the tenant that waits to be signed or published, in the
   order it is done (`GET /tenants/{id}/pending`, `app/lib/pending.ts`):
   identities whose DID is pending or has changes to sign, issuers, verifiers
-  and mediators still drafts or whose endorsement expired, issuers' status
+  and mediators still drafts, issuers' status
   lists to sign (again) and accepted applications' credentials to issue.
   Each row opens the thing, is tagged with why it waits and, for whoever
-  does it (the API's `yours`: who signs as the tenant; an issuer's signer for
+  does it (the API's `yours`: who signs as the tenant; an admin to publish; an issuer's signer for
   its lists and credentials), leads to where it is done — or says what has
   to be done first (`blocked_by`), linked when the asker can do it. Whoever
   signs with no Almena wallet is asked to link one first. `PendingRows`
@@ -51,10 +51,13 @@ everything (`task --list`); `task check` must pass before finishing.
   link to the rest. Who signs as the tenant is its signing flow, not the
   role: the API says it per tenant (`Tenant.signs`). Below it, "Account health"
   (`Health.tsx`): the API's score (`GET /tenants/{id}/health`, a percentage
-  and a bar) and its checks in order — name, mediator, signing flow, more to
-  come — each done, or pending with the task and a "Set up" link to where it
-  is done. The checks and their order are the API's; the portal only words
-  them (`dashboard.health.tasks.{check}_{issue}`). Lists tag each row published or
+  and a bar) and its checks in order — name, mediator, signing flow; for the
+  trust anchor its onboarding: name, signing flow, domain, identity, its own
+  mediator — each done, or pending with the task, why it is needed and a
+  "Set up" link to where it is done (on the check's `item` when it names one);
+  the anchor's first pending is marked "Next". The checks and their order are
+  the API's; the portal only words them (`dashboard.health.tasks.{check}_{issue}`
+  and `dashboard.health.reasons.{check}_{issue}`). Lists tag each row published or
   draft (issuers, verifiers, mediators) and with its DID's signature.
 - Verifiers have a Verify tab (`(tabs)/verify`, `VerifyByQr`,
   `app/lib/verification-actions.ts`): pick one of the tenant's forms that asks
@@ -190,12 +193,13 @@ everything (`task --list`); `task check` must pass before finishing.
   tenant's name, the mediator its own identity uses and the languages it works
   in — ticked from the platform's, `locales`, one at least; a new account starts
   with the one it signed up in, the trust anchor has them all, fixed; admins
-  edit, members read), Billing (`/dashboard/tenant/billing`, `app/lib/subscriptions.ts`: the
-  subscription — plan, where it stands, until when — and each feature it gives,
-  included or not; with none, the free use; payments are not open yet, so it
-  says to contact Almena; the trust anchor has everything)
-  and JSON (`/dashboard/tenant/json`: its DID document, shown as items show
-  theirs, `DidDocuments`).
+  edit, members read) and JSON (`/dashboard/tenant/json`: its DID document,
+  shown as items show theirs, `DidDocuments`).
+- `/dashboard/billing` is its own entry in the menu, under Settings in the
+  Account card (`app/lib/subscriptions.ts`): the subscription — plan, where it
+  stands, until when — and each feature it gives, included or not; with none,
+  the free use; payments are not open yet, so it says to contact Almena; the
+  trust anchor has everything.
 - Subscriptions: what an account may make of its own (fields, credential
   types) comes with one (`Tenant.features`, the API's `entitlements`); without
   it the catalogue offers no "Create" nor "Edit" — what it made stays, works and
@@ -210,9 +214,7 @@ everything (`task --list`); `task check` must pass before finishing.
   the account, listed from `app/lib/signing-flows.ts`, a module of its own so
   the client form can import it — in two halves: on the left its
   configuration, the choice and what that flow asks for (`single_user`: the
-  member who signs, admin or not; `none`: nobody — the platform signs for the
-  account with a key it keeps, each DID change at once, so no wallet is
-  needed and pending asks for none); on the right how the flow in the select
+  member who signs, admin or not); on the right how the flow in the select
   works, drawn by `FlowExplained` with what it gains and costs, redrawn as
   the select changes; admins edit, members read) and
   Domains (`/dashboard/domains`: the domains linked to the
@@ -382,10 +384,7 @@ everything (`task --list`); `task check` must pass before finishing.
   sign — and whoever signs as the tenant gets "Sign", which opens `/dashboard/{section}/{id}/sign`
   (outside the tabs, like delete): `WalletRequest` with `purpose: "sign"`
   asks the API to prepare the identity's next log entry and shows the QR for
-  the signer's wallet; signed, it comes back to the item. When the platform
-  signs (the flow `none`) the API answers `signed` and the screen goes straight
-  back (`startWallet`'s `done`); a wallet is only shown for the entry that
-  hands over to `none`, signed by the old flow's signers. Publishing an item
+  the signer's wallet; signed, it comes back to the item. Publishing an item
   whose identity is pending is refused ("Sign its identity first"). The JSON
   tab shows the published document when signed, the one to sign while
   pending, and both when there are changes to sign — saying in which fields
@@ -409,13 +408,9 @@ everything (`task --list`); `task check` must pass before finishing.
   (`/{id}/json`, the DID document). `load.ts` asks the API
   for the item once per request; `Detail.tsx` holds the shared shapes. Issuers,
   verifiers and mediators are edited by any member; the operations are icons
-  (`ResourceActions`): publish, for whoever signs as the tenant — which is
-  endorsing it: its own screen (`/{id}/publish`), where the signer's wallet
-  signs the tenant's membership credential and the item's `whois.vp` in one
-  approval; under the flow `none` that screen is a button instead
-  (`PublishForm`, `app/lib/publish-actions.ts`) and the platform signs — and,
-  for admins, unpublish and delete, which asks on its own screen (`/{id}/delete`);
+  (`ResourceActions`), for admins: publish or unpublish — a toggle, no
+  signature; refused until its DID and the tenant's are signed — and delete,
+  which asks on its own screen (`/{id}/delete`);
   an identity's only operation is delete, for admins, on the same screen and
-  only while nothing acts as it and nobody signed it (`IdentityActions`). The
-  Summary shows the endorsement (its `whois.vp`, until when). A draft's DID does not
+  only while nothing acts as it and nobody signed it (`IdentityActions`). A draft's DID does not
   resolve and the API's public catalogue does not list it.

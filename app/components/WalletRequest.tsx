@@ -51,11 +51,6 @@ export function WalletRequest({
       setState("failed");
       return;
     }
-    // Signed by the platform: no wallet to wait for.
-    if ("done" in answer) {
-      window.location.assign(answer.done);
-      return;
-    }
     setShown(answer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [purpose, targetKey]);

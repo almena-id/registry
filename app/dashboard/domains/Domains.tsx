@@ -2,7 +2,7 @@
 
 import { ChevronRightIcon } from "lucide-react";
 import Link from "next/link";
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 
 import { CopyButton } from "@/app/components/CopyButton";
 import { Alert, AlertDescription } from "@/app/components/ui/alert";
@@ -38,7 +38,8 @@ const fact =
  * One linked domain, as a list row: its name, whether it is proved and when
  * it was added. Opened, it shows its configuration — the DNS record that
  * proves it — and, for admins, checking for the record (again, once verified:
- * gone, it stops being verified) and removing it.
+ * gone, it stops being verified) and removing it. A check that finds the
+ * record folds the row up: the record is no longer the point.
  */
 export function DomainRow({
   domain,
@@ -55,10 +56,12 @@ export function DomainRow({
 }) {
   const { t } = useI18n();
   const copy = t.dashboard.domains;
-  const [checked, check, checking] = useActionState<DomainState>(
-    () => checkDomain(domain.id, domain.verified),
-    {},
-  );
+  const [expanded, setExpanded] = useState(open);
+  const [checked, check, checking] = useActionState<DomainState>(async () => {
+    const state = await checkDomain(domain.id, domain.verified);
+    if (!state.error) setExpanded(false);
+    return state;
+  }, {});
   const [removed, remove, removing] = useActionState<DomainState>(
     () => removeDomain(domain.id),
     {},
@@ -66,7 +69,7 @@ export function DomainRow({
   const error = checked.error ?? removed.error;
 
   return (
-    <Collapsible asChild defaultOpen={open}>
+    <Collapsible asChild open={expanded} onOpenChange={setExpanded}>
       <li className="group border-t first:border-t-0">
         <CollapsibleTrigger className="flex w-full items-center gap-3 px-5 py-3.5 text-left transition-colors outline-none hover:bg-accent focus-visible:bg-accent">
           <ChevronRightIcon className="size-4 flex-none text-muted-foreground transition-transform group-data-[state=open]:rotate-90" />

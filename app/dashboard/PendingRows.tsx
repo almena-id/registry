@@ -16,7 +16,6 @@ const stateBadge = {
   pending: "pending",
   outdated: "danger",
   draft: "muted",
-  expired: "danger",
   unsigned: "pending",
   accepted: "brand",
 } as const;
@@ -54,7 +53,7 @@ function actionHref(row: Pending, back: string): string {
     case "credential":
       return `/dashboard/applications/${row.id}`;
     default:
-      return `/dashboard/${row.kind}s/${row.id}/publish`;
+      return `/dashboard/${row.kind}s/${row.id}`;
   }
 }
 
@@ -63,8 +62,7 @@ function actionHref(row: Pending, back: string): string {
  * `GET /tenants/{id}/pending`), in the order it is done: each named and
  * tagged with why it waits; for whoever does it, the way to it — or, when
  * something has to be done first, what. Whoever signs without an Almena
- * wallet is asked to link one first — unless the platform signs as the
- * account (its flow `none`) and nothing else of theirs waits. `limit` shows that many, then how many
+ * wallet is asked to link one first. `limit` shows that many, then how many
  * more, leading to the whole list.
  */
 export async function PendingRows({
@@ -89,14 +87,8 @@ export async function PendingRows({
   const types = new Map(
     credentials?.types.map((type) => [type.id, type.labels]),
   );
-  // Under `none` the platform signs as the account; an issuer's lists and
-  // credentials are still signed from its signer's wallet.
-  const platform = tenant?.signing_flow === "none";
-  const walletWork = (row: Pending) =>
-    row.yours &&
-    (!platform || row.kind === "status_list" || row.kind === "credential");
   const noWallet =
-    ((Boolean(tenant?.signs) && !platform) || rows.some(walletWork)) &&
+    (Boolean(tenant?.signs) || rows.some((row) => row.yours)) &&
     waysIn !== null &&
     !waysIn.accounts.some((a) => a.provider === "almena");
   const shown = limit === undefined ? rows : rows.slice(0, limit);

@@ -11,7 +11,7 @@ import { fetchSubscription } from "@/app/lib/subscriptions";
 export async function generateMetadata(): Promise<Metadata> {
   const { t } = await getI18n();
   return {
-    title: `${t.dashboard.tenant.title} · ${t.dashboard.billing.title}`,
+    title: t.dashboard.billing.title,
   };
 }
 
@@ -21,7 +21,21 @@ export async function generateMetadata(): Promise<Metadata> {
  * the free use of the platform and what a subscription adds. Payments come
  * later; for now Almena sets subscriptions. The trust anchor has everything.
  */
-export default async function TenantBillingPage() {
+export default async function BillingPage() {
+  const { t } = await getI18n();
+  const copy = t.dashboard.billing;
+  return (
+    <div>
+      <header className="mb-6">
+        <h1 className="text-[28px] font-bold tracking-tight">{copy.title}</h1>
+        <p className="text-muted-foreground">{copy.lead}</p>
+      </header>
+      <BillingBody />
+    </div>
+  );
+}
+
+async function BillingBody() {
   const [{ t, locale }, subscription, tenant, timeZone] = await Promise.all([
     getI18n(),
     fetchSubscription(),

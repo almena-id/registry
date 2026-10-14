@@ -20,32 +20,28 @@ function form(flow: string): FormData {
 }
 
 describe("choosing the signing flow", () => {
-  it("chooses no signature", async () => {
+  it("chooses any admin", async () => {
     api.mockResolvedValue({
       status: 200,
-      data: { signing_flow: "none", signer: null },
+      data: { signing_flow: "any_admin", signer: null },
       detail: null,
     });
-    const state = { signingFlow: "any_admin" as const, signer: "" };
-    expect(await saveSigningFlow(state, form("none"))).toEqual({
-      signingFlow: "none",
+    const state = { signingFlow: "single_user" as const, signer: "u1" };
+    expect(await saveSigningFlow(state, form("any_admin"))).toEqual({
+      signingFlow: "any_admin",
       signer: "",
       saved: true,
     });
     expect(api).toHaveBeenCalledWith("/tenants/t1", {
       method: "PATCH",
-      body: { signing_flow: "none" },
+      body: { signing_flow: "any_admin" },
       token: "the-session",
     });
   });
 
-  it("says when the platform cannot make its key", async () => {
-    api.mockResolvedValue({ status: 503, data: null, detail: "vault_unavailable" });
+  it("sends no flow the portal does not offer", async () => {
     const state = { signingFlow: "any_admin" as const, signer: "" };
-    expect(await saveSigningFlow(state, form("none"))).toEqual({
-      signingFlow: "none",
-      signer: "",
-      error: "vaultUnavailable",
-    });
+    expect(await saveSigningFlow(state, form("none"))).toEqual(state);
+    expect(api).not.toHaveBeenCalled();
   });
 });

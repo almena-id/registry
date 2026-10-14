@@ -119,16 +119,16 @@ async function saveForm(
   const { status, detail, failure } = await api(
     id ? `${path}/${encodeURIComponent(id)}` : path,
     {
-    method: id ? "PUT" : "POST",
-    token,
-    body: {
-      name,
-      description: hasText(description) ? description : null,
-      // In the drafts' order: the API names the one that does not hold by it.
-      fields: written.map((draft) => toField(draft, catalogue)),
-      credentials: asked.map(toCredential),
+      method: id ? "PUT" : "POST",
+      token,
+      body: {
+        name,
+        description: hasText(description) ? description : null,
+        // In the drafts' order: the API names the one that does not hold by it.
+        fields: written.map((draft) => toField(draft, catalogue)),
+        credentials: asked.map(toCredential),
+      },
     },
-  },
   );
   if (status === null || status >= 300) {
     const refused = (failure ?? {}) as {
@@ -138,7 +138,10 @@ async function saveForm(
     const code = detail ?? "";
     const field = refused.field !== undefined && written[refused.field];
     if (field && code === "form_in_use")
-      return { ...keep, errors: { field: { id: field.id, problem: "inUseField" } } };
+      return {
+        ...keep,
+        errors: { field: { id: field.id, problem: "inUseField" } },
+      };
     if (field && FIELD_CODES[code])
       return {
         ...keep,
@@ -163,13 +166,13 @@ async function saveForm(
     return { ...keep, errors: { form: CODES[code] ?? "unavailable" } };
   }
   revalidatePath("/dashboard", "layout");
-  redirect(id ? `/dashboard/forms/${encodeURIComponent(id)}` : "/dashboard/forms");
+  redirect(
+    id ? `/dashboard/forms/${encodeURIComponent(id)}` : "/dashboard/forms",
+  );
 }
 
 /** Deletes a form no offer puts and nothing was made with; why not, otherwise. */
-export async function deleteForm(
-  id: string,
-): Promise<{ error?: ErrorKey }> {
+export async function deleteForm(id: string): Promise<{ error?: ErrorKey }> {
   const token = (await cookies()).get(sessionCookie)?.value;
   const tenant = await currentTenant();
   if (!token || !tenant) return { error: "unavailable" };

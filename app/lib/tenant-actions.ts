@@ -130,9 +130,6 @@ export async function saveSigningFlow(
       return { ...keep, signerError: "signerRequired" };
     if (detail === "signer_not_member")
       return { ...keep, signerError: "signerNotMember" };
-    // `none`: the key the platform signs with could not be made.
-    if (detail === "vault_unavailable")
-      return { ...keep, error: "vaultUnavailable" };
     return { ...keep, error: status === 403 ? "notAdmin" : "unavailable" };
   }
   // Who signs decides what the portal offers (signing, publishing).

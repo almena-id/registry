@@ -21,7 +21,7 @@ export type TenantDetail = {
   identity: { id: string; name: string; did: string | null } | null;
   /** `own`: the tenant's; otherwise another tenant's public one. */
   mediator: { id: string; name: string; own: boolean } | null;
-  /** Who signs as the account: its identities' DIDs and its endorsements. */
+  /** Who signs as the account: its identities' DIDs. */
   signing_flow: SigningFlow;
   /** `single_user`: who signs; `null` under any other flow. */
   signer: Signer | null;
@@ -36,18 +36,27 @@ export async function fetchTenant(): Promise<TenantDetail | null> {
   return data;
 }
 
-/** What the tenant must have set up to operate, in the order it is listed. */
+/**
+ * What the tenant must have set up to operate, in the order it is listed.
+ * The root's are its onboarding: each step needs the ones before it.
+ */
 export type HealthCheck = {
-  check: "name" | "mediator" | "signing_flow";
+  check: "name" | "signing_flow" | "domain" | "identity" | "mediator";
   done: boolean;
   /** What is missing, when not done. */
   issue:
     | "missing"
+    | "unverified"
+    | "pending"
+    | "outdated"
+    | "unsigned"
     | "unpublished"
+    | "unchosen"
     | "no_signer"
     | "no_wallet"
-    | "no_key"
     | null;
+  /** What the task is done on: the tenant's identity, or the mediator. */
+  item: string | null;
 };
 export type TenantHealth = {
   /** The share of checks done, 0 to 100. */

@@ -241,17 +241,20 @@ export async function saveDescribed(
   };
 }
 
-/** `pendingIdentity`: refused because its identity is not signed yet. */
+/**
+ * `pendingIdentity`, `pendingTenant`: refused because its identity, or the
+ * tenant's, is not signed yet.
+ */
 export type PublicationState = {
   published: boolean;
   failed?: boolean;
   pendingIdentity?: boolean;
+  pendingTenant?: boolean;
 };
 
 /**
- * Take one back (its DID stops resolving, the catalogue drops it, its
- * `whois.vp` goes). Publishing is endorsing, signed from a wallet: see the
- * publish screen.
+ * Publish one (its DID resolves, the catalogue lists it) or take it back:
+ * an admin's decision, no signature.
  */
 export async function setPublished(
   section: "issuers" | "verifiers" | "mediators",
@@ -267,6 +270,7 @@ export async function setPublished(
     { method: "POST", token },
   );
   if (detail === "identity_pending") return { ...state, pendingIdentity: true };
+  if (detail === "tenant_pending") return { ...state, pendingTenant: true };
   if (!data) return { ...state, failed: true };
   revalidatePath(`/dashboard/${section}/${id}`);
   return { published: data.published_at !== null };

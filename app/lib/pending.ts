@@ -23,7 +23,7 @@ export type Pending = {
   id: string;
   /** Its name; a status list's and an application's slug. */
   name: string;
-  state: "pending" | "outdated" | "draft" | "expired" | "unsigned" | "accepted";
+  state: "pending" | "outdated" | "draft" | "unsigned" | "accepted";
   /** Status lists and credentials: the issuer whose they are. */
   issuer: { id: string; name: string } | null;
   /** Credentials: the type to issue. */

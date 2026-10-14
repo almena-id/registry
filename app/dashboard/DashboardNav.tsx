@@ -20,6 +20,7 @@ type Entry =
   | "fieldCategories"
   | "credentialCategories"
   | "tenant"
+  | "billing"
   | "signing"
   | "domains"
   | "users"
@@ -38,7 +39,7 @@ type Label =
 // use, and the identities they act as; the templates it asks and issues with — its forms, then what they are made of:
 // fields and credential types, and, for the trust anchor, the value lists
 // fields draw on and the categories both are filed under; the trust behind its DIDs — the domains they live on and who signs
-// them; then the account itself — its settings, billing among them, and its
+// them; then the account itself — its settings, its billing and its
 // people — and, for the trust anchor's admins, every other account and its
 // subscription. Most used first.
 const groups: {
@@ -92,6 +93,7 @@ const groups: {
     label: "tenantLabel",
     entries: [
       { key: "tenant", href: "/dashboard/tenant" },
+      { key: "billing", href: "/dashboard/billing" },
       { key: "users", href: "/dashboard/users" },
     ],
   },

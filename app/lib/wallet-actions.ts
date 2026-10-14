@@ -14,17 +14,11 @@ const walletCookie = "almena.wallet";
 export type WalletPurpose = "sign_in" | "link" | "sign";
 
 /**
- * `sign`: what is signed — an identity's next log entry, or an item's
- * endorsement (publishing it) — and where to go back to once it is.
+ * `sign`: what is signed — an identity's next log entry, a credential, a
+ * status list — and where to go back to once it is.
  */
 export type SignTarget =
   | { kind: "identity"; id: string; back: string }
-  | {
-      kind: "endorsement";
-      section: "issuers" | "verifiers" | "mediators";
-      id: string;
-      back: string;
-    }
   /** An accepted application's credential, signed by its issuer's signer. */
   | { kind: "credential"; id: string; back: string }
   /** An issuer's status list as it is (`list`; its current one if absent). */
@@ -46,7 +40,6 @@ type Kept = { purpose: WalletPurpose; id: string; poll: string; back?: string };
  */
 export type WalletStart =
   | { ok: true; deepLink: string; qr: string; expiresAt: string }
-  | { ok: true; done: string }
   | { ok: false; error: string | null };
 
 /** What the page does next: keep waiting, go somewhere, or start over. */
@@ -56,10 +49,12 @@ export type WalletPoll =
   | { status: "expired" }
   | { status: "failed" };
 
-type Created =
-  | { id: string; deep_link: string; poll: string; expires_at: string }
-  /** Signed by the platform, at once (the tenant's signing flow `none`). */
-  | { status: "signed" };
+type Created = {
+  id: string;
+  deep_link: string;
+  poll: string;
+  expires_at: string;
+};
 
 type Result = {
   status: "pending" | "signed_in" | "linked" | "taken" | "signed";
@@ -96,15 +91,10 @@ export async function startWallet(
                 `${base}/issuers/${encodeURIComponent(target.issuer)}/status-lists/sign`,
                 target.list ? { status_list_id: target.list } : {},
               ]
-            : target.kind === "credential_status"
-              ? [
-                  `${base}/applications/${encodeURIComponent(target.id)}/credential-status`,
-                  { status: target.status },
-                ]
-              : [
-                  `${base}/${target.section}/${encodeURIComponent(target.id)}/publish`,
-                  {},
-                ];
+            : [
+                `${base}/applications/${encodeURIComponent(target.id)}/credential-status`,
+                { status: target.status },
+              ];
     created = await api<Created>(path, {
       method: "POST",
       body: { locale, ...extra },
@@ -119,11 +109,6 @@ export async function startWallet(
   }
   const data = created.data;
   if (!data) return { ok: false, error: created.detail };
-  if ("status" in data)
-    return {
-      ok: true,
-      done: `${target ? safeBack(target.back, "/dashboard") : "/dashboard"}?signed=1`,
-    };
   const kept: Kept = {
     purpose,
     id: data.id,

@@ -99,9 +99,6 @@ export type Signed = {
   changes: string[];
   log_url: string | null;
   document_url: string | null;
-  /** A published issuer's, verifier's or mediator's endorsement by its tenant. */
-  whois_url?: string | null;
-  endorsed_until?: string | null;
 };
 
 /**

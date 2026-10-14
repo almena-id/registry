@@ -10,9 +10,8 @@ vi.mock("./api", () => ({
   currentTenant: async () => ({ id: "t1" }),
 }));
 
-const { changeRole, leave, removeMember, withdrawInvitation } = await import(
-  "./member-actions"
-);
+const { changeRole, leave, removeMember, withdrawInvitation } =
+  await import("./member-actions");
 
 beforeEach(() => api.mockReset());
 

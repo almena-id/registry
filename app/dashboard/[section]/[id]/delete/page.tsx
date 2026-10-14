@@ -66,9 +66,7 @@ export default async function DeletePage({
               </>
             ) : (
               <>
-                <p className="mb-4 text-muted-foreground">
-                  {copy.deleteLead}
-                </p>
+                <p className="mb-4 text-muted-foreground">{copy.deleteLead}</p>
                 <DeleteForm section={section} id={item.id} />
               </>
             )}

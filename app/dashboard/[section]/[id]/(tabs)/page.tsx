@@ -200,29 +200,6 @@ export default async function SummaryTab({
         </div>
         {created}
         {publishedAt(published ? item.log_url : null)}
-        {/* Its tenant's endorsement: its whois.vp, and until when it holds. */}
-        <div className={FACT}>
-          <dt className="text-muted-foreground">{status.endorsement}</dt>
-          {item.whois_url && item.endorsed_until ? (
-            <dd className="font-mono text-[13px] break-all">
-              <a
-                className="text-primary hover:underline"
-                href={item.whois_url}
-                target="_blank"
-                rel="noreferrer"
-              >
-                {item.whois_url}
-              </a>{" "}
-              ·{" "}
-              {status.endorsedUntil.replace(
-                "{date}",
-                formatDateTime(item.endorsed_until, locale, timeZone),
-              )}
-            </dd>
-          ) : (
-            <dd className="text-faint">{status.notEndorsed}</dd>
-          )}
-        </div>
       </dl>
     </Card>
   );

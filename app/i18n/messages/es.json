@@ -58,8 +58,8 @@
         "body": "Cada versión de cada DID se firma y se publica, así que lo firmado sigue verificándose."
       },
       {
-        "title": "Avalado por tu organización",
-        "body": "Todo lo que publicas lleva el aval firmado de tu organización, verificable por cualquiera."
+        "title": "Controlado por tu organización",
+        "body": "Cada emisor, verificador y mediador nombra el DID de tu organización como su controlador, firmado desde tu wallet."
       }
     ]
   },
@@ -114,6 +114,7 @@
       "users": "Usuarios",
       "tenantLabel": "Cuenta",
       "tenant": "Ajustes",
+      "billing": "Facturación",
       "signing": "Firma",
       "domains": "Dominios",
       "breadcrumb": "Ruta de navegación",
@@ -391,12 +392,7 @@
       "deleteLead": "Su DID dejará de resolverse. No se puede deshacer.",
       "cancel": "Cancelar",
       "identityPending": "Firma primero su identidad.",
-      "publishTitle": "Publicar {name}",
-      "publishLead": "Tu organización lo avala, firmado desde tu wallet; entonces se publica.",
-      "publishLeadNone": "Tu organización lo avala, firmado por la plataforma en nombre de la cuenta; después se publica.",
-      "endorsement": "Aval",
-      "endorsedUntil": "hasta {date}",
-      "notEndorsed": "Sin aval"
+      "tenantPending": "Firma primero la identidad de la cuenta."
     },
     "users": {
       "title": "Usuarios",
@@ -469,13 +465,12 @@
         "mediatorNotFound": "Ese mediador no está disponible para esta cuenta.",
         "signerRequired": "Elige quién firma.",
         "signerNotMember": "No es miembro de esta cuenta.",
-        "languagesRequired": "Elige al menos un idioma.",
-        "vaultUnavailable": "No se puede acceder al almacén de claves de la plataforma, así que no puede crear la clave con la que firma. Inténtalo de nuevo en un momento."
+        "languagesRequired": "Elige al menos un idioma."
       },
       "identity": "Identidad",
       "identityHint": "El DID propio de la organización, con el nombre de la cuenta.",
       "noMediators": "Aún no hay mediadores.",
-      "signingLead": "Quién firma por la cuenta: alguien desde su wallet, o nadie.",
+      "signingLead": "Quién firma por la cuenta, desde su wallet.",
       "signingFlow": "Flujo de firma",
       "signingFlows": {
         "any_admin": {
@@ -491,13 +486,6 @@
           "people": "Miembros",
           "gains": "Una sola persona responde de lo que se publica.",
           "costs": "Si esa persona no está, no se publica nada."
-        },
-        "none": {
-          "label": "Sin firma",
-          "hint": "Nadie firma: la plataforma firma por la cuenta en cuanto hay algo que firmar. Los administradores siguen decidiendo qué se publica.",
-          "people": "Nadie",
-          "gains": "Trabajar sin wallets: lo que creas queda firmado al momento.",
-          "costs": "La plataforma guarda la clave de la cuenta: le confías tu firma."
         }
       },
       "signing": {
@@ -585,18 +573,39 @@
     "health": {
       "title": "Salud de la cuenta",
       "fix": "Configurar",
+      "next": "Siguiente",
       "checks": {
         "name": "Nombre",
-        "mediator": "Mediador",
-        "signing_flow": "Flujo de firma"
+        "signing_flow": "Flujo de firma",
+        "domain": "Dominio",
+        "identity": "Identidad",
+        "mediator": "Mediador"
       },
       "tasks": {
         "name_missing": "Pon nombre a la cuenta",
-        "mediator_missing": "Elige un mediador",
-        "mediator_unpublished": "Publica su mediador",
         "signing_flow_no_signer": "Elige quién firma",
         "signing_flow_no_wallet": "Quien firma necesita una wallet vinculada",
-        "signing_flow_no_key": "La plataforma aún no tiene clave con la que firmar: vuelve a elegir el flujo"
+        "domain_missing": "Añade el dominio por el que se la conoce",
+        "domain_unverified": "Verifica su dominio",
+        "identity_pending": "Firma la identidad de la cuenta",
+        "identity_outdated": "Vuelve a firmar la identidad de la cuenta",
+        "mediator_missing": "Elige un mediador",
+        "mediator_unsigned": "Firma la identidad de su mediador",
+        "mediator_unpublished": "Publica su mediador",
+        "mediator_unchosen": "Elige su mediador"
+      },
+      "reasons": {
+        "name_missing": "Es como la ven los titulares y las demás cuentas.",
+        "signing_flow_no_signer": "Nada se firma como la cuenta hasta que alguien pueda hacerlo.",
+        "signing_flow_no_wallet": "A partir de aquí, cada firma se hace con la clave de ese móvil.",
+        "domain_missing": "Su mediador se sirve bajo él, y su DID lo nombra.",
+        "domain_unverified": "Hasta que se encuentre el registro DNS, no se puede servir nada bajo él. Verificarlo antes de firmar ahorra una firma.",
+        "identity_pending": "Su DID tiene que existir antes de publicar nada bajo él: su mediador lo nombra como controlador.",
+        "identity_outdated": "Su documento ha cambiado desde que se firmó (un mediador, dominio o firmante nuevo) y sale cuando se vuelva a firmar.",
+        "mediator_missing": "El trust anchor no tiene otro mediador por el que recibir: crea el suyo.",
+        "mediator_unsigned": "Se firma después de la identidad de la cuenta, para que la nombre como su controlador.",
+        "mediator_unpublished": "Publicarlo hace que su DID resuelva; hasta entonces nada pasa por él.",
+        "mediator_unchosen": "Al elegirlo, el documento de la cuenta nombra su servicio y hay que volver a firmarlo. Las cuentas nuevas empiezan con él."
       }
     },
     "json": {
@@ -610,6 +619,7 @@
     },
     "billing": {
       "title": "Facturación",
+      "lead": "La suscripción de la cuenta y lo que aporta.",
       "unavailable": "No se puede contactar con el registro. Inténtalo de nuevo en un momento.",
       "plan": "Plan",
       "free": "Uso libre",
@@ -1166,7 +1176,6 @@
         "pending": "Pendiente de firma",
         "outdated": "Cambios por firmar",
         "draft": "Borrador",
-        "expired": "Aval caducado",
         "unsigned": "Sin firmar",
         "resign": "Por volver a firmar",
         "accepted": "Por emitir"

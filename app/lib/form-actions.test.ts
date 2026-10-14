@@ -15,7 +15,12 @@ vi.mock("./field-catalog", () => ({
     categories: [],
     domains: {},
     fields: [
-      { id: "given_name", type: "text", labels: { en: "Name" }, source: "OIDC" },
+      {
+        id: "given_name",
+        type: "text",
+        labels: { en: "Name" },
+        source: "OIDC",
+      },
     ],
   }),
 }));
@@ -29,14 +34,24 @@ function formData(values: Record<string, unknown>): FormData {
   return data;
 }
 
-const field = { ...{ id: "d0", ref: "given_name", as: "", required: true }, help: {}, values: [], min_date: "", max_date: "", max_length: "" };
+const field = {
+  ...{ id: "d0", ref: "given_name", as: "", required: true },
+  help: {},
+  values: [],
+  min_date: "",
+  max_date: "",
+  max_length: "",
+};
 
 beforeEach(() => api.mockReset());
 
 describe("saving a form", () => {
   it("asks for a name and a field before calling the API", async () => {
     const state = await createForm({}, formData({ name: {}, fields: [] }));
-    expect(state.errors).toEqual({ name: "nameRequired", form: "fieldsRequired" });
+    expect(state.errors).toEqual({
+      name: "nameRequired",
+      form: "fieldsRequired",
+    });
     expect(api).not.toHaveBeenCalled();
   });
 
@@ -72,7 +87,9 @@ describe("saving a form", () => {
     );
     expect(api.mock.calls[0][0]).toBe("/tenants/t1/forms/f1");
     expect(api.mock.calls[0][1].method).toBe("PUT");
-    expect(state.errors).toEqual({ field: { id: "d0", problem: "inUseField" } });
+    expect(state.errors).toEqual({
+      field: { id: "d0", problem: "inUseField" },
+    });
   });
 
   it("words a refusal of the whole form", async () => {
@@ -82,7 +99,11 @@ describe("saving a form", () => {
       detail: "form_in_use",
       failure: { detail: "form_in_use" },
     });
-    const state = await updateForm("f1", {}, formData({ name: { en: "J" }, fields: [field] }));
+    const state = await updateForm(
+      "f1",
+      {},
+      formData({ name: { en: "J" }, fields: [field] }),
+    );
     expect(state.errors).toEqual({ form: "inUse" });
   });
 });
