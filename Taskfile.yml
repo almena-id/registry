@@ -64,7 +64,7 @@ tasks:
       - npm run --silent test
 
   e2e:
-    desc: Run the smoke tests (Playwright, e2e/) against the production build (task build first)
+    desc: Run the end-to-end tests (Playwright, e2e/) against the production build (task build first) — the smoke tests, and the signed-in ones against ../api on SQLite when it is checked out beside this one
     deps: [install]
     cmds:
       # The browser Playwright drives, once per machine (cached by Playwright).
@@ -126,5 +126,5 @@ tasks:
       # second run, or one after .env is gone, still works.
       - cd / && docker compose --project-name almena-registry down --volumes --remove-orphans
       - task: clean
-      - rm -rf .task coverage out build next-env.d.ts *.tsbuildinfo test-results playwright-report blob-report
+      - rm -rf .task .e2e coverage out build next-env.d.ts *.tsbuildinfo test-results playwright-report blob-report
       - find . -maxdepth 1 -name '.env*' ! -name '.env.example' -exec rm -f {} +

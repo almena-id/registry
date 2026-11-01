@@ -86,7 +86,7 @@ export async function linkEmail(
 /** Unlink the email (`id` empty) or a provider account. */
 export async function unlink(id: string): Promise<void> {
   const { status, detail } = await api(
-    id ? `/auth/me/accounts/${id}` : "/auth/me/email",
+    id ? `/auth/me/accounts/${encodeURIComponent(id)}` : "/auth/me/email",
     { method: "DELETE", token: await token() },
   );
   if (status !== 204)

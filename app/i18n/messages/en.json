@@ -532,7 +532,7 @@
     },
     "queue": {
       "leadIssuer": "Where this issuer's back office reads, over AMQP, what happens to its applications: submitted, decided, issued, and credential status changes.",
-      "leadVerifier": "Where this verifier's back office will read, over AMQP, what happens to it. Nothing is put in it yet.",
+      "leadVerifier": "Where this verifier's back office reads, over AMQP, what happens to it: every verification by QR a wallet answers, with its verdict and the credentials presented.",
       "queue": "Queue",
       "none": "None yet",
       "user": "User",
@@ -609,7 +609,11 @@
         "signing_flow": "Signing flow",
         "domain": "Domain",
         "identity": "Identity",
-        "mediator": "Mediator"
+        "mediator": "Mediator",
+        "signers": "Signers",
+        "status_lists": "Status lists",
+        "queues": "Queues",
+        "published": "Published"
       },
       "tasks": {
         "name_missing": "Give the account a name",
@@ -620,9 +624,17 @@
         "identity_pending": "Sign the account's identity",
         "identity_outdated": "Sign the account's identity again",
         "mediator_missing": "Choose a mediator",
+        "mediator_missing_anchor": "Create its own mediator",
         "mediator_unsigned": "Sign its mediator's identity",
         "mediator_unpublished": "Publish its mediator",
-        "mediator_unchosen": "Choose its mediator"
+        "mediator_unchosen": "Choose its mediator",
+        "signers_no_signer": "Choose who signs for it",
+        "signers_no_wallet": "Its signer needs a linked wallet",
+        "status_lists_unsigned": "Sign its status list",
+        "status_lists_stale": "Sign its status list again",
+        "queues_missing": "Create its queue",
+        "published_missing": "Create an issuer or a verifier",
+        "published_unpublished": "Publish an issuer or a verifier"
       },
       "reasons": {
         "name_missing": "It is what holders and other accounts see it as.",
@@ -632,10 +644,18 @@
         "domain_unverified": "Until the DNS record is found, nothing can be served under it. Verifying it before signing saves a signature.",
         "identity_pending": "Its DID must exist before anything is published under it: its mediator names it as controller.",
         "identity_outdated": "Its document has changed since it was signed — a new mediator, domain or signer — and goes out once signed again.",
-        "mediator_missing": "The trust anchor has no other mediator to receive through: create its own.",
+        "mediator_missing": "Holders and other accounts reach the account through it: its DID document names it.",
+        "mediator_missing_anchor": "The trust anchor has no other mediator to receive through: create its own.",
         "mediator_unsigned": "Signed after the account's identity, so that it names the account as its controller.",
         "mediator_unpublished": "Publishing makes its DID resolve; until then nothing routes through it.",
-        "mediator_unchosen": "Once chosen, the account's document names its service and has to be signed again. New accounts start with it."
+        "mediator_unchosen": "Once chosen, the account's document names its service and has to be signed again. New accounts start with it.",
+        "signers_no_signer": "Nothing it issues or asks for is signed until someone may sign.",
+        "signers_no_wallet": "Every signature is made with that wallet's key.",
+        "status_lists_unsigned": "Its credentials name the list: none is issued until it is signed.",
+        "status_lists_stale": "It was signed with a key its DID no longer lists, so verifiers cannot check it.",
+        "queues_missing": "Its back office hears of applications and verifications through it.",
+        "published_missing": "The account works through its issuers and verifiers.",
+        "published_unpublished": "Until one is published, holders and wallets cannot see it."
       },
       "done": "{done} of {all} done"
     },
@@ -1359,7 +1379,6 @@
       "not_paired": "The holder's wallet is not paired.",
       "too_many_requests": "Too many sign-ins asked for from your connection. Try again later.",
       "tenant_outdated": "The account's DID still names the old signers' keys: they sign the change of flow first.",
-      "vault_unavailable": "The keys cannot be reached right now. Try again in a moment.",
       "log_moved": "Something else was signed meanwhile. Try again."
     }
   },

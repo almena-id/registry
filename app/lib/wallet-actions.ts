@@ -34,9 +34,8 @@ export type SignTarget =
 type Kept = { purpose: WalletPurpose; id: string; poll: string; back?: string };
 
 /**
- * Why a request could not be made: the API's code, when it gave one. `done`:
- * nobody's wallet was asked — the platform signed it as the tenant (its
- * signing flow `none`) — and where to go now.
+ * The request drawn as a QR code, or why it could not be made: the API's
+ * code, when it gave one.
  */
 export type WalletStart =
   | { ok: true; deepLink: string; qr: string; expiresAt: string }

@@ -46,8 +46,10 @@ async function visitor(): Promise<Record<string, string>> {
   if (!secret) return {};
   try {
     const seen = await headers();
+    // The rightmost entry is the one the proxy in front (Caddy) added; the
+    // ones before it come from the client, which can write anything there.
     const address =
-      seen.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+      seen.get("x-forwarded-for")?.split(",").at(-1)?.trim() ||
       seen.get("x-real-ip")?.trim();
     return address
       ? { "X-Almena-Portal": secret, "X-Almena-Client-IP": address }

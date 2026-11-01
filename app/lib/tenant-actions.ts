@@ -150,6 +150,7 @@ export async function chooseTenant(id: string): Promise<void> {
   (await cookies()).set(tenantCookie, id, {
     maxAge: 60 * 60 * 24 * 365,
     httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
   });
   revalidatePath("/dashboard", "layout");

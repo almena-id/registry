@@ -532,7 +532,7 @@
     },
     "queue": {
       "leadIssuer": "Donde el back office de este emisor lee, por AMQP, lo que pasa con sus solicitudes: enviadas, decididas, emitidas y los cambios de estado de las credenciales.",
-      "leadVerifier": "Donde el back office de este verificador leerá, por AMQP, lo que le pase. Todavía no se publica nada en ella.",
+      "leadVerifier": "Donde el back office de este verificador lee, por AMQP, lo que le pasa: cada verificación por QR que responde un wallet, con su veredicto y las credenciales presentadas.",
       "queue": "Cola",
       "none": "Ninguna todavía",
       "user": "Usuario",
@@ -609,7 +609,11 @@
         "signing_flow": "Flujo de firma",
         "domain": "Dominio",
         "identity": "Identidad",
-        "mediator": "Mediador"
+        "mediator": "Mediador",
+        "signers": "Firmantes",
+        "status_lists": "Listas de estados",
+        "queues": "Colas",
+        "published": "Publicado"
       },
       "tasks": {
         "name_missing": "Pon nombre a la cuenta",
@@ -620,9 +624,17 @@
         "identity_pending": "Firma la identidad de la cuenta",
         "identity_outdated": "Vuelve a firmar la identidad de la cuenta",
         "mediator_missing": "Elige un mediador",
+        "mediator_missing_anchor": "Crea su propio mediador",
         "mediator_unsigned": "Firma la identidad de su mediador",
         "mediator_unpublished": "Publica su mediador",
-        "mediator_unchosen": "Elige su mediador"
+        "mediator_unchosen": "Elige su mediador",
+        "signers_no_signer": "Elige quién firma por él",
+        "signers_no_wallet": "Quien firma necesita un wallet vinculado",
+        "status_lists_unsigned": "Firma su lista de estados",
+        "status_lists_stale": "Vuelve a firmar su lista de estados",
+        "queues_missing": "Crea su cola",
+        "published_missing": "Crea un emisor o un verificador",
+        "published_unpublished": "Publica un emisor o un verificador"
       },
       "reasons": {
         "name_missing": "Es como la ven los titulares y las demás cuentas.",
@@ -632,10 +644,18 @@
         "domain_unverified": "Hasta que se encuentre el registro DNS, no se puede servir nada bajo él. Verificarlo antes de firmar ahorra una firma.",
         "identity_pending": "Su DID tiene que existir antes de publicar nada bajo él: su mediador lo nombra como controlador.",
         "identity_outdated": "Su documento ha cambiado desde que se firmó (un mediador, dominio o firmante nuevo) y sale cuando se vuelva a firmar.",
-        "mediator_missing": "El trust anchor no tiene otro mediador por el que recibir: crea el suyo.",
+        "mediator_missing": "Los titulares y las demás cuentas llegan a la cuenta a través de él: su documento DID lo nombra.",
+        "mediator_missing_anchor": "El trust anchor no tiene otro mediador por el que recibir: crea el suyo.",
         "mediator_unsigned": "Se firma después de la identidad de la cuenta, para que la nombre como su controlador.",
         "mediator_unpublished": "Publicarlo hace que su DID resuelva; hasta entonces nada pasa por él.",
-        "mediator_unchosen": "Al elegirlo, el documento de la cuenta nombra su servicio y hay que volver a firmarlo. Las cuentas nuevas empiezan con él."
+        "mediator_unchosen": "Al elegirlo, el documento de la cuenta nombra su servicio y hay que volver a firmarlo. Las cuentas nuevas empiezan con él.",
+        "signers_no_signer": "Nada de lo que emite o pide se firma hasta que alguien pueda firmar.",
+        "signers_no_wallet": "Cada firma se hace con la clave de ese wallet.",
+        "status_lists_unsigned": "Sus credenciales nombran la lista: no se emite ninguna hasta que esté firmada.",
+        "status_lists_stale": "Se firmó con una clave que su DID ya no incluye, y los verificadores no pueden comprobarla.",
+        "queues_missing": "Su sistema interno se entera de las solicitudes y verificaciones a través de ella.",
+        "published_missing": "La cuenta opera a través de sus emisores y verificadores.",
+        "published_unpublished": "Hasta que se publique uno, ni los titulares ni los wallets lo ven."
       },
       "done": "{done} de {all} hechas"
     },
@@ -970,7 +990,7 @@
       "label": "Etiqueta",
       "anchorHint": "Catálogo {version}: esta cuenta es el ancla de confianza, y estos campos son de todos — los formularios de cualquier cuenta los piden, y se publican en almena.id. Añade lo que nombran los estándares; borra solo lo que nada use.",
       "newAnchorLead": "Un campo del catálogo de Almena, para todas las cuentas: nómbralo como lo nombra un estándar y etiquétalo en todos los idiomas.",
-      "labelsEveryHint": "En todos los idiomas: todas las cuentas y carteras lo muestran.",
+      "labelsEveryHint": "En todos los idiomas: todas las cuentas y wallets lo muestran.",
       "keyAnchorHint": "minúsculas, dígitos y _; también el nombre del claim",
       "category": "Categoría",
       "source": "Estándar",
@@ -1000,7 +1020,7 @@
       "yourTypes": "Tus tipos de credencial",
       "yourTypesHint": "Tipos de credencial propios de esta cuenta, para lo que el catálogo de Almena no tiene. Solo los otorgan sus emisores y solo los piden sus formularios; se publican en almena.id a nombre de esta cuenta, porque las credenciales salen de la plataforma.",
       "yourTypesEmpty": "Aún no tienes tipos de credencial propios.",
-      "newOwnTypeLead": "Un tipo de credencial propio de esta cuenta: lo otorgan sus emisores y lo piden sus formularios. Sus claims son campos del catálogo, de Almena o tuyos. Comprueba antes que el catálogo de Almena no lo tiene: sus tipos los entienden todos los emisores y carteras.",
+      "newOwnTypeLead": "Un tipo de credencial propio de esta cuenta: lo otorgan sus emisores y lo piden sus formularios. Sus claims son campos del catálogo, de Almena o tuyos. Comprueba antes que el catálogo de Almena no lo tiene: sus tipos los entienden todos los emisores y wallets.",
       "subscribeForFields": "Los campos propios vienen con una suscripción (mira Ajustes › Facturación).",
       "subscribeForTypes": "Los tipos de credencial propios vienen con una suscripción (mira Ajustes › Facturación).",
       "categories": {
@@ -1359,7 +1379,6 @@
       "not_paired": "El wallet del titular no está emparejado.",
       "too_many_requests": "Demasiados inicios de sesión pedidos desde tu conexión. Inténtalo más tarde.",
       "tenant_outdated": "El DID de la cuenta aún nombra las claves de quienes firmaban: firman ellos primero el cambio de flujo.",
-      "vault_unavailable": "No se puede acceder a las claves ahora mismo. Inténtalo de nuevo en un momento.",
       "log_moved": "Se firmó otra cosa entretanto. Inténtalo de nuevo."
     }
   },

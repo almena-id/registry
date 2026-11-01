@@ -21,6 +21,9 @@ import type { VerifiedCredential } from "@/app/lib/verify-actions";
 type Shown = Extract<Opened, { ok: true }>;
 type Result = { verified: boolean; credentials: VerifiedCredential[] };
 
+const pollEvery = 2000;
+const longestWait = 30000;
+
 /**
  * Pick a form, show its QR: the wallet that scans it is asked, as this
  * verifier, for what the form asks; every two seconds the registry is asked
@@ -47,20 +50,37 @@ export function VerifyByQr({
 
   useEffect(() => {
     if (!shown || state !== "waiting") return;
-    const timer = setInterval(async () => {
+    let stop = false;
+    let timer: ReturnType<typeof setTimeout>;
+    const expires = new Date(shown.expiresAt).getTime();
+    // Every two seconds; while the registry cannot be reached, twice as long
+    // each time (up to half a minute), and never past the request's expiry.
+    const ask = async (wait: number) => {
       const seen = await checkVerification(verifierId, shown.id).catch(
         () => null,
       );
-      if (!seen) return;
-      if (seen.status === "answered" && seen.result) {
+      if (stop) return;
+      if (seen?.status === "answered" && seen.result) {
         setResult(seen.result);
         setState("idle");
         setShown(null);
-      } else if (seen.status === "expired") {
-        setState("expired");
+        return;
       }
-    }, 2000);
-    return () => clearInterval(timer);
+      if (seen?.status === "expired" || Date.now() >= expires) {
+        setState("expired");
+        return;
+      }
+      const next = seen ? pollEvery : Math.min(wait * 2, longestWait);
+      timer = setTimeout(
+        () => void ask(next),
+        Math.min(next, Math.max(0, expires - Date.now())),
+      );
+    };
+    timer = setTimeout(() => void ask(pollEvery), pollEvery);
+    return () => {
+      stop = true;
+      clearTimeout(timer);
+    };
   }, [shown, state, verifierId]);
 
   async function show() {

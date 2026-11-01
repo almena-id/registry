@@ -27,7 +27,6 @@ Read from the environment or `.env`; [.env.example](.env.example) explains every
 | Variable | Default | |
 |---|---|---|
 | `NEXT_PUBLIC_REGISTRY_WEB_URL` | `https://registry.almena.id` | Public origin of the portal, for metadata; inlined at build time |
-| `NEXT_PUBLIC_REGISTRY_API_URL` | `https://api.almena.id` | The API as the browser reaches it; inlined into the bundle at build time, so changing it needs a rebuild |
 | `REGISTRY_API_URL` | `https://api.almena.id` | The API as the Next.js server reaches it, read at runtime |
 | `REGISTRY_PORTAL_SECRET` | — | The secret the API shares with its portals (its `REGISTRY_PORTAL_SECRET`): with it every call names the visitor's address (`X-Almena-Client-IP`, from the edge's `X-Forwarded-For`), so the API's limits per network address count visitors, not this server |
 | `REGISTRY_CATALOG_URL` | `https://catalog.almena.id` | The catalog, where holders apply for credentials; the old `/credentials` and `/apply/{id}` links redirect there, read at runtime |

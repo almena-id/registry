@@ -18,15 +18,28 @@ everything (`task --list`); `task check` must pass before finishing.
   `vitest.config.mts`; `test/setup.ts` mocks Next's cookies, redirect and
   cache, `server-only` is an empty module) — the `lib/` helpers and the
   server actions with the API mocked: what each sends and how a refusal is
-  worded. Smoke tests in `e2e/` (Playwright, `playwright.config.ts`) run the
-  production build with no API reachable. A new server action, or a new
-  refusal it words, comes with its unit test.
+  worded. End-to-end tests in `e2e/` (Playwright, `playwright.config.ts`) run
+  the production build: `smoke.spec.ts` with no API reachable;
+  `signed-in.spec.ts` against the real API on a throwaway SQLite database
+  (`e2e/demo_api.py`, run from a `../api` checkout with `uv`, port 8767, the
+  account's session in `.e2e/`) — overview, creating an issuer and a form,
+  the applications inbox, the account's settings; left out where there is no
+  `../api` (or with `E2E_SIGNED_IN=0`). Every page they load fails on a
+  Content Security Policy violation (`e2e/fixtures.ts`). A new server
+  action, or a new refusal it words, comes with its unit test.
 
 - The portal is `https://registry.almena.id` (`NEXT_PUBLIC_REGISTRY_WEB_URL`),
-  the API `https://api.almena.id`: `process.env.REGISTRY_API_URL`
-  on the server, `process.env.NEXT_PUBLIC_REGISTRY_API_URL` in the browser
-  (inlined at build).
+  the API `https://api.almena.id` (`process.env.REGISTRY_API_URL`), reached
+  only by the server: the browser never calls it.
 - `app/health/route.ts` is the Docker health check: keep it dependency-free.
+- Security headers (`app/lib/security-headers.ts`): every response carries
+  `nosniff`, a referrer policy, a permissions policy and `X-Frame-Options`
+  (`next.config.ts`); every page a Content Security Policy with a nonce of
+  its own (`proxy.ts`: scripts only from here and nonced, inline styles
+  allowed, `frame-ancestors 'none'`, forms only posted here). Nothing is
+  loaded from another origin; adding something that is needs the policy
+  changed with it. A holder's file goes out as a sandboxed download
+  (`app/lib/download.ts`).
 - `app/.well-known/`: `security.txt` (RFC 9116, this repository's advisories)
   and `did-configuration.json`, read as it is from `REGISTRY_WEB_WELL_KNOWN_DIR`:
   the Domain Linkage Credential tying this origin to `did:web:almena.id` is
@@ -63,18 +76,22 @@ everything (`task --list`); `task check` must pass before finishing.
   illustrated empty state, not a flat chart. Days are the API's UTC days,
   written with `formatDay`, never shifted into the visitor's zone. Then
   "Account health" (`Health.tsx`): the API's score (`GET /tenants/{id}/health`,
-  a percentage in a `RingGauge`) and its checks in order — name, mediator, signing flow; for the
+  a percentage in a `RingGauge`) and its checks in order — name, mediator, signing flow, then, with issuers or verifiers, their signers, status lists and queues, and something published; for the
   trust anchor its onboarding: name, signing flow, domain, identity, its own
   mediator — each done, or pending with the task, why it is needed and a
   "Set up" link to where it is done (on the check's `item` when it names one);
   the anchor's first pending is marked "Next". The checks and their order are
   the API's; the portal only words them (`dashboard.health.tasks.{check}_{issue}`
-  and `dashboard.health.reasons.{check}_{issue}`). Lists tag each row published or
+  and `dashboard.health.reasons.{check}_{issue}`; for the trust anchor a
+  `…_anchor` key, when there is one, comes first — `mediator_missing` asks
+  it to create its own, every other account to choose one). Lists tag each row published or
   draft (issuers, verifiers, mediators) and with its DID's signature.
 - Verifiers have a Verify tab (`(tabs)/verify`, `VerifyByQr`,
   `app/lib/verification-actions.ts`): pick one of the tenant's forms that asks
   for credentials, show its QR (`POST …/verifiers/{id}/verifications`, the
-  code drawn server side), poll every two seconds until the wallet answers,
+  code drawn server side), poll every two seconds until the wallet answers
+  (backing off up to half a minute while the registry cannot be reached, and
+  stopping once the request expires),
   and show the verdict (`Verdict`, shared with the form's Verify tab). Only a
   published verifier asks: the wallet is shown its DID.
 - Issuers and verifiers have a Queue tab (`(tabs)/queue`, `lib/queues.ts`,
@@ -106,7 +123,9 @@ everything (`task --list`); `task check` must pass before finishing.
   its status — is `WalletScreen` (`app/dashboard/WalletScreen.tsx`: the way
   back, title, lead, an optional warning and the QR card centred under
   them); never a layout of its own. Every QR code is drawn by `WalletQr`
-  (the code, "Open in the wallet", the wait), the Verify tab's too.
+  (the code, "Open in the wallet" — only for an `almena:` or `https:` link,
+  `safeDeepLink` —, the wait), the Verify tab's too. Only the wait's state is
+  a live region; the countdown beside it is never announced.
 - Sign-in goes through server actions (`app/lib/auth-actions.ts`): the API's
   bearer token is kept in the HTTP-only `almena.session` cookie on this origin
   and sent by the server (`app/lib/api.ts`); the browser never holds it.
@@ -394,8 +413,7 @@ everything (`task --list`); `task check` must pass before finishing.
   credentials carry no files), then
   `/dashboard/applications/{id}/issue` has the issuer's signer's wallet sign it
   (`WalletRequest`, target `credential`); the holder takes it in the catalog
-  with a third QR (`receive`), or from the wallet when the issuer's notice
-  arrives. A credential names its entry in the issuer's
+  with a third QR (`receive`). A credential names its entry in the issuer's
   status list, so that list is signed first: until it is, the issuance card
   says so and links to `/dashboard/issuers/{id}/sign-status?back=…` (target
   `status_list`; `back` only ever a dashboard path, `safeBack`). Issued, the

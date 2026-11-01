@@ -14,8 +14,9 @@ const rowClass =
 
 /**
  * Where each task is done: on the thing it names (`item`) when there is one —
- * the account's identity to sign, its mediator to sign or publish — else where
- * it is set. An own mediator waiting to be published opens itself.
+ * the account's identity to sign, its mediator to sign or publish, an issuer
+ * or verifier to give a signer, a queue or its status lists — else where it
+ * is set. An own mediator waiting to be published opens itself.
  */
 function taskHref(
   check: HealthCheck,
@@ -43,6 +44,24 @@ function taskHref(
         return `/dashboard/mediators/${mediator}`;
       return "/dashboard/tenant";
     }
+    case "signers":
+      return check.item && check.item_kind
+        ? `/dashboard/${check.item_kind}s/${check.item}/signing`
+        : "/dashboard/issuers";
+    case "status_lists":
+      return check.item
+        ? `/dashboard/issuers/${check.item}/status`
+        : "/dashboard/issuers";
+    case "queues":
+      return check.item && check.item_kind
+        ? `/dashboard/${check.item_kind}s/${check.item}/queue`
+        : "/dashboard/issuers";
+    case "published":
+      if (check.item && check.item_kind)
+        return `/dashboard/${check.item_kind}s/${check.item}`;
+      return check.issue === "missing"
+        ? "/dashboard/issuers/new"
+        : "/dashboard/issuers";
     default:
       return "/dashboard/tenant";
   }
@@ -59,13 +78,20 @@ export async function Health() {
   const copy = t.dashboard.health;
   const [health, tenant] = await Promise.all([fetchHealth(), fetchTenant()]);
   const ownMediator = tenant?.mediator?.own ? tenant.mediator.id : null;
-  // A check this build has no words for is named, not described.
-  const task = (check: HealthCheck) =>
-    copy.tasks[`${check.check}_${check.issue}` as keyof typeof copy.tasks] ??
-    copy.checks[check.check];
-  const reason = (check: HealthCheck): string | undefined =>
-    copy.reasons[`${check.check}_${check.issue}` as keyof typeof copy.reasons];
   const anchor = tenant?.anchor ?? false;
+  // The trust anchor's own wording first (`{check}_{issue}_anchor`: it has
+  // no other mediator to fall back on), then every account's. A check this
+  // build has no words for is named, not described.
+  const words = <T extends Record<string, string>>(
+    from: T,
+    check: HealthCheck,
+  ): string | undefined => {
+    const key = `${check.check}_${check.issue}`;
+    return (anchor ? from[`${key}_anchor`] : undefined) ?? from[key];
+  };
+  const task = (check: HealthCheck) =>
+    words(copy.tasks, check) ?? copy.checks[check.check];
+  const reason = (check: HealthCheck) => words(copy.reasons, check);
   const next = anchor
     ? health?.checks.find((check) => !check.done)?.check
     : undefined;

@@ -1,6 +1,18 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+import { Redirected } from "@/test/next";
+
 const api = vi.fn();
+const set = vi.fn();
+vi.mock("next/headers", () => ({
+  cookies: async () => ({
+    get: (name: string) =>
+      name === "almena.session" ? { value: "the-session" } : undefined,
+    set: (...args: unknown[]) => set(...args),
+    delete: () => {},
+  }),
+  headers: async () => new Headers(),
+}));
 vi.mock("./api", () => ({
   sessionCookie: "almena.session",
   tenantCookie: "almena.tenant",
@@ -9,7 +21,7 @@ vi.mock("./api", () => ({
   currentTenants: async () => [{ id: "t1" }],
 }));
 
-const { saveSigningFlow } = await import("./tenant-actions");
+const { chooseTenant, saveSigningFlow } = await import("./tenant-actions");
 
 beforeEach(() => api.mockReset());
 
@@ -43,5 +55,31 @@ describe("choosing the signing flow", () => {
     const state = { signingFlow: "any_admin" as const, signer: "" };
     expect(await saveSigningFlow(state, form("none"))).toEqual(state);
     expect(api).not.toHaveBeenCalled();
+  });
+});
+
+describe("choosing the tenant", () => {
+  it("keeps it in an HTTP-only cookie, secure in production", async () => {
+    vi.stubEnv("NODE_ENV", "production");
+    set.mockReset();
+    await expect(chooseTenant("t1")).rejects.toEqual(
+      new Redirected("/dashboard"),
+    );
+    expect(set).toHaveBeenCalledWith(
+      "almena.tenant",
+      "t1",
+      expect.objectContaining({
+        httpOnly: true,
+        secure: true,
+        sameSite: "lax",
+      }),
+    );
+    vi.unstubAllEnvs();
+  });
+
+  it("ignores a tenant that is not the account's", async () => {
+    set.mockReset();
+    await chooseTenant("t2");
+    expect(set).not.toHaveBeenCalled();
   });
 });

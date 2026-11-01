@@ -107,18 +107,17 @@ export function WalletRequest({
           deepLink={shown.deepLink}
           label={copy.qr}
           open={copy.open}
-          status={
-            <>
-              {copy.waiting}
-              {time && ` ${copy.expiresIn.replace("{time}", time)}`}
-            </>
-          }
+          status={copy.waiting}
+          countdown={time && copy.expiresIn.replace("{time}", time)}
         />
       ) : (
         state !== "waiting" && (
           <>
             {state === "expired" && (
-              <p className="text-center text-sm text-muted-foreground">
+              <p
+                className="text-center text-sm text-muted-foreground"
+                role="status"
+              >
                 {copy.expired}
               </p>
             )}

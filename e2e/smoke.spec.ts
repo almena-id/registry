@@ -1,11 +1,15 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./fixtures";
 
-test("the landing leads with the wallet, and other ways in", async ({ page }) => {
+test("the landing leads with the wallet, and other ways in", async ({
+  page,
+}) => {
   await page.goto("/");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(
     "Your organisation's identities, in one place",
   );
-  await expect(page.getByRole("link", { name: "Continue with Almena" })).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: "Continue with Almena" }),
+  ).toBeVisible();
   await page.getByRole("link", { name: "Other ways in" }).click();
   await expect(page).toHaveURL(/\/login$/);
 });
@@ -37,7 +41,9 @@ test("the language is the visitor's", async ({ browser }) => {
   const context = await browser.newContext({ locale: "es-ES" });
   const page = await context.newPage();
   await page.goto("/");
-  await expect(page.getByRole("link", { name: "Continuar con Almena" })).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: "Continuar con Almena" }),
+  ).toBeVisible();
   await context.close();
 });
 
@@ -65,3 +71,17 @@ for (const locale of ["en-GB", "es-ES"]) {
     await context.close();
   });
 }
+
+test("pages forbid framing and carry their security headers", async ({
+  request,
+}) => {
+  const response = await request.get("/login");
+  const headers = response.headers();
+  expect(headers["content-security-policy"]).toContain(
+    "frame-ancestors 'none'",
+  );
+  expect(headers["x-frame-options"]).toBe("DENY");
+  expect(headers["x-content-type-options"]).toBe("nosniff");
+  expect(headers["referrer-policy"]).toBe("strict-origin-when-cross-origin");
+  expect(headers["permissions-policy"]).toContain("camera=()");
+});

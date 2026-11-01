@@ -4,38 +4,9 @@ import { cookies } from "next/headers";
 
 import { api, currentTenant, sessionCookie } from "./api";
 import type { CredentialType } from "./credential-catalog";
-import type {
-  CatalogueField,
-  CredentialRequest,
-  FormField,
-  Labels,
-} from "./form-fields";
+import type { CatalogueField, Labels } from "./form-fields";
 import type { CredentialStatus } from "./status-lists";
 import type { Texts } from "./texts";
-
-/** Where whoever started an application keeps its secret (one per application). */
-export const applicationCookie = (id: string) => `almena.application.${id}`;
-
-/** A form field as an offer shows it: the form's settings and its definition. */
-export type OfferField = FormField & { key: string; field: CatalogueField };
-
-export type Offer = {
-  issuer: {
-    slug: string;
-    name: string;
-    /** By language. */
-    description: Texts | null;
-    did: string;
-  };
-  credential_type: CredentialType;
-  form: {
-    slug: string;
-    name: Texts;
-    description: Texts | null;
-    fields: OfferField[];
-    credentials: CredentialRequest[];
-  };
-};
 
 export type FileMeta = {
   filename: string;
@@ -58,65 +29,6 @@ export type Presented = {
 
 export type ApplicationStatus =
   "open" | "paired" | "submitted" | "accepted" | "rejected" | "issued";
-
-export type WalletState = {
-  purpose: "pair" | "present" | "submit" | "receive" | null;
-  answered: boolean;
-  live: boolean;
-  deep_link: string | null;
-  expires_at: string | null;
-};
-
-/** An application, as whoever holds its secret sees it. */
-export type HolderApplication = {
-  id: string;
-  slug: string;
-  status: ApplicationStatus;
-  holder_did: string | null;
-  offer: Offer;
-  answers: Record<string, unknown>;
-  filled: Record<string, unknown>;
-  files: Record<string, FileMeta>;
-  presented: Presented[];
-  wallet: WalletState;
-  submitted_at: string | null;
-  decided_at: string | null;
-  decision_note: string | null;
-  issued_at: string | null;
-  valid_until: string | null;
-  delivered_at: string | null;
-  /** Issued: its status, as the issuer's status list says. */
-  credential_status: CredentialStatus | null;
-};
-
-/** An issuer's offer, public; `null` when there is none (or no API). */
-export async function fetchOffer(
-  issuer: string,
-  type: string,
-): Promise<Offer | null> {
-  const { data } = await api<Offer>(
-    `/catalog/issuers/${encodeURIComponent(issuer)}/offers/${encodeURIComponent(type)}`,
-  );
-  return data;
-}
-
-/** The secret of an application this browser started, if it did. */
-export async function applicationSecret(id: string): Promise<string | null> {
-  return (await cookies()).get(applicationCookie(id))?.value ?? null;
-}
-
-/** An application this browser started; `null` otherwise, or when gone. */
-export async function fetchApplication(
-  id: string,
-): Promise<HolderApplication | null> {
-  const secret = await applicationSecret(id);
-  if (!secret) return null;
-  const { data } = await api<HolderApplication>(
-    `/applications/${encodeURIComponent(id)}`,
-    { headers: { "X-Application-Secret": secret } },
-  );
-  return data;
-}
 
 /** One answer of a received application, as the holder signed it. */
 export type SignedAnswer = {

@@ -73,10 +73,6 @@ function spoken(
   };
 }
 
-/**
- * Add a credential type: the trust anchor's to Almena's catalogue, any other
- * account's of its own (when its subscription allows it).
- */
 /** The type as typed, read from its form. */
 function readType(form: FormData): CredentialTypeState {
   const read = (name: string) => String(form.get(name) ?? "").trim();

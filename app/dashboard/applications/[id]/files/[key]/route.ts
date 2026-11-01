@@ -1,11 +1,12 @@
 import { cookies } from "next/headers";
 
 import { apiRaw, currentTenant, sessionCookie } from "@/app/lib/api";
+import { downloadHeaders } from "@/app/lib/download";
 
 /**
  * A file a holder uploaded with an application, for the account's members:
  * fetched from the API with the session (which the browser never holds) and
- * handed on as an attachment.
+ * handed on as a sandboxed download, never shown on this origin.
  */
 export async function GET(
   _: Request,
@@ -20,13 +21,5 @@ export async function GET(
     token,
   );
   if (!response.ok) return new Response(null, { status: response.status });
-  return new Response(response.body, {
-    headers: {
-      "Content-Type":
-        response.headers.get("content-type") ?? "application/octet-stream",
-      "Content-Disposition":
-        response.headers.get("content-disposition") ?? "attachment",
-      "X-Content-Type-Options": "nosniff",
-    },
-  });
+  return new Response(response.body, { headers: downloadHeaders(response) });
 }

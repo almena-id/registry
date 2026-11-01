@@ -41,7 +41,16 @@ export async function fetchTenant(): Promise<TenantDetail | null> {
  * The root's are its onboarding: each step needs the ones before it.
  */
 export type HealthCheck = {
-  check: "name" | "signing_flow" | "domain" | "identity" | "mediator";
+  check:
+    | "name"
+    | "signing_flow"
+    | "domain"
+    | "identity"
+    | "mediator"
+    | "signers"
+    | "status_lists"
+    | "queues"
+    | "published";
   done: boolean;
   /** What is missing, when not done. */
   issue:
@@ -54,9 +63,12 @@ export type HealthCheck = {
     | "unchosen"
     | "no_signer"
     | "no_wallet"
+    | "stale"
     | null;
-  /** What the task is done on: the tenant's identity, or the mediator. */
+  /** What the task is done on: the tenant's identity, its mediator, or one of its issuers or verifiers. */
   item: string | null;
+  /** What `item` is. */
+  item_kind?: "identity" | "mediator" | "issuer" | "verifier" | null;
 };
 export type TenantHealth = {
   /** The share of checks done, 0 to 100. */
