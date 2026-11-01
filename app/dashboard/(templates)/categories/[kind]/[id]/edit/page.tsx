@@ -41,7 +41,12 @@ export default async function EditCategoryPage({
       <CategoryForm
         kind={kind}
         edit={item.id}
-        initial={{ kind: item.kind, key: item.key, labels: item.labels }}
+        initial={{
+          kind: item.kind,
+          key: item.key,
+          labels: item.labels,
+          icon: item.icon,
+        }}
       />
     </div>
   );

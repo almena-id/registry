@@ -66,7 +66,7 @@ export default async function UsersPage() {
                 key={`${member.status}:${member.user_id ?? member.email}`}
                 className="flex items-center justify-between gap-4 border-t px-5 py-3.5 first:border-t-0 max-sm:flex-col max-sm:items-start max-sm:gap-1"
               >
-                <div className="flex min-w-0 flex-col gap-0.5">
+                <div className="flex min-w-0 flex-col gap-0.5 max-sm:self-stretch">
                   <span className="font-semibold">
                     {member.email ?? member.alias ?? copy.noEmail}
                     {member.user_id !== null && member.user_id === me?.id && (

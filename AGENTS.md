@@ -34,8 +34,11 @@ everything (`task --list`); `task check` must pass before finishing.
 - `output: "standalone"` in `next.config.ts` is what the Dockerfile ships.
 - The landing (`/`) leads with "Continue with Almena" (the wallet; "Other
   ways in" is `/login`) and draws the model as it works: you sign for your
-  tenant from your wallet, its issuers, verifiers and mediators hang from it;
-  three numbered points below.
+  tenant from your wallet, its issuers, verifiers and mediators hang from it,
+  each node with its icon; three numbered points below, each with its icon.
+  The hero, and the sign-in screens (`(auth)/layout.tsx`), sit on the brand
+  pattern (`.brand-pattern`: a dot grid faded out from the middle) — heroes
+  only, never a working screen.
 - Pending (`/dashboard/pending`, first entry of the Activity card) lists
   everything in the tenant that waits to be signed or published, in the
   order it is done (`GET /tenants/{id}/pending`, `app/lib/pending.ts`):
@@ -49,9 +52,18 @@ everything (`task --list`); `task check` must pass before finishing.
   signs with no Almena wallet is asked to link one first. `PendingRows`
   draws them; the overview opens with "Awaiting you", its first five and a
   link to the rest. Who signs as the tenant is its signing flow, not the
-  role: the API says it per tenant (`Tenant.signs`). Below it, "Account health"
-  (`Health.tsx`): the API's score (`GET /tenants/{id}/health`, a percentage
-  and a bar) and its checks in order — name, mediator, signing flow; for the
+  role: the API says it per tenant (`Tenant.signs`). Below it, Activity
+  (`Activity.tsx`, `app/lib/activity.ts`, `GET /tenants/{id}/activity`): per
+  day, applications submitted, credentials issued and presentations verified
+  as stacked bars (`StackedBars`), rejected and failed ones a dot above the
+  day, over 7, 30 or 90 days — the span kept in the URL (`?days=`,
+  `activitySpan` in `app/lib/activity-days.ts`, 30 by default); then tiles:
+  applications waiting, accepted to issue, the credentials issued by status
+  and the verifications, each a `Donut`. Nothing ever happened is an
+  illustrated empty state, not a flat chart. Days are the API's UTC days,
+  written with `formatDay`, never shifted into the visitor's zone. Then
+  "Account health" (`Health.tsx`): the API's score (`GET /tenants/{id}/health`,
+  a percentage in a `RingGauge`) and its checks in order — name, mediator, signing flow; for the
   trust anchor its onboarding: name, signing flow, domain, identity, its own
   mediator — each done, or pending with the task, why it is needed and a
   "Set up" link to where it is done (on the check's `item` when it names one);
@@ -110,6 +122,18 @@ everything (`task --list`); `task check` must pass before finishing.
   Spanish (`es`) the first translation (`app/i18n/messages/*.json`). No
   hard-coded user-facing strings. The language is the selector's choice
   (`almena.locale` cookie), else the browser's Accept-Language.
+- Text never leaves its box, in any language (some run a third longer than
+  English), from a 320px phone up: labels wrap rather than run out
+  (`whitespace-nowrap` only where a row scrolls sideways on purpose — the
+  side menu on phones, the tabs); a long unbroken word (a DID, an address)
+  breaks (`overflow-wrap: break-word` on `body`, `wrap-anywhere` inside flex
+  rows); what is cut is cut with an ellipsis (`truncate`), never a name a
+  number depends on; a row that stacks on phones stretches its text column
+  (`max-sm:self-stretch`); fields side by side fit their columns to the room
+  (`repeat(auto-fit,minmax(…))`), not a fixed count; a table hidden for
+  assistive technology sits in an `sr-only` box, never is one (a table
+  grows to its content and widens the page). The smoke tests check the
+  public pages on a phone in every locale.
 - Typefaces, self-hosted with `next/font` in `app/layout.tsx`: Chakra Petch
   (`font-brand`: headings, the wordmark), Inter (`font-sans`: the
   interface), JetBrains Mono (`font-mono`: DIDs, URLs, digests, JSON).
@@ -124,7 +148,27 @@ everything (`task --list`); `task check` must pass before finishing.
   `lucide-react`.
 - Green `#1f9d55` is the registry's identity: `--primary` and `--ring` in
   both themes (`--brand-strong` `#18804a` light, `#34b56c` dark), and the
-  Almena mark (`Logo`, `app/icon.svg`).
+  Almena mark (`Logo`, `app/icon.svg`). Beyond it the theme has `--warning`
+  (a suspended credential), one token per chart series
+  (`--chart-submitted`, `--chart-issued`, `--chart-verified`, checked for
+  colour-blind separation in each theme; what went wrong is `--destructive`)
+  and `--pattern-dot`.
+- Graphics are hand-drawn SVG and React, no chart or illustration library,
+  colours from the tokens only, decorative ones `aria-hidden`:
+  `components/charts` (`StackedBars` — legend, a tooltip on hover or with the
+  arrow keys, a hidden table of every day —, `Donut`, `RingGauge`, each named
+  for assistive technology) and `components/illustrations` (`Guilloche`,
+  `EmptyArt`). Every empty list is `EmptyState` (the drawing with what the
+  list would hold, the words). A credential is drawn as a card,
+  `CredentialCard` (ID-1 proportions, the brand's gradient with a guilloché
+  and the mark, its category's icon and label, the type and its issuer, a
+  `CredentialChip` with its status; `full` or `compact`). Categories are
+  drawn with the API's icon (`icon`, lucide's names): `app/lib/category-icons.ts`
+  maps them, a tag for any other; `CategoryIcon` and `CategoryLabel` draw
+  them wherever a category shows (catalogue rows, the pickers' headings,
+  credential cards). Sections and the side menu's entries carry their icon
+  (`app/dashboard/icons.ts`); the overview's cards too, in a brand-tinted
+  square.
 - Light/dark/system is the `almena.theme` cookie, rendered as `data-theme` on
   `<html>` by the server; Tailwind's `dark:` follows it. `app/globals.css`
   holds only the theme — shadcn's variables carrying the wallet's palette — and
@@ -301,8 +345,10 @@ everything (`task --list`); `task check` must pass before finishing.
   `app/lib/category-actions.ts`), what fields and credential types are
   filed under, each with how much is filed under it,
   created (`…/new`, `CategoryForm`: the screen's kind, key, a name in
-  every language), renamed (`…/{id}/edit`; kind and key fixed) and deleted
-  while nothing is (`category_in_use`). Whatever the anchor keeps only it
+  every language and its icon, picked from a grid of the API's — `tag`
+  unless chosen, `icon_invalid` worded), renamed or given another icon
+  (`…/{id}/edit`; kind and key fixed) and deleted while nothing is
+  (`category_in_use`). Whatever the anchor keeps only it
   changes; what an account makes of its own only it sees and uses.
   Credential types (`/dashboard/credential-types`): Almena's types, read
   only, by category — each opens to its claims (fields of the catalogue, the
@@ -326,7 +372,9 @@ everything (`task --list`); `task check` must pass before finishing.
   form, its key fixed; while something uses the type only its words,
   category, standard and new optional claims change) and "Delete" (refused
   while an issuer grants it, a form asks for it or an application was made
-  for it). Issuers have a Credentials tab
+  for it). Both lists of types are drawn as compact `CredentialCard`s
+  (`CatalogueList`'s `layout="cards"`: under each card its key, facts, tags
+  and the same actions; the card opens it). Issuers have a Credentials tab
   (`/dashboard/issuers/{id}/credentials`): the types they grant, ticked by any
   member (`PUT …/credential-types`); the public catalogue lists them.
 - Applying for a credential is the catalog's (`../catalog`,
@@ -338,7 +386,9 @@ everything (`task --list`); `task check` must pass before finishing.
   `/dashboard/applications` (a card of its own, Activity, after the overview): the answers, the
   files (downloaded through a route handler with the session), the
   credentials presented, whether the holder's signature holds, and accept or
-  reject. Accepted, the credential is issued from the same page: its claims,
+  reject. The page draws the credential as a full `CredentialCard` beside
+  the title, its chip the application's status, or the credential's once
+  issued. Accepted, the credential is issued from the same page: its claims,
   proposed from the application, are settled in `IssuanceForm` (each a
   catalogue field, `FieldInput` — the catalog's, without file uploads:
   credentials carry no files), then

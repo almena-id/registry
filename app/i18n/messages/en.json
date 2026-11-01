@@ -570,6 +570,36 @@
     "attention": {
       "title": "Awaiting you"
     },
+    "activity": {
+      "title": "Activity",
+      "lead": "What your issuers and verifiers did, day by day (UTC).",
+      "span": "Period",
+      "spans": {
+        "7": "7 days",
+        "30": "30 days",
+        "90": "90 days"
+      },
+      "empty": "No activity yet. Applications, issued credentials and verifications will show here.",
+      "summary": "Over the last {days} days: {submitted} applications submitted, {issued} credentials issued, {verified} presentations verified, {rejected} applications rejected and {failed} verifications failed.",
+      "chartLabel": "Applications submitted, credentials issued and presentations verified per day, last {days} days",
+      "day": "Day",
+      "series": {
+        "submitted": "Submitted",
+        "issued": "Issued",
+        "verified": "Verified",
+        "rejected": "Rejected",
+        "failed": "Failed verifications",
+        "wrong": "Rejected or failed"
+      },
+      "waiting": "Applications waiting",
+      "waitingHint": "Submitted, to decide",
+      "toIssue": "Accepted, to issue",
+      "issuedSoFar": "{count} issued so far",
+      "credentials": "Credentials issued",
+      "verifications": "Verifications",
+      "verified": "Verified",
+      "failed": "Failed"
+    },
     "health": {
       "title": "Account health",
       "fix": "Set up",
@@ -606,7 +636,8 @@
         "mediator_unsigned": "Signed after the account's identity, so that it names the account as its controller.",
         "mediator_unpublished": "Publishing makes its DID resolve; until then nothing routes through it.",
         "mediator_unchosen": "Once chosen, the account's document names its service and has to be signed again. New accounts start with it."
-      }
+      },
+      "done": "{done} of {all} done"
     },
     "json": {
       "published": "Published document",
@@ -978,6 +1009,32 @@
         "edit": "Edit category",
         "editLead": "Rename “{label}”. What it files and its key never change.",
         "name": "Name",
+        "icon": "Icon",
+        "iconHint": "What the category is drawn with, wherever it is shown.",
+        "icons": {
+          "tag": "Tag",
+          "user": "Person",
+          "id-card": "Identity card",
+          "house": "Home",
+          "mail": "Mail",
+          "phone": "Phone",
+          "file-text": "Document",
+          "folder": "Folder",
+          "graduation-cap": "Education",
+          "briefcase": "Work",
+          "users": "People",
+          "award": "Award",
+          "badge-check": "Certified",
+          "shield": "Shield",
+          "heart-pulse": "Health",
+          "car": "Vehicle",
+          "landmark": "Government",
+          "building": "Organisation",
+          "globe": "World",
+          "key": "Key",
+          "plane": "Travel",
+          "wallet": "Finance"
+        },
         "kinds": {
           "field": "Field categories",
           "credential": "Credential categories"
@@ -992,6 +1049,7 @@
           "keyInvalid": "The key starts with a letter and has only lowercase letters, digits and _ (32 at most).",
           "keyExists": "There is a category of that kind with that key already.",
           "labelsRequired": "Give it a name in every language.",
+          "iconInvalid": "Choose one of the icons offered.",
           "inUse": "Something is filed under it: move it elsewhere first.",
           "unavailable": "The registry cannot be reached. Try again in a moment."
         },
@@ -1078,7 +1136,8 @@
         "inUse": "Something uses it: it cannot be deleted.",
         "fileFormats": "File formats never go: every file field draws on them."
       },
-      "typesHint": "The credentials issuers grant and forms ask to be presented: Almena's, standard for every account, and yours."
+      "typesHint": "The credentials issuers grant and forms ask to be presented: Almena's, standard for every account, and yours.",
+      "anyIssuer": "Any account's issuer"
     },
     "applications": {
       "title": "Applications",

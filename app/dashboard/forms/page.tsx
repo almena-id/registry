@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import { PlusIcon } from "lucide-react";
+import { ClipboardListIcon, PlusIcon } from "lucide-react";
 
+import { EmptyState } from "@/app/components/EmptyState";
 import { Alert, AlertDescription } from "@/app/components/ui/alert";
 import { Button } from "@/app/components/ui/button";
 import { Card } from "@/app/components/ui/card";
@@ -92,7 +93,7 @@ export default async function FormsPage() {
             </Alert>
           </div>
         ) : forms.length === 0 ? (
-          <p className="px-5 py-10 text-center text-faint">{copy.empty}</p>
+          <EmptyState icon={ClipboardListIcon} title={copy.empty} />
         ) : (
           <ul>
             {forms.map((form) => (

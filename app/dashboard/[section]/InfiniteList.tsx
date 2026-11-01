@@ -4,6 +4,7 @@ import { KeyIcon } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 
+import { EmptyState } from "@/app/components/EmptyState";
 import { Alert, AlertDescription } from "@/app/components/ui/alert";
 import { Badge } from "@/app/components/ui/badge";
 import { Button } from "@/app/components/ui/button";
@@ -19,6 +20,7 @@ import {
   type Section,
 } from "@/app/lib/directory-types";
 import { formatDateTime } from "@/app/lib/format";
+import { SECTION_ICONS } from "../icons";
 
 /** A signature: signed is the brand's, pending waits, outdated warns. */
 const SIGNATURE_BADGE = {
@@ -101,8 +103,11 @@ export function InfiniteList({
 
   if (items.length === 0) {
     return (
-      <Card className="gap-0 px-5 py-10 text-center">
-        <p className="text-faint">{t.dashboard.sections[section].empty}</p>
+      <Card className="gap-0 py-0">
+        <EmptyState
+          icon={SECTION_ICONS[section]}
+          title={t.dashboard.sections[section].empty}
+        />
       </Card>
     );
   }
@@ -115,7 +120,7 @@ export function InfiniteList({
             key={item.id}
             className="flex items-center justify-between gap-4 border-t px-5 py-3.5 first:border-t-0 max-sm:flex-col max-sm:items-start max-sm:gap-1"
           >
-            <div className="flex min-w-0 flex-col gap-0.5">
+            <div className="flex min-w-0 flex-col gap-0.5 max-sm:self-stretch">
               {opens(section) ? (
                 // Identities and mediators open: their DID, and what can change.
                 <Link

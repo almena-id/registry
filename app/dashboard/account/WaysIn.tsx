@@ -26,9 +26,10 @@ const marks: Record<ProviderId | "almena", React.ReactNode> = {
 /* One row per way in: its mark, what it is, and what can be done with it. */
 const row = "flex items-center gap-3 border-t py-3 first:border-t-0";
 const mark = "grid size-9 flex-none place-items-center rounded-sm border";
-const main = "flex min-w-0 flex-1 flex-col gap-0.5";
+// What it is keeps some room; on a narrow screen the actions' words wrap.
+const main = "flex min-w-24 flex-1 flex-col gap-0.5";
 const detail = "truncate text-sm text-muted-foreground";
-const actions = "flex flex-none items-center gap-2";
+const actions = "flex min-w-0 items-center justify-end gap-2 text-right";
 
 /**
  * One row per way in — the email (always shown, empty or not), each linked

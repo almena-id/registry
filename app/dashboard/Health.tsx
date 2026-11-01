@@ -5,7 +5,7 @@ import { Alert, AlertDescription } from "@/app/components/ui/alert";
 import { Badge } from "@/app/components/ui/badge";
 import { Button } from "@/app/components/ui/button";
 import { Card } from "@/app/components/ui/card";
-import { Progress } from "@/app/components/ui/progress";
+import { RingGauge } from "@/app/components/charts/RingGauge";
 import { getI18n } from "@/app/i18n/server";
 import { fetchHealth, fetchTenant, type HealthCheck } from "@/app/lib/tenant";
 
@@ -73,14 +73,9 @@ export async function Health() {
   return (
     <Card className="mb-4 gap-0 px-6 py-5">
       <section>
-        <div className="mb-3 flex items-baseline justify-between gap-3">
-          <h2 className="text-[15px] font-semibold">{copy.title}</h2>
-          {health && (
-            <p className="text-[22px] font-[650] tracking-[-0.01em]">
-              {health.score}%
-            </p>
-          )}
-        </div>
+        {health === null && (
+          <h2 className="mb-3 text-[15px] font-semibold">{copy.title}</h2>
+        )}
         {health === null ? (
           <Alert variant="destructive" role="alert">
             <AlertDescription>
@@ -88,49 +83,58 @@ export async function Health() {
             </AlertDescription>
           </Alert>
         ) : (
-          <>
-            <Progress
-              className="mb-3 bg-sunk"
-              aria-label={copy.title}
-              value={health.score}
-            />
-            <ul>
-              {health.checks.map((check) => (
-                <li key={check.check} className={rowClass}>
-                  {check.done ? (
-                    <span className="flex min-w-0 items-center gap-2.5 text-muted-foreground">
-                      <CheckIcon className="size-4 flex-none text-primary" />
-                      {copy.checks[check.check]}
-                    </span>
-                  ) : (
-                    <>
-                      <span className="flex min-w-0 items-start gap-2.5">
-                        <CircleIcon className="mt-0.5 size-4 flex-none text-faint" />
-                        <span className="min-w-0">
-                          <span className="flex flex-wrap items-center gap-2">
-                            {task(check)}
-                            {check.check === next && (
-                              <Badge variant="brand">{copy.next}</Badge>
+          <div className="flex items-start gap-6 max-sm:flex-col max-sm:gap-3">
+            <div className="flex flex-none flex-col items-center gap-2 max-sm:flex-row max-sm:gap-4">
+              <RingGauge value={health.score} label={copy.title} />
+              <p className="max-w-[14ch] text-center text-[13px] text-muted-foreground max-sm:text-left">
+                {copy.done
+                  .replace(
+                    "{done}",
+                    String(health.checks.filter((check) => check.done).length),
+                  )
+                  .replace("{all}", String(health.checks.length))}
+              </p>
+            </div>
+            <div className="min-w-0 flex-1">
+              <h2 className="mb-1 text-[15px] font-semibold">{copy.title}</h2>
+              <ul>
+                {health.checks.map((check) => (
+                  <li key={check.check} className={rowClass}>
+                    {check.done ? (
+                      <span className="flex min-w-0 items-center gap-2.5 text-muted-foreground">
+                        <CheckIcon className="size-4 flex-none text-primary" />
+                        {copy.checks[check.check]}
+                      </span>
+                    ) : (
+                      <>
+                        <span className="flex min-w-0 items-start gap-2.5">
+                          <CircleIcon className="mt-0.5 size-4 flex-none text-faint" />
+                          <span className="min-w-0">
+                            <span className="flex flex-wrap items-center gap-2">
+                              {task(check)}
+                              {check.check === next && (
+                                <Badge variant="brand">{copy.next}</Badge>
+                              )}
+                            </span>
+                            {reason(check) && (
+                              <span className="mt-0.5 block text-[13px] text-muted-foreground">
+                                {reason(check)}
+                              </span>
                             )}
                           </span>
-                          {reason(check) && (
-                            <span className="mt-0.5 block text-[13px] text-muted-foreground">
-                              {reason(check)}
-                            </span>
-                          )}
                         </span>
-                      </span>
-                      <Button asChild variant="ghost" size="sm">
-                        <Link href={taskHref(check, ownMediator, anchor)}>
-                          {copy.fix}
-                        </Link>
-                      </Button>
-                    </>
-                  )}
-                </li>
-              ))}
-            </ul>
-          </>
+                        <Button asChild variant="ghost" size="sm">
+                          <Link href={taskHref(check, ownMediator, anchor)}>
+                            {copy.fix}
+                          </Link>
+                        </Button>
+                      </>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
         )}
       </section>
     </Card>

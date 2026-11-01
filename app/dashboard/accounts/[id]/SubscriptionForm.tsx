@@ -53,7 +53,7 @@ export function SubscriptionForm({
           <AlertDescription>{copy.saved}</AlertDescription>
         </Alert>
       )}
-      <div className="grid items-end gap-3 sm:grid-cols-3">
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(13rem,1fr))] items-end gap-3">
         <Field className="gap-1.5">
           <FieldLabel htmlFor="status">{copy.status}</FieldLabel>
           <Select

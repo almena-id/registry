@@ -32,7 +32,8 @@ export type CredentialType = {
 
 export type CredentialCatalogue = {
   version: string;
-  categories: { id: string; labels: Labels }[];
+  /** `icon`: what it is drawn with (`app/lib/category-icons.ts`). */
+  categories: { id: string; labels: Labels; icon?: string }[];
   types: CredentialType[];
 };
 

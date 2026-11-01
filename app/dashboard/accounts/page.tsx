@@ -71,7 +71,7 @@ export default async function AccountsPage({
           maxLength={100}
           className="max-w-xs"
         />
-        <nav className="flex gap-1" aria-label={copy.filter}>
+        <nav className="flex flex-wrap gap-1" aria-label={copy.filter}>
           {(
             [
               [undefined, copy.all],

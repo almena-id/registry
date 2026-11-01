@@ -87,7 +87,7 @@ export function Tokens({
               key={token.id}
               className="flex items-center justify-between gap-4 border-t py-3 first:border-t-0 max-sm:flex-col max-sm:items-start"
             >
-              <div className="flex min-w-0 flex-col gap-0.5">
+              <div className="flex min-w-0 flex-col gap-0.5 max-sm:self-stretch">
                 <span className="font-semibold">{token.name}</span>
                 <span className="text-[13px] text-muted-foreground">
                   {copy.expires.replace("{date}", when(token.expires_at))}

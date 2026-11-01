@@ -42,7 +42,8 @@ export type Code = { value: CodeValue; labels: Labels; media_type?: string };
 export type Catalogue = {
   version: string;
   languages: string[];
-  categories: { id: string; labels: Labels }[];
+  /** `icon`: what it is drawn with (`app/lib/category-icons.ts`). */
+  categories: { id: string; labels: Labels; icon?: string }[];
   fields: CatalogueField[];
   domains: Record<string, { labels: Labels; source: string; codes: Code[] }>;
 };

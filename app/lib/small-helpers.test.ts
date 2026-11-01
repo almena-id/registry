@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { socialError } from "./auth-errors";
+import { formatDay } from "./format";
 import { formatCount } from "./plural";
 import { safeBack } from "./status-lists";
 
@@ -33,5 +34,12 @@ describe("a count", () => {
     expect(formatCount(forms, 1, "en")).toBe("1 claim");
     expect(formatCount(forms, 1200, "en")).toBe("1,200 claims");
     expect(formatCount(forms, 1200, "es")).toBe("1200 claims");
+  });
+});
+
+describe("a day the API counts in UTC", () => {
+  it("is written as that day, never the one before", () => {
+    expect(formatDay("2026-11-01", "en", "short")).toBe("Nov 1");
+    expect(formatDay("2026-11-01", "en")).toBe("Nov 1, 2026");
   });
 });

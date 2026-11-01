@@ -29,9 +29,9 @@ const PEOPLE: Record<SigningFlow, boolean[]> = {
  * the screen): the column is narrow beside the form at laptop widths and wide
  * on a large monitor. One size ladder for every node, icon and word.
  */
-const NODE = "size-11 @sm:size-14 @lg:size-18 @2xl:size-22";
-const ICON = "size-5 @sm:size-6 @lg:size-8 @2xl:size-10";
-const WORD = "text-[12px] @lg:text-sm @2xl:text-base";
+const NODE = "size-9 @xs:size-11 @sm:size-14 @lg:size-18 @2xl:size-22";
+const ICON = "size-4 @xs:size-5 @sm:size-6 @lg:size-8 @2xl:size-10";
+const WORD = "text-[11px] @xs:text-[12px] @lg:text-sm @2xl:text-base";
 
 function Node({ icon: Icon, lit }: { icon: LucideIcon; lit?: boolean }) {
   return (
@@ -54,7 +54,7 @@ function Arrow() {
   return (
     <ArrowRightIcon
       aria-hidden
-      className="size-4 flex-none text-faint @lg:size-6 @2xl:size-8"
+      className="size-3.5 flex-none text-faint @xs:size-4 @lg:size-6 @2xl:size-8"
     />
   );
 }
@@ -67,13 +67,13 @@ function Arrow() {
 function Drawing({ flow, people }: { flow: SigningFlow; people: string }) {
   const { t } = useI18n();
   const copy = t.dashboard.tenant.signing;
-  const word = cn("text-center text-faint", WORD);
+  const word = cn("text-center text-faint hyphens-auto", WORD);
   return (
     // The container is the wrapper: an element cannot query its own width.
     <div className="@container">
-      <div className="rounded-xl bg-sunk/60 px-4 py-6 @lg:py-10 @2xl:py-14">
-        <div className="mx-auto grid w-fit grid-cols-[repeat(5,auto)] items-center justify-items-center gap-x-3 gap-y-2 @lg:gap-x-8 @lg:gap-y-3 @2xl:gap-x-12">
-          <div className="flex -space-x-2.5 @lg:-space-x-4 @2xl:-space-x-5">
+      <div className="rounded-xl bg-sunk/60 px-2 py-6 @xs:px-4 @lg:py-10 @2xl:py-14">
+        <div className="mx-auto grid w-fit max-w-full grid-cols-[repeat(5,auto)] items-center justify-items-center gap-x-1 gap-y-2 @xs:gap-x-3 @lg:gap-x-8 @lg:gap-y-3 @2xl:gap-x-12">
+          <div className="flex -space-x-2 @xs:-space-x-2.5 @lg:-space-x-4 @2xl:-space-x-5">
             {PEOPLE[flow].map((lit, index) => (
               <Node key={index} icon={UserIcon} lit={lit} />
             ))}

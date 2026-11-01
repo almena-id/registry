@@ -11,6 +11,8 @@ export type Category = {
   kind: "field" | "credential";
   key: string;
   labels: Labels;
+  /** What it is drawn with: one of the API's icons (`category-icons.ts`). */
+  icon: string;
   /** How many fields, or credential types of any account, are filed under it. */
   uses: number;
   created_at: string;

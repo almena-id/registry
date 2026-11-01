@@ -30,6 +30,7 @@ import {
   FieldLegend,
   FieldSet,
 } from "@/app/components/ui/field";
+import { CategoryLabel } from "@/app/components/CategoryLabel";
 import { useI18n } from "@/app/i18n/client";
 import type {
   CredentialCatalogue,
@@ -165,7 +166,11 @@ function CredentialPicker({
             {credentials.categories.map((category) => (
               <CommandGroup
                 key={category.id}
-                heading={label(category.labels, locale)}
+                heading={
+                  <CategoryLabel icon={category.icon}>
+                    {label(category.labels, locale)}
+                  </CategoryLabel>
+                }
               >
                 {credentials.types
                   .filter((type) => type.category === category.id)

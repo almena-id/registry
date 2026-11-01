@@ -570,6 +570,36 @@
     "attention": {
       "title": "Pendiente"
     },
+    "activity": {
+      "title": "Actividad",
+      "lead": "Lo que han hecho tus emisores y verificadores, día a día (UTC).",
+      "span": "Periodo",
+      "spans": {
+        "7": "7 días",
+        "30": "30 días",
+        "90": "90 días"
+      },
+      "empty": "Aún no hay actividad. Aquí aparecerán las solicitudes, las credenciales emitidas y las verificaciones.",
+      "summary": "En los últimos {days} días: {submitted} solicitudes enviadas, {issued} credenciales emitidas, {verified} presentaciones verificadas, {rejected} solicitudes rechazadas y {failed} verificaciones fallidas.",
+      "chartLabel": "Solicitudes enviadas, credenciales emitidas y presentaciones verificadas por día, últimos {days} días",
+      "day": "Día",
+      "series": {
+        "submitted": "Enviadas",
+        "issued": "Emitidas",
+        "verified": "Verificadas",
+        "rejected": "Rechazadas",
+        "failed": "Verificaciones fallidas",
+        "wrong": "Rechazadas o fallidas"
+      },
+      "waiting": "Solicitudes en espera",
+      "waitingHint": "Enviadas, por decidir",
+      "toIssue": "Aceptadas, por emitir",
+      "issuedSoFar": "{count} emitidas hasta ahora",
+      "credentials": "Credenciales emitidas",
+      "verifications": "Verificaciones",
+      "verified": "Verificadas",
+      "failed": "Fallidas"
+    },
     "health": {
       "title": "Salud de la cuenta",
       "fix": "Configurar",
@@ -606,7 +636,8 @@
         "mediator_unsigned": "Se firma después de la identidad de la cuenta, para que la nombre como su controlador.",
         "mediator_unpublished": "Publicarlo hace que su DID resuelva; hasta entonces nada pasa por él.",
         "mediator_unchosen": "Al elegirlo, el documento de la cuenta nombra su servicio y hay que volver a firmarlo. Las cuentas nuevas empiezan con él."
-      }
+      },
+      "done": "{done} de {all} hechas"
     },
     "json": {
       "published": "Documento publicado",
@@ -978,6 +1009,32 @@
         "edit": "Editar categoría",
         "editLead": "Cambia el nombre de «{label}». Lo que ordena y su clave no cambian nunca.",
         "name": "Nombre",
+        "icon": "Icono",
+        "iconHint": "Con qué se dibuja la categoría, allí donde se muestre.",
+        "icons": {
+          "tag": "Etiqueta",
+          "user": "Persona",
+          "id-card": "Documento de identidad",
+          "house": "Vivienda",
+          "mail": "Correo",
+          "phone": "Teléfono",
+          "file-text": "Documento",
+          "folder": "Carpeta",
+          "graduation-cap": "Educación",
+          "briefcase": "Trabajo",
+          "users": "Personas",
+          "award": "Premio",
+          "badge-check": "Certificado",
+          "shield": "Escudo",
+          "heart-pulse": "Salud",
+          "car": "Vehículo",
+          "landmark": "Administración",
+          "building": "Organización",
+          "globe": "Mundo",
+          "key": "Llave",
+          "plane": "Viajes",
+          "wallet": "Finanzas"
+        },
         "kinds": {
           "field": "Categorías de campos",
           "credential": "Categorías de credenciales"
@@ -992,6 +1049,7 @@
           "keyInvalid": "La clave empieza por una letra y solo tiene minúsculas, dígitos y _ (32 como mucho).",
           "keyExists": "Ya hay una categoría de ese tipo con esa clave.",
           "labelsRequired": "Dale un nombre en todos los idiomas.",
+          "iconInvalid": "Elige uno de los iconos ofrecidos.",
           "inUse": "Hay algo en ella: muévelo a otra antes.",
           "unavailable": "No se puede contactar con el registro. Inténtalo de nuevo en un momento."
         },
@@ -1078,7 +1136,8 @@
         "inUse": "Algo lo usa: no se puede borrar.",
         "fileFormats": "Los formatos de fichero no se borran nunca: todo campo de fichero los usa."
       },
-      "typesHint": "Las credenciales que otorgan los emisores y que los formularios piden presentar: las de Almena, estándar para todas las cuentas, y las tuyas."
+      "typesHint": "Las credenciales que otorgan los emisores y que los formularios piden presentar: las de Almena, estándar para todas las cuentas, y las tuyas.",
+      "anyIssuer": "El emisor de cualquier cuenta"
     },
     "applications": {
       "title": "Solicitudes",

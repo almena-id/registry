@@ -206,8 +206,9 @@ export function CredentialTypeForm({
                   key={field.value}
                   className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1"
                 >
-                  <FieldLabel className="flex cursor-pointer items-center gap-2 font-normal">
+                  <FieldLabel className="flex min-w-0 cursor-pointer items-start gap-2 font-normal">
                     <Checkbox
+                      className="mt-0.5"
                       checked={Boolean(claim)}
                       onCheckedChange={(checked) =>
                         setClaim(
@@ -218,9 +219,11 @@ export function CredentialTypeForm({
                         )
                       }
                     />
-                    {field.label}
-                    <span className="font-mono text-[12px] text-faint">
-                      {field.value}
+                    <span className="min-w-0 wrap-anywhere">
+                      {field.label}{" "}
+                      <span className="font-mono text-[12px] text-faint">
+                        {field.value}
+                      </span>
                     </span>
                   </FieldLabel>
                   {claim && (

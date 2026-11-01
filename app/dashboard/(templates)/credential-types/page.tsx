@@ -30,10 +30,11 @@ export async function generateMetadata(): Promise<Metadata> {
 /**
  * The credential types, as lists like the dashboard's others: the account's
  * own first (only its issuers grant them, only its forms ask for them), then
- * Almena's, which every account's issuers grant and forms ask for. Each row is
- * the type's name and key, what it states, a tag for those issued elsewhere
- * (the EU PID) and, on the right, its claims, category and formats; then its
- * actions — duplicate, open its type metadata, delete. Clicking a row the
+ * Almena's, which every account's issuers grant and forms ask for. Each is
+ * drawn as a credential card — its name, who issues it and its category with
+ * the category's icon — and under it its key, its claims and formats, what it
+ * states, a tag for those issued elsewhere (the EU PID) and its actions —
+ * duplicate, open its type metadata, delete. Clicking a row the
  * account may change opens it. The trust anchor's own are Almena's.
  */
 export default async function CredentialTypesPage() {
@@ -81,7 +82,7 @@ export default async function CredentialTypesPage() {
   const categories = new Map(
     credentials.categories.map((category, index) => [
       category.id,
-      { index, name: label(category.labels, locale) },
+      { index, name: label(category.labels, locale), icon: category.icon },
     ]),
   );
   // The account's own by ref (the anchor's: Almena's), to change or delete.
@@ -89,6 +90,7 @@ export default async function CredentialTypesPage() {
   const row = (item: CredentialType): CatalogueListRow => {
     const id = owned.get(item.id);
     const external = item.issuance === "external";
+    const category = categories.get(item.category);
     return {
       id: id ?? item.id,
       href:
@@ -97,9 +99,16 @@ export default async function CredentialTypesPage() {
       code: item.id,
       line: label(item.descriptions, locale),
       badges: external ? [{ text: copy.external, variant: "pending" }] : [],
+      card: {
+        // Who issues it: a framework of its own, else any account's issuer.
+        issuer: external ? item.source || copy.external : copy.anyIssuer,
+        category: {
+          label: category?.name ?? item.category,
+          icon: category?.icon,
+        },
+      },
       facts: [
         formatCount(copy.list.claims, item.claims.length, locale),
-        categories.get(item.category)?.name ?? item.category,
         [
           "SD-JWT",
           ...(item.formats.jwt_vc_json ? ["W3C"] : []),
@@ -135,6 +144,7 @@ export default async function CredentialTypesPage() {
             </p>
           </div>
           <CatalogueList
+            layout="cards"
             rows={[...own].reverse().map((item) => row(item.type))}
             remove={deleteCredentialType}
             errors={errors}
@@ -155,6 +165,7 @@ export default async function CredentialTypesPage() {
           </p>
         </div>
         <CatalogueList
+          layout="cards"
           rows={[...credentials.types].sort(byCategory).map(row)}
           remove={anchor ? deleteCredentialType : undefined}
           errors={errors}

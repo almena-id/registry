@@ -77,6 +77,7 @@ export default async function CategoriesPage({
               href: `${base}/${item.id}/edit`,
               title: label(item.labels, locale),
               code: item.key,
+              icon: item.icon,
               // Its name in the other languages, at a glance.
               line: Object.entries(item.labels)
                 .filter(([lang]) => lang !== locale)

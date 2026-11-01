@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import { ChevronRightIcon } from "lucide-react";
+import { ChevronRightIcon, InboxIcon } from "lucide-react";
 
+import { EmptyState } from "@/app/components/EmptyState";
 import { Alert, AlertDescription } from "@/app/components/ui/alert";
 import { Badge } from "@/app/components/ui/badge";
 import { Button } from "@/app/components/ui/button";
@@ -54,7 +55,7 @@ export default async function ApplicationsPage({
             </Alert>
           </div>
         ) : received.length === 0 ? (
-          <p className="px-5 py-10 text-center text-faint">{copy.empty}</p>
+          <EmptyState icon={InboxIcon} title={copy.empty} />
         ) : (
           <ul>
             {received.map((item) => (

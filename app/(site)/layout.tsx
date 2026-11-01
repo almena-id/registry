@@ -11,7 +11,8 @@ export default async function SiteLayout({
   return (
     <>
       <SiteHeader t={t} />
-      <main className="page-frame flex flex-1 flex-col pt-8 pb-12">
+      {/* Clipped across: the heroes' pattern reaches past the gutters. */}
+      <main className="page-frame flex flex-1 flex-col overflow-x-clip pt-8 pb-12">
         {children}
       </main>
     </>

@@ -61,6 +61,16 @@
   --sunk: #e8eaef;
   --shadow-card:
     0 1px 2px rgba(23, 24, 28, 0.06), 0 8px 24px rgba(23, 24, 28, 0.06);
+  /* Credential states beyond the brand (valid) and destructive (revoked). */
+  --warning: #b7791f;
+  --warning-soft: rgba(183, 121, 31, 0.14);
+  /* The activity chart's series, one token each (checked for colour-blind
+     separation against the card in each theme). */
+  --chart-submitted: #3b6fd8;
+  --chart-issued: #1f9d55;
+  --chart-verified: #b0489a;
+  /* The brand pattern behind heroes: a faint dot grid in the brand tint. */
+  --pattern-dot: rgba(31, 157, 85, 0.22);
   /* Scanners want dark on light, whatever the theme. */
   --qr-paper: #ffffff;
 
@@ -93,6 +103,12 @@
     --faint: rgba(244, 244, 246, 0.4);
     --sunk: #0b0c0e;
     --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.3);
+    --warning: #e0a43a;
+    --warning-soft: rgba(224, 164, 58, 0.16);
+    --chart-submitted: #5b86e6;
+    --chart-issued: #25a35e;
+    --chart-verified: #c75cb2;
+    --pattern-dot: rgba(52, 181, 108, 0.24);
   }
 }
 
@@ -119,6 +135,12 @@
   --faint: rgba(244, 244, 246, 0.4);
   --sunk: #0b0c0e;
   --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.3);
+  --warning: #e0a43a;
+  --warning-soft: rgba(224, 164, 58, 0.16);
+  --chart-submitted: #5b86e6;
+  --chart-issued: #25a35e;
+  --chart-verified: #c75cb2;
+  --pattern-dot: rgba(52, 181, 108, 0.24);
 }
 
 :root[data-theme="light"] {
@@ -162,6 +184,11 @@
   --color-faint: var(--faint);
   --color-sunk: var(--sunk);
   --color-qr-paper: var(--qr-paper);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --color-chart-submitted: var(--chart-submitted);
+  --color-chart-issued: var(--chart-issued);
+  --color-chart-verified: var(--chart-verified);
   --shadow-card: var(--shadow-card);
 }
 
@@ -180,6 +207,9 @@
   body {
     font-family: var(--font-sans);
     line-height: 1.5;
+    /* A word longer than its box (a DID, an address, a long word of some
+       language) breaks inside it rather than spilling out. */
+    overflow-wrap: break-word;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -220,4 +250,33 @@
   display: block;
   width: 100%;
   height: auto;
+}
+
+/* ------------------------------------------------------------- graphics */
+
+/* Behind heroes only: a dot grid in the brand tint, fading out from the
+   middle. Never behind a working screen. */
+.brand-pattern {
+  background-image: radial-gradient(var(--pattern-dot) 1px, transparent 1px);
+  background-size: 18px 18px;
+  mask-image: radial-gradient(closest-side, black 30%, transparent 100%);
+  pointer-events: none;
+}
+
+/* A credential drawn as a card: the brand, from its colour to its strong
+   shade. The text on it is the foreground on primary. */
+.credential-card {
+  background: linear-gradient(
+    135deg,
+    var(--primary),
+    color-mix(in oklab, var(--primary) 70%, black)
+  );
+  color: var(--primary-foreground);
+}
+
+/* The status chip on a credential card: a light pill, dark text, whatever
+   the theme; its dot carries the state. */
+.credential-chip {
+  background: rgba(255, 255, 255, 0.9);
+  color: #17181c;
 }

@@ -49,6 +49,7 @@ export default async function NewCategoryPage({
                 kind,
                 key: `${original.key}_copy`.slice(0, 32),
                 labels: original.labels,
+                icon: original.icon,
               }
             : { kind }
         }

@@ -4,6 +4,11 @@ import { notFound } from "next/navigation";
 
 import { ArrowLeftIcon, ShieldAlertIcon, ShieldCheckIcon } from "lucide-react";
 
+import {
+  CredentialCard,
+  CredentialChip,
+  type ChipTone,
+} from "@/app/components/CredentialCard";
 import { Alert, AlertDescription } from "@/app/components/ui/alert";
 import { Badge } from "@/app/components/ui/badge";
 import { Button } from "@/app/components/ui/button";
@@ -23,6 +28,18 @@ export async function generateMetadata(): Promise<Metadata> {
   const { t } = await getI18n();
   return { title: t.dashboard.applications.one };
 }
+
+/** How an application's status, or its credential's once issued, is dotted on the card. */
+const TONE: Record<string, ChipTone> = {
+  submitted: "warning",
+  accepted: "valid",
+  rejected: "danger",
+  open: "muted",
+  paired: "muted",
+  valid: "valid",
+  suspended: "warning",
+  revoked: "danger",
+};
 
 const fact =
   "flex flex-wrap justify-between gap-x-3 gap-y-1 border-t pt-2.5 text-sm first:border-t-0 first:pt-0";
@@ -63,6 +80,20 @@ export default async function ApplicationPage({
   );
   const typeName = (type: string) =>
     types.get(type) ? label(types.get(type)!, locale) : type;
+  const type = credentials?.types.find(
+    (entry) => entry.id === item.content.credential_type,
+  );
+  const category = credentials?.categories.find(
+    (entry) => entry.id === type?.category,
+  );
+  // The credential's own status once issued; the application's before.
+  const chip =
+    item.status === "issued"
+      ? {
+          tone: TONE[credentialStatus],
+          text: copy.credentialStatuses[credentialStatus],
+        }
+      : { tone: TONE[item.status], text: copy.status[item.status] };
 
   return (
     <div className="grid gap-4">
@@ -73,8 +104,8 @@ export default async function ApplicationPage({
         <ArrowLeftIcon className="size-4" />
         {copy.back}
       </Link>
-      <header className="flex flex-wrap items-start justify-between gap-3">
-        <div>
+      <header className="grid items-start gap-4 min-[900px]:grid-cols-[1fr_minmax(280px,360px)]">
+        <div className="grid gap-2">
           <h1 className="text-[28px] font-bold tracking-tight">
             {typeName(item.content.credential_type)}
           </h1>
@@ -82,10 +113,23 @@ export default async function ApplicationPage({
             {item.issuer.name} · {label(item.form.name, locale)} ·{" "}
             <span className="font-mono text-[13px]">{item.slug}</span>
           </p>
+          <Badge variant={statusBadge[item.status]}>
+            {copy.status[item.status]}
+          </Badge>
         </div>
-        <Badge variant={statusBadge[item.status]}>
-          {copy.status[item.status]}
-        </Badge>
+        {/* The credential as the holder will carry it, with where it stands. */}
+        <CredentialCard
+          typeName={typeName(item.content.credential_type)}
+          issuerName={item.issuer.name}
+          category={
+            category && {
+              label: label(category.labels, locale),
+              icon: category.icon,
+            }
+          }
+        >
+          <CredentialChip tone={chip.tone}>{chip.text}</CredentialChip>
+        </CredentialCard>
       </header>
 
       <Card className="gap-3 p-5">

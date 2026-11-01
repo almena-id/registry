@@ -36,13 +36,10 @@ import {
   FieldLegend,
   FieldSet,
 } from "@/app/components/ui/field";
+import { CategoryLabel } from "@/app/components/CategoryLabel";
 import { useI18n } from "@/app/i18n/client";
 import type { CredentialCatalogue } from "@/app/lib/credential-catalog";
-import {
-  createForm,
-  updateForm,
-  type FormState,
-} from "@/app/lib/form-actions";
+import { createForm, updateForm, type FormState } from "@/app/lib/form-actions";
 import type { Form } from "@/app/lib/forms";
 import type { Texts } from "@/app/lib/texts";
 import {
@@ -237,7 +234,9 @@ export function FormBuilder({
 
       <div className="flex justify-end gap-2">
         <Button asChild variant="ghost">
-          <Link href={form ? `/dashboard/forms/${form.id}` : "/dashboard/forms"}>
+          <Link
+            href={form ? `/dashboard/forms/${form.id}` : "/dashboard/forms"}
+          >
             {copy.cancel}
           </Link>
         </Button>
@@ -280,7 +279,11 @@ function FieldPicker({
             {catalogue.categories.map((category) => (
               <CommandGroup
                 key={category.id}
-                heading={label(category.labels, locale)}
+                heading={
+                  <CategoryLabel icon={category.icon}>
+                    {label(category.labels, locale)}
+                  </CategoryLabel>
+                }
               >
                 {catalogue.fields
                   .filter((field) => field.category === category.id)

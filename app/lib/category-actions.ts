@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 
 import { locales, type Dictionary } from "@/app/i18n/config";
 import { api, currentTenant, sessionCookie } from "./api";
+import { isCategoryIcon } from "./category-icons";
 import { segmentOf } from "@/app/dashboard/(templates)/categories/kinds";
 import { textsFrom, type Texts } from "./texts";
 
@@ -17,6 +18,8 @@ export type CategoryState = {
   kind?: string;
   key?: string;
   labels?: Texts;
+  /** What it is drawn with: one of the API's icons. */
+  icon?: string;
   error?: ErrorKey;
 };
 
@@ -24,6 +27,7 @@ const CODES: Record<string, ErrorKey> = {
   key_invalid: "keyInvalid",
   key_exists: "keyExists",
   labels_required: "labelsRequired",
+  icon_invalid: "iconInvalid",
   category_in_use: "inUse",
   category_not_found: "unavailable",
   anchor_only: "unavailable",
@@ -52,6 +56,7 @@ function read(form: FormData): CategoryState {
     kind: String(form.get("kind") ?? "").trim(),
     key: String(form.get("key") ?? "").trim(),
     labels: textsFrom(form.get("labels")),
+    icon: String(form.get("icon") ?? "tag"),
   };
 }
 
@@ -66,25 +71,39 @@ export async function createCategory(
   const keep = read(form);
   if (!keep.key) return { ...keep, error: "keyRequired" };
   if (!named(keep.labels)) return { ...keep, error: "labelsRequired" };
+  if (!isCategoryIcon(keep.icon)) return { ...keep, error: "iconInvalid" };
   const error = await call("", {
     method: "POST",
-    body: { kind: keep.kind, key: keep.key, labels: keep.labels },
+    body: {
+      kind: keep.kind,
+      key: keep.key,
+      labels: keep.labels,
+      icon: keep.icon,
+    },
   });
   if (error) return { ...keep, error };
   redirect(`/dashboard/categories/${segmentOf(keep.kind)}`);
 }
 
-/** The trust anchor renames one; its kind and key never change. */
+/**
+ * The trust anchor renames one or changes its icon; its kind and key never
+ * change.
+ */
 export async function updateCategory(
   id: string,
   previous: CategoryState,
   form: FormData,
 ): Promise<CategoryState> {
-  const keep = { ...previous, labels: textsFrom(form.get("labels")) };
+  const keep = {
+    ...previous,
+    labels: textsFrom(form.get("labels")),
+    icon: String(form.get("icon") ?? previous.icon ?? "tag"),
+  };
   if (!named(keep.labels)) return { ...keep, error: "labelsRequired" };
+  if (!isCategoryIcon(keep.icon)) return { ...keep, error: "iconInvalid" };
   const error = await call(`/${encodeURIComponent(id)}`, {
     method: "PATCH",
-    body: { labels: keep.labels },
+    body: { labels: keep.labels, icon: keep.icon },
   });
   if (error) return { ...keep, error };
   redirect(`/dashboard/categories/${segmentOf(keep.kind)}`);

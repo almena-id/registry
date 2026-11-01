@@ -105,6 +105,9 @@ export default async function CataloguePage() {
     href: own && allowed ? `/dashboard/fields/${own.id}/edit` : undefined,
     title: label(item.labels, locale),
     code: item.id,
+    // The tenant's own fields are "Your fields": a tag, as categories are.
+    icon:
+      catalogue.categories.find((c) => c.id === item.category)?.icon ?? "tag",
     line: [own && !anchor ? "" : item.source, holds(item)]
       .filter(Boolean)
       .join(" · "),

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import { useI18n } from "@/app/i18n/client";
+import { NAV_ICONS } from "./icons";
 
 type Entry =
   | "overview"
@@ -99,8 +100,10 @@ const groups: {
   },
 ];
 
+// On the side menu a long label wraps under itself (some languages run
+// long); on narrow screens the cards are rows that scroll, one line each.
 const item =
-  "flex items-center justify-between gap-2 rounded-[10px] px-3 py-[9px] text-[15px] whitespace-nowrap";
+  "group flex items-center gap-2.5 rounded-[10px] px-3 py-[9px] text-[15px] leading-snug max-[859px]:whitespace-nowrap";
 
 export function DashboardNav({
   anchor = false,
@@ -129,16 +132,25 @@ export function DashboardNav({
                 { key: "accounts" as const, href: "/dashboard/accounts" },
               ]
             : listed;
-        const links = entries.map(({ key, href }) => (
-          <Link
-            key={key}
-            href={href}
-            className={`${item} hover:bg-accent aria-[current=page]:bg-brand-soft aria-[current=page]:font-semibold aria-[current=page]:text-primary`}
-            aria-current={current(href) ? "page" : undefined}
-          >
-            {t.dashboard.nav[key]}
-          </Link>
-        ));
+        const links = entries.map(({ key, href }) => {
+          const Icon = NAV_ICONS[key];
+          return (
+            <Link
+              key={key}
+              href={href}
+              className={`${item} hover:bg-accent aria-[current=page]:bg-brand-soft aria-[current=page]:font-semibold aria-[current=page]:text-primary`}
+              aria-current={current(href) ? "page" : undefined}
+            >
+              <Icon
+                className="size-4 flex-none text-faint group-hover:text-muted-foreground group-aria-[current=page]:text-primary"
+                aria-hidden
+              />
+              <span className="min-w-0 wrap-anywhere">
+                {t.dashboard.nav[key]}
+              </span>
+            </Link>
+          );
+        });
         const card =
           "flex flex-col gap-0.5 rounded-2xl border bg-card p-2 max-[859px]:flex-row max-[859px]:overflow-x-auto";
         if (!label)

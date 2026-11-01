@@ -45,3 +45,23 @@ test("the health check answers", async ({ request }) => {
   const response = await request.get("/health");
   expect(response.ok()).toBe(true);
 });
+
+// Every language runs to its own lengths: on a phone, no page may scroll
+// sideways in any of them.
+for (const locale of ["en-GB", "es-ES"]) {
+  test(`the public pages fit a phone in ${locale}`, async ({ browser }) => {
+    const context = await browser.newContext({
+      locale,
+      viewport: { width: 360, height: 740 },
+    });
+    const page = await context.newPage();
+    for (const path of ["/", "/login"]) {
+      await page.goto(path);
+      const overflow = await page.evaluate(
+        () => document.documentElement.scrollWidth - window.innerWidth,
+      );
+      expect(overflow, path).toBeLessThanOrEqual(0);
+    }
+    await context.close();
+  });
+}
