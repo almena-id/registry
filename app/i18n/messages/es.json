@@ -614,7 +614,7 @@
       "tasks": {
         "name_missing": "Pon nombre a la cuenta",
         "signing_flow_no_signer": "Elige quién firma",
-        "signing_flow_no_wallet": "Quien firma necesita una wallet vinculada",
+        "signing_flow_no_wallet": "Quien firma necesita un wallet vinculado",
         "domain_missing": "Añade el dominio por el que se la conoce",
         "domain_unverified": "Verifica su dominio",
         "identity_pending": "Firma la identidad de la cuenta",
