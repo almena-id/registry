@@ -115,7 +115,8 @@ everything (`task --list`); `task check` must pass before finishing.
   are shown disabled.
 - "Continue with Almena" (`/login/almena`) and linking a wallet
   (`/dashboard/account/almena`) share `WalletRequest`: the API's request drawn
-  as a QR code (`qrcode`, server side) and an `almena://` link, then a poll
+  as a QR code (`qrcode`, server side) and its link (the API's `deep_link`,
+  `https://almena.id/w/…`, which only the wallet opens on a phone), then a poll
   every two seconds (`app/lib/wallet-actions.ts`); the poll secret stays in the
   HTTP-only `almena.wallet` cookie. A new wallet signs up an account with no
   email. Every dashboard screen decided in the wallet — linking it, signing
