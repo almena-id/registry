@@ -14,36 +14,22 @@ const rowClass =
 
 /**
  * Where each task is done: on the thing it names (`item`) when there is one —
- * the account's identity to sign, its mediator to sign or publish, an issuer
- * or verifier to give a signer, a queue or its status lists — else where it
- * is set. An own mediator waiting to be published opens itself.
+ * the account's identity to sign, an issuer or verifier to give a signer, a
+ * queue or its status lists — else where it is set. An own mediator chosen
+ * but waiting to be published opens itself.
  */
-function taskHref(
-  check: HealthCheck,
-  ownMediator: string | null,
-  anchor: boolean,
-): string {
+function taskHref(check: HealthCheck, ownMediator: string | null): string {
   switch (check.check) {
     case "signing_flow":
       return "/dashboard/signing";
-    case "domain":
-      return check.issue === "missing"
-        ? "/dashboard/domains/new"
-        : "/dashboard/domains";
     case "identity":
       return check.item
         ? `/dashboard/identities/${check.item}/sign`
         : "/dashboard/tenant";
-    case "mediator": {
-      const mediator = check.item ?? ownMediator;
-      if (check.issue === "missing" && anchor)
-        return "/dashboard/mediators/new";
-      if (check.issue === "unsigned" && mediator)
-        return `/dashboard/mediators/${mediator}/sign`;
-      if (check.issue === "unpublished" && mediator)
-        return `/dashboard/mediators/${mediator}`;
-      return "/dashboard/tenant";
-    }
+    case "mediator":
+      return check.issue === "unpublished" && ownMediator
+        ? `/dashboard/mediators/${ownMediator}`
+        : "/dashboard/tenant";
     case "signers":
       return check.item && check.item_kind
         ? `/dashboard/${check.item_kind}s/${check.item}/signing`
@@ -79,16 +65,11 @@ export async function Health() {
   const [health, tenant] = await Promise.all([fetchHealth(), fetchTenant()]);
   const ownMediator = tenant?.mediator?.own ? tenant.mediator.id : null;
   const anchor = tenant?.anchor ?? false;
-  // The trust anchor's own wording first (`{check}_{issue}_anchor`: it has
-  // no other mediator to fall back on), then every account's. A check this
-  // build has no words for is named, not described.
+  // A check this build has no words for is named, not described.
   const words = <T extends Record<string, string>>(
     from: T,
     check: HealthCheck,
-  ): string | undefined => {
-    const key = `${check.check}_${check.issue}`;
-    return (anchor ? from[`${key}_anchor`] : undefined) ?? from[key];
-  };
+  ): string | undefined => from[`${check.check}_${check.issue}`];
   const task = (check: HealthCheck) =>
     words(copy.tasks, check) ?? copy.checks[check.check];
   const reason = (check: HealthCheck) => words(copy.reasons, check);
@@ -150,7 +131,7 @@ export async function Health() {
                           </span>
                         </span>
                         <Button asChild variant="ghost" size="sm">
-                          <Link href={taskHref(check, ownMediator, anchor)}>
+                          <Link href={taskHref(check, ownMediator)}>
                             {copy.fix}
                           </Link>
                         </Button>

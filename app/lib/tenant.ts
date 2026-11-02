@@ -44,7 +44,6 @@ export type HealthCheck = {
   check:
     | "name"
     | "signing_flow"
-    | "domain"
     | "identity"
     | "mediator"
     | "signers"
@@ -55,20 +54,18 @@ export type HealthCheck = {
   /** What is missing, when not done. */
   issue:
     | "missing"
-    | "unverified"
     | "pending"
     | "outdated"
     | "unsigned"
     | "unpublished"
-    | "unchosen"
     | "no_signer"
     | "no_wallet"
     | "stale"
     | null;
-  /** What the task is done on: the tenant's identity, its mediator, or one of its issuers or verifiers. */
+  /** What the task is done on: the tenant's identity, or one of its issuers or verifiers. */
   item: string | null;
   /** What `item` is. */
-  item_kind?: "identity" | "mediator" | "issuer" | "verifier" | null;
+  item_kind?: "identity" | "issuer" | "verifier" | null;
 };
 export type TenantHealth = {
   /** The share of checks done, 0 to 100. */

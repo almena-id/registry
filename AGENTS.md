@@ -77,14 +77,13 @@ everything (`task --list`); `task check` must pass before finishing.
   written with `formatDay`, never shifted into the visitor's zone. Then
   "Account health" (`Health.tsx`): the API's score (`GET /tenants/{id}/health`,
   a percentage in a `RingGauge`) and its checks in order — name, mediator, signing flow, then, with issuers or verifiers, their signers, status lists and queues, and something published; for the
-  trust anchor its onboarding: name, signing flow, domain, identity, its own
-  mediator — each done, or pending with the task, why it is needed and a
+  trust anchor its onboarding: name, signing flow, identity — each done, or pending with the task, why it is needed and a
   "Set up" link to where it is done (on the check's `item` when it names one);
   the anchor's first pending is marked "Next". The checks and their order are
   the API's; the portal only words them (`dashboard.health.tasks.{check}_{issue}`
-  and `dashboard.health.reasons.{check}_{issue}`; for the trust anchor a
-  `…_anchor` key, when there is one, comes first — `mediator_missing` asks
-  it to create its own, every other account to choose one). Lists tag each row published or
+  and `dashboard.health.reasons.{check}_{issue}`). A domain and a mediator
+  of its own are optional for every account, never a check; a mediator
+  needs a verified domain first. Lists tag each row published or
   draft (issuers, verifiers, mediators) and with its DID's signature.
 - Verifiers have a Verify tab (`(tabs)/verify`, `VerifyByQr`,
   `app/lib/verification-actions.ts`): pick one of the tenant's forms that asks
