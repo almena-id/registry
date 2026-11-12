@@ -32,7 +32,6 @@ ENV NODE_ENV=production \
 RUN adduser --system --uid 10001 --no-create-home registry
 COPY --from=build --chown=registry /app/.next/standalone ./
 COPY --from=build --chown=registry /app/.next/static ./.next/static
-COPY --from=build --chown=registry /app/public ./public
 USER registry
 EXPOSE 3000
 
